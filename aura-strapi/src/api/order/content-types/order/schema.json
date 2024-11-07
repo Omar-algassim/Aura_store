@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "order",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "region": {
+      "type": "enumeration",
+      "enum": [
+        "sudan",
+        "egypt",
+        "saudi arabia"
+      ]
+    },
+    "total_pay": {
+      "type": "decimal",
+      "required": true
+    },
+    "order_status": {
+      "type": "enumeration",
+      "enum": [
+        "draft",
+        "pending",
+        "confirmed",
+        "preparing",
+        "delivered"
+      ]
+    },
+    "checkout_image": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "users_id": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "steady_sellings",
+  "info": {
+    "singularName": "steady-selling",
+    "pluralName": "steady-sellings",
+    "displayName": "steady_selling",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "sold": {
+      "type": "biginteger",
+      "required": true
+    },
+    "total_pay": {
+      "type": "decimal",
+      "required": true
+    },
+    "period_start": {
+      "type": "date",
+      "required": true
+    },
+    "peroid_end": {
+      "type": "date",
+      "required": true
+    },
+    "product_id": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product"
+    }
+  }
+}

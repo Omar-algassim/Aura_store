@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "hot_regions",
+  "info": {
+    "singularName": "hot-region",
+    "pluralName": "hot-regions",
+    "displayName": "hot_region"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "region": {
+      "type": "enumeration",
+      "enum": [
+        "sudan",
+        "egypt",
+        "saudi arabia"
+      ],
+      "required": true
+    },
+    "order_count": {
+      "type": "biginteger"
+    },
+    "total_pay": {
+      "type": "decimal",
+      "required": true
+    },
+    "period_start": {
+      "type": "date",
+      "required": true
+    },
+    "period_end": {
+      "type": "date",
+      "required": true
+    }
+  }
+}
