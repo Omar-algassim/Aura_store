@@ -6,9 +6,9 @@ Create a straightforward, accessible, and secure platform for users to shop onli
 Facilitate a simple purchase flow by using WhatsApp for customer communication and verification, combined with uploaded payment advice.
 Ensure a seamless user experience with a focus on performance, product presentation, and easy navigation.
 3. Technical Requirements
-3.1 Frontend Development
-The frontend will be built using a combination of modern web technologies to ensure a smooth, responsive user experience:
-Framework: React with Next.js for server-side rendering (SSR) to enhance performance, search engine optimization (SEO), and dynamic content rendering.
+    3.1 Frontend Development
+	The frontend will be built using a combination of modern web technologies to ensure a smooth, responsive user experience:
+	Framework: React with Next.js for server-side rendering (SSR) to enhance performance, search engine optimization (SEO), and dynamic content rendering.
 Styling: Utilize CSS-in-JS libraries like styled-components or Tailwind CSS for modular and maintainable styling, along with Bootstrap for a consistent UI layout.
 User Interface Design: Focus on creating a visually appealing design with a luxury feel using brand colors (light beige, pink), high-quality images, and an intuitive layout. The design will incorporate accessibility standards for optimal usability.
 Responsive Design: Ensure the platform is fully responsive and provides a consistent user experience across desktops, tablets, and mobile devices.
