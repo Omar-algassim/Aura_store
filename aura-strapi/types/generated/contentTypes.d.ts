@@ -481,7 +481,7 @@ export interface ApiHotRegionHotRegion extends Struct.CollectionTypeSchema {
       'api::hot-region.hot-region'
     > &
       Schema.Attribute.Private;
-    order_count: Schema.Attribute.BigInteger;
+    orders_count: Schema.Attribute.BigInteger;
     period_end: Schema.Attribute.Date & Schema.Attribute.Required;
     period_start: Schema.Attribute.Date & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;

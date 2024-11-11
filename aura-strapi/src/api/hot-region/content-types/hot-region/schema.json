@@ -20,7 +20,7 @@
       ],
       "required": true
     },
-    "order_count": {
+    "orders_count": {
       "type": "biginteger"
     },
     "total_pay": {
