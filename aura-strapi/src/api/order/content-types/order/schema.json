@@ -46,6 +46,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "delivery_address": {
+      "displayName": "Delivery Address",
+      "type": "component",
+      "repeatable": false,
+      "component": "location.delivery-address"
     }
   }
 }

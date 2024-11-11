@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_location_locations",
+  "info": {
+    "displayName": "Location",
+    "icon": "earth"
+  },
+  "options": {},
+  "attributes": {
+    "region": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    }
+  }
+}
