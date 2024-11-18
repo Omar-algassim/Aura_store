@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_location_delivery_addresses",
+  "info": {
+    "displayName": "Delivery Address",
+    "icon": "pinMap"
+  },
+  "options": {},
+  "attributes": {
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "region": {
+      "type": "string",
+      "required": true
+    },
+    "address": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "available_cities",
+  "info": {
+    "singularName": "available-citie",
+    "pluralName": "available-cities",
+    "displayName": "Available Cities"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "unique": true
+    },
+    "region": {
+      "type": "string",
+      "required": true
+    },
+    "currently_available": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

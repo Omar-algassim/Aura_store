@@ -65,18 +65,17 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "first_name": {
-      "type": "string",
-      "required": true
-    },
-    "second_name": {
-      "type": "string"
-    },
     "phone_number": {
       "type": "biginteger",
       "required": true,
       "unique": true,
       "private": true
+    },
+    "location": {
+      "displayName": "Location",
+      "type": "component",
+      "repeatable": false,
+      "component": "location.location"
     }
   }
 }
