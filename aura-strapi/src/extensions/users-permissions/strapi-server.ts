@@ -2,6 +2,7 @@
 
 import { Context } from 'koa';
 import { errors } from '@strapi/utils';
+import axios from 'axios';
 
 const { ApplicationError } = errors;
 
@@ -19,6 +20,36 @@ const sanitizeUser = (user:any, ctx:any) => {
   return strapi.contentAPI.sanitize.output(user, userSchema, { auth });
 };
 
+const sendConfirmationMessage = (user: any) => {
+  const phone_num = user.phone_number;
+  if (!phone_num) {
+    throw new ApplicationError('cannot find the user phone number')
+  }
+  //send whatsapp message using facebook api
+  const whats_token = process.env.WHATS_ACCESS_TOKEN;
+  const sender = process.env.SEND_NUMBER;
+  const url = `https://graph.facebook.com/v12.0/${sender}/messages`;
+  // const clean_num = phone_num ? `+${phone_num.slice(1)}` : phone_num;
+
+  axios.post(url, {
+      Authorization: whats_token,
+      messaging_product: "whatsapp",
+      to: clean_num,
+      type: "template",
+      template: {
+          name: "hello_world",
+          language: {
+              code: "en_US"
+          }
+      }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+};
 const validateRegistrationData = (data: CustomRegistrationBody) => {
   if (!data.email && !data.phone_number) {
     throw new Error('Either email or phone number is required');
@@ -48,6 +79,7 @@ export default async (plugin: any) => {
     }
 
     // const { register } = strapi.config.get('plugin::users-permissions');
+    
     const alwaysAllowedKeys = ['username', 'password', 'email', 'phone_number'];
     // Validate request body
     try {
@@ -60,6 +92,14 @@ export default async (plugin: any) => {
     const username = body.username || 
       (body.email ? body.email.split('@')[0] : `user_${Date.now()}`);
 
+    const role = await strapi.db
+    .query('plugin::users-permissions.role')
+    .findOne({ where: { type: settings.default_role } });
+    //check the role
+    if (!role) {
+      throw new ApplicationError('Impossible to find the default role');
+    }
+  
     // Check if user exists
     const userExists = await strapi.query('plugin::users-permissions.user').findOne({
       where: {
@@ -74,22 +114,32 @@ export default async (plugin: any) => {
       throw new ApplicationError('Username, email, or phone number already taken');
     }
 
-    // Hash password
-    const hashedPassword = await strapi.service('plugin::users-permissions.user').hashPassword({
-      password: body.password,
-    });
+    const newUser = {
+      ...body,
+      role: role.id,
+      email: body.email ? body.email.toLowerCase() : undefined,
+      username,
+      phone_number: body.phone_number,
+      confirmed: !settings.email_confirmation,
+    };
 
-    // Create user
-    const user = await strapi.query('plugin::users-permissions.user').create({
-      data: {
-        ...body,
-        username,
-        password: hashedPassword,
-        provider: 'local',
-        confirmed: !settings.email_confirmation,
-        role: settings.default_role,
-      },
-    });
+    const user = await strapi.service('plugin::users-permissions.user').add(newUser);
+    // // Hash password
+    // const hashedPassword = await strapi.service('plugin::users-permissions.user').hashPassword({
+    //   password: body.password,
+    // });
+
+    // // Create user
+    // const user = await strapi.query('plugin::users-permissions.user').create({
+    //   data: {
+    //     ...body,
+    //     username,
+    //     password: hashedPassword,
+    //     provider: 'local',
+    //     confirmed: !settings.email_confirmation,
+    //     role: settings.default_role,
+    //   },
+    // });
 
     const sanitizedUser = await sanitizeUser(user, ctx);
 
@@ -100,12 +150,13 @@ export default async (plugin: any) => {
         } else {
           // else: use the sms code confirmation service
           // for now we will just set confirmed to true
-          await strapi.db.query("plugin::users-permissions.user")
-          .update({
-            where: { id: user.id },
-            data: { confirmed: true },
-            populate: ['role'],
-          });
+          sendConfirmationMessage(user);
+          // await strapi.db.query("plugin::users-permissions.user")
+          // .update({
+          //   where: { id: user.id },
+          //   data: { confirmed: true },
+          //   populate: ['role'],
+          // });
         }
       } catch (err) {
         return ctx.badRequest([{ messages: [{ id: 'Auth.error.email.invalid' }] }]);
@@ -124,15 +175,11 @@ export default async (plugin: any) => {
     });
   };
 
-  plugin.controllers.auth = async ({strapi}) => {
+  plugin.controllers.auth = ({ strapi }) => {
     return {
-      ...await baseControllers({strapi}),
+      ...baseControllers({ strapi }),
       register,
     }
   };
-
-  console.log(`\n\nDone Creating the custom Auth Register\n\n`);
-  // console.log(`\n\nThe plugin baseControllers are: ${baseControllers}\n\n`);
-  console.log(`\n\nThe plugin controllers are: ${plugin.controllers.auth}\n\n`);
   return plugin;
 };
