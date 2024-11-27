@@ -2,7 +2,7 @@
 
 import { Context } from 'koa';
 import { errors } from '@strapi/utils';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const { ApplicationError } = errors;
 
@@ -20,7 +20,7 @@ const sanitizeUser = (user:any, ctx:any) => {
   return strapi.contentAPI.sanitize.output(user, userSchema, { auth });
 };
 
-const sendConfirmationMessage = (user: any) => {
+const sendConfirmationMessage = async (user: any) => {
   const phone_num = user.phone_number;
   if (!phone_num) {
     throw new ApplicationError('cannot find the user phone number')
@@ -29,27 +29,32 @@ const sendConfirmationMessage = (user: any) => {
   const whats_token = process.env.WHATS_ACCESS_TOKEN;
   const sender = process.env.SEND_NUMBER;
   const url = `https://graph.facebook.com/v12.0/${sender}/messages`;
-  // const clean_num = phone_num ? `+${phone_num.slice(1)}` : phone_num;
+  const clean_num = phone_num ? `+${phone_num.slice(1)}` : phone_num;
+  let response: AxiosResponse;
 
-  axios.post(url, {
-      Authorization: whats_token,
-      messaging_product: "whatsapp",
-      to: clean_num,
-      type: "template",
-      template: {
-          name: "hello_world",
-          language: {
-              code: "en_US"
-          }
-      }
-  })
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
+  try {
+    response = await axios.post(url, {
+        Authorization: whats_token,
+        messaging_product: "whatsapp",
+        to: clean_num,
+        type: "template",
+        template: {
+            name: "hello_world",
+            language: {
+                code: "en_US"
+            }
+        }
+    });
+    if (response.status !== 200) {
+      console.log(response.statusText);
+      throw new Error('Failed to send confirmation message');
+    }
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
 };
+
 const validateRegistrationData = (data: CustomRegistrationBody) => {
   if (!data.email && !data.phone_number) {
     throw new Error('Either email or phone number is required');
@@ -85,6 +90,7 @@ export default async (plugin: any) => {
     try {
       validateRegistrationData(body);
     } catch (error: any) {
+      console.error(error);
       return ctx.badRequest(error.message);
     }
 
@@ -159,6 +165,7 @@ export default async (plugin: any) => {
           // });
         }
       } catch (err) {
+        console.error(err);
         return ctx.badRequest([{ messages: [{ id: 'Auth.error.email.invalid' }] }]);
       }
 
