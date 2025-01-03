@@ -437,6 +437,7 @@ export interface ApiBestSellingBestSelling extends Struct.CollectionTypeSchema {
 export interface ApiBrandBrand extends Struct.CollectionTypeSchema {
   collectionName: 'brands';
   info: {
+    description: '';
     displayName: 'brand';
     pluralName: 'brands';
     singularName: 'brand';
@@ -451,8 +452,8 @@ export interface ApiBrandBrand extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::brand.brand'> &
       Schema.Attribute.Private;
+    name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -589,7 +590,14 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
       Schema.Attribute.Private;
     order_status: Schema.Attribute.Enumeration<
-      ['draft', 'pending', 'confirmed', 'preparing', 'delivered']
+      [
+        'draft',
+        'pending',
+        'confirmed',
+        'preparing',
+        'out to deliver',
+        'delivered',
+      ]
     >;
     publishedAt: Schema.Attribute.DateTime;
     region: Schema.Attribute.Enumeration<['sudan', 'egypt', 'saudi arabia']>;
@@ -621,6 +629,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::category.category'
     >;
+    color_grade: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -641,6 +650,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
+    specification: Schema.Attribute.Text;
     stock: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
     thumbnail: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios',
@@ -651,6 +661,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     usage: Schema.Attribute.Text;
+    weight: Schema.Attribute.Integer;
   };
 }
 

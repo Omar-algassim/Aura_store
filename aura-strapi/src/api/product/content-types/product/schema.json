@@ -62,9 +62,6 @@
     "description": {
       "type": "text"
     },
-    "discount": {
-      "type": "decimal"
-    },
     "categories": {
       "type": "relation",
       "relation": "oneToMany",
@@ -74,6 +71,18 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::brand.brand"
+    },
+    "weight": {
+      "type": "integer"
+    },
+    "color_grade": {
+      "type": "string"
+    },
+    "specification": {
+      "type": "text"
+    },
+    "discount": {
+      "type": "decimal"
     }
   }
 }
