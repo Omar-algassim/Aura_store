@@ -4,14 +4,15 @@
   "info": {
     "singularName": "brand",
     "pluralName": "brands",
-    "displayName": "brand"
+    "displayName": "brand",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
+    "name": {
       "type": "string"
     }
   }

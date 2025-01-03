@@ -29,7 +29,7 @@ const sendConfirmationMessage = (user: any) => {
   const whats_token = process.env.WHATS_ACCESS_TOKEN;
   const sender = process.env.SEND_NUMBER;
   const url = `https://graph.facebook.com/v12.0/${sender}/messages`;
-  // const clean_num = phone_num ? `+${phone_num.slice(1)}` : phone_num;
+  const clean_num = phone_num ? `+${phone_num.slice(1)}` : phone_num;
 
   axios.post(url, {
       Authorization: whats_token,
