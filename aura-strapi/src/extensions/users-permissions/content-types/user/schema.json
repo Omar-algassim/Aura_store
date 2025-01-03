@@ -23,7 +23,7 @@
       "type": "email",
       "minLength": 6,
       "configurable": false,
-      "required": false
+      "required": true
     },
     "provider": {
       "type": "string",
@@ -65,17 +65,17 @@
       "inversedBy": "users",
       "configurable": false
     },
+    "phone_number": {
+      "type": "biginteger",
+      "required": true,
+      "unique": true,
+      "private": true
+    },
     "location": {
       "displayName": "Location",
       "type": "component",
       "repeatable": false,
       "component": "location.location"
-    },
-    "phone_number": {
-      "type": "string",
-      "required": false,
-      "maxLength": 12,
-      "minLength": 10
     }
   }
 }
