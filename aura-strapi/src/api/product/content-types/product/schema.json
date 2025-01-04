@@ -19,28 +19,24 @@
     },
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "unique": true
     },
-    "image": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
-    },
-    "thumbnail": {
+    "images": {
       "type": "media",
       "multiple": true,
       "required": false,
       "allowedTypes": [
         "images",
-        "files",
-        "videos",
-        "audios"
+        "videos"
+      ]
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
       ]
     },
     "price": {
