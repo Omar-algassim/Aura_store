@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Alexandria } from "next/font/google";
 import "./globals.css";
+// import {Input} from "@/components/ui/shadcn/input";
 
 const alexandria = Alexandria({
   variable: "--font-alexandria",
@@ -32,7 +33,9 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body
         dir="rtl"
-        className={`${alexandria.variable}  antialiased flex flex-col gap-12 mt-8 justify-center`}
+        className={`${alexandria.variable} 
+        antialiased flex flex-col items-center justify-start border
+        `}
       >
         {children}
       </body>
