@@ -1,7 +1,26 @@
-import { ButtonSecondary } from '@/components/common/Buttons'
-import React from 'react'
+'use client';
+import React, { useEffect, useState } from 'react'
+import { ButtonSecondary } from '@/components/common/Buttons';
 
 function ConfirmEmailPage() {
+  const [canResend, setCanResend] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(45);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setRemainingTime(prev => prev - 1)
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  });
+
+  useEffect(() => {
+    if (remainingTime <= 0) {
+      setCanResend(true);
+    }
+  }, [remainingTime]);
   return (
     <div className='flex flex-col w-[364px] tablet:w-full tablet:max-w-[880px] border-none rounded-3xl pt-10 pb-6 px-6 gap-8 mt-20 bg-white justify-center items-center'>
       <div className='w-full flex items-center justify-center'>
@@ -15,9 +34,12 @@ function ConfirmEmailPage() {
       </div>
 
       <div>
-        <ButtonSecondary className='bg-white border-none hover:bg-white hover:text-primary-dark active:bg-white active:text-primary-dark focus:outline-none focus:bg-white focus:text-primary-dark'>
+        <ButtonSecondary disabled={!canResend} className='bg-white border-none hover:bg-white hover:text-primary-dark active:bg-white active:text-primary-dark focus:outline-none focus:bg-white focus:text-primary-dark'>
           إعادة إرسال الرابط
         </ButtonSecondary>
+        <p className={`text-center text-[14px] font-[400] font-alex text-secondary ${canResend ? 'hidden' : 'block'}`}>
+          إعادة إرسال الرابط بعد {remainingTime} ثانية
+        </p>
       </div>
     </div>
   )

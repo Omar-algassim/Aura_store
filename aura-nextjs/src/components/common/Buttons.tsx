@@ -68,6 +68,6 @@ export function ButtonPrimary(props: ButtonProps) {
 
 export function ButtonSecondary(props: ButtonProps) {
   return (
-    <BaseButton {...props} customStyles={props.className} variant='secondary' type="submit" />
+    <BaseButton {...props} disabled={props.disabled} customStyles={props.className} variant='secondary' type="submit" />
   );
 }

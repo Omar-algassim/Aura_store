@@ -1,5 +1,5 @@
 import { signupAction } from '@/utils/services/auth-service'
-import React, { useActionState } from 'react'
+import React, { useActionState, useEffect } from 'react'
 import Input from '@/components/common/Input';
 import {Preloader} from '../Preloader';
 import { ButtonPrimary } from '@/components/common/Buttons';
@@ -36,20 +36,22 @@ export function SignupForm({type}: {type: 'phone' | 'email'}) {
 
   const formError = typeof formState.error === 'string' ? formState.error : null;
 
-  if (formState.data) {
-    // dispatch user data to global context
-    // console.log('user data', JSON.stringify(formState.data, null, 2));
-    UserDispatcher({type: 'LOGIN', payload: {userData: formState.data}});
-
-    // check if the user used phone number or email, and act accordingly
-    if (type === 'email') {
-      // redirect to email confirmation page
-      redirect('/confirm-email');
-    } else {
-      // redirect to phone confirmation page
-      redirect('/confirm-phone');
+  useEffect(() => {
+    if (formState.data) {
+      // dispatch user data to global context
+      // console.log('user data', JSON.stringify(formState.data, null, 2));
+      UserDispatcher({type: 'LOGIN', payload: {userData: formState.data}});
+  
+      // check if the user used phone number or email, and act accordingly
+      if (type === 'email') {
+        // redirect to email confirmation page
+        redirect('/confirm-email');
+      } else {
+        // redirect to phone confirmation page
+        redirect('/confirm-phone');
+      }
     }
-  }
+  })
 
   return (
     <form action={formAction} className='flex flex-col space-y-4 mt-6 w-full tablet:flex-row tablet:flex-wrap tablet:gap-x-4 tablet:items-center'>
