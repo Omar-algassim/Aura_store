@@ -20,6 +20,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  if (
+    (currentPath === "/login" && user.ok) ||
+    (currentPath === "/register" && user.ok)
+  ) {
+    return NextResponse.redirect(new URL("/profile", request.url));
+  }
+
   return NextResponse.next();
 }
 
