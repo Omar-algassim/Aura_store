@@ -50,7 +50,7 @@ function SignupPage() {
       <Tabs dir='rtl' className='overflow-hidden w-full p-4 flex flex-col items-center justify-center'>
         <TabsList className='flex w-full justify-between tablet:justify-center tablet:gap-4'>
           <TabsTrigger className='w-full' value='phone-signup' asChild>
-            <Button className='w-[48%] tablet:w-[320px] h-[56px] py-3 px-6 rounded-[12px] bg-surface text-[14px] font-[400] font-alex text-foreground hover:scale-105 active:scale-100 focus:outline-none focus:scale-100 transition-all' onClick={() => setIsOpen('phone-signup')}>
+            <Button className={`w-[48%] tablet:w-[320px] h-[56px] py-3 px-6 rounded-[12px] text-[14px] font-[400] font-alex text-foreground hover:scale-105 active:scale-100 focus:outline-none focus:scale-100 transition-all ${isOpen === 'phone-signup' ? 'bg-slate-400' : 'bg-surface'}`} onClick={() => setIsOpen('phone-signup')}>
                بإستخدام الهاتف
               {isOpen === 'phone-signup'
                 ?<ArrowDownCircle size={24} className='mr-1 transition-all' />
@@ -59,7 +59,7 @@ function SignupPage() {
             </Button>
           </TabsTrigger>
           <TabsTrigger value='email-signup' asChild>
-            <Button className='w-[48%] tablet:w-[320px] h-[56px] py-3 px-6 rounded-[12px] bg-surface text-[14px] font-[400] font-alex text-foreground hover:scale-105 active:scale-100 focus:outline-none focus:scale-100 transition-all' onClick={() => setIsOpen('email-signup')}>
+            <Button className={`w-[48%] tablet:w-[320px] h-[56px] py-3 px-6 rounded-[12px] text-[14px] font-[400] font-alex text-foreground hover:scale-105 active:scale-100 focus:outline-none focus:scale-100 transition-all ${isOpen === 'email-signup' ? 'bg-slate-400' : 'bg-surface'}`} onClick={() => setIsOpen('email-signup')}>
                بإستخدام الإيميل
               {isOpen === 'email-signup'
                 ?<ArrowDownCircle size={24} className='mr-1 transition-all' />

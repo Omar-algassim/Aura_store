@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Alexandria } from "next/font/google";
 import "./globals.css";
+import UserContextProvider from "@/components/context/UserContext";
 // import {Input} from "@/components/ui/shadcn/input";
 
 const alexandria = Alexandria({
@@ -37,7 +38,9 @@ export default function RootLayout({
         antialiased flex flex-col items-center justify-start border
         `}
       >
-        {children}
+        <UserContextProvider>
+          {children}
+        </UserContextProvider>
       </body>
     </html>
   );

@@ -4,3 +4,8 @@ export interface SignupDTO {
   password: string;
   username?: string;
 }
+
+export interface SigninDTO {
+  provider: string;
+  password: string;
+}

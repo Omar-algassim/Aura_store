@@ -1,3 +1,4 @@
+'use client';
 import { useState } from "react";
 import { Button } from "../ui/shadcn/button";
 import { ButtonPreloader } from "../ui/Preloader";
@@ -10,6 +11,7 @@ interface BaseButtonProps {
   type?: 'button' | 'submit' | 'reset';
   preloader?: boolean;
   customStyles?: string;
+  disabled?: boolean;
 }
 
 interface ButtonProps {
@@ -17,6 +19,7 @@ interface ButtonProps {
   handleClick?: () => void;
   preloader?: boolean;
   className?: string;
+  disabled?:boolean
 }
 
 
@@ -27,7 +30,8 @@ function BaseButton(props: BaseButtonProps) {
     type,
     customStyles,
     preloader,
-    handleClick} = props;
+    handleClick,
+    disabled} = props;
 
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +45,7 @@ function BaseButton(props: BaseButtonProps) {
   }
 
   return (
-    <Button variant={variant || "default"} type={type}
+    <Button disabled={disabled} variant={variant || "default"} type={type}
       className={`w-full max-w-[320px] h-14 rounded-[12px] flex items-center 
       justify-center gap-2 hover:bg-primary-dark hover:text-white active:bg-primary-dark active:text-white focus:outline-none focus:bg-primary-dark focus:text-white
       ${variant !== 'secondary'
@@ -58,7 +62,7 @@ function BaseButton(props: BaseButtonProps) {
 
 export function ButtonPrimary(props: ButtonProps) {
   return (
-    <BaseButton {...props} customStyles={props.className} type="submit" />
+    <BaseButton {...props} disabled={props.disabled} customStyles={props.className} type="submit" />
   );
 }
 

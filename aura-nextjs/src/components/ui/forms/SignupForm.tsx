@@ -3,10 +3,14 @@ import React, { useActionState } from 'react'
 import Input from '@/components/common/Input';
 import {Preloader} from '../Preloader';
 import { ButtonPrimary } from '@/components/common/Buttons';
+import { useUserDispatch } from '@/components/context';
+import { redirect } from 'next/navigation';
 
 const initialState = {
-  ok: true,
   message: '',
+  type: '',
+  data: null,
+  error: [],
 };
 
 const getError = (error: {message: string, path: string[]}[], key: string) => {
@@ -18,7 +22,11 @@ const getError = (error: {message: string, path: string[]}[], key: string) => {
 
 export function SignupForm({type}: {type: 'phone' | 'email'}) {
 
+  // const user = useUser();
+  const UserDispatcher = useUserDispatch();
   const [formState, formAction, isPending] = useActionState(signupAction, initialState);
+
+
   const emailError = getError(formState.error, 'email');
   const phoneError = getError(formState.error, 'phone');
   const firstNameError = getError(formState.error, 'firstName');
@@ -26,11 +34,27 @@ export function SignupForm({type}: {type: 'phone' | 'email'}) {
   const passwordError = getError(formState.error, 'password');
   const confirmPasswordError = getError(formState.error, 'confirmPassword');
 
-  const error = typeof formState.error === 'string' ? formState.error : null;
+  const formError = typeof formState.error === 'string' ? formState.error : null;
+
+  if (formState.data) {
+    // dispatch user data to global context
+    // console.log('user data', JSON.stringify(formState.data, null, 2));
+    UserDispatcher({type: 'LOGIN', payload: {userData: formState.data}});
+
+    // check if the user used phone number or email, and act accordingly
+    if (type === 'email') {
+      // redirect to email confirmation page
+      redirect('/confirm-email');
+    } else {
+      // redirect to phone confirmation page
+      redirect('/confirm-phone');
+    }
+  }
+
   return (
     <form action={formAction} className='flex flex-col space-y-4 mt-6 w-full tablet:flex-row tablet:flex-wrap tablet:gap-x-4 tablet:items-center'>
       {
-        error && <span className='text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] text-wrap'>{error}</span>
+        formError && <span className='text-primary-dark text-xs text-center font-[400] font-alex w-full text-wrap'>{formError}</span>
       }
       {type === 'email'
         ? <div className='w-full'>
