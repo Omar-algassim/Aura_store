@@ -46,6 +46,24 @@ class APIClient {
     }
   }
 
+  async signin(identifier: string, password: string) {
+    try {
+      const result = await this.api.post("/auth/local", {
+        identifier,
+        password,
+      });
+      if (result.status === 200) {
+        return { data: result.data };
+      }
+      return { error: "كلمة المرور او البريد الالكتروني غير صحيح" };
+    } catch (error: any) {
+      console.error(error);
+      return {
+        error: "كلمة المرور او البريد الالكتروني غير صحيح",
+      };
+    }
+  }
+
   async signinProvider(provider: string, access_token: string) {
     try {
       const result = await this.api.get(

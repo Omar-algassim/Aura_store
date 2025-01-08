@@ -104,26 +104,12 @@ export const signinAction = async (_prevState: any, formData: FormData) => {
         data: null,
       };
     }
-
-    let error: string | undefined;
-    let userData: any;
-    // prepare the data to be sent to the server
-
-    // check the provider and call the appropriate API endpoint
-    if (validation.data.provider.includes("@")) {
-      // if it's an email, call the email signin API
-      console.log("email signin", JSON.stringify(data, null, 2));
-      // const response = await apiClient.signin(data);
-      // userData = response.data;
-      // error = response.error;
-    } else {
-      // if it's a phone number, call the phone signin API
-      console.log("phone signin", JSON.stringify(data, null, 2));
-      // const response = await apiClient.signin(data);
-      // userData = response.data;
-      // error = response.error;
-    }
+    const { error, data: userData } = await apiClient.signin(
+      validation.data.provider,
+      validation.data.password
+    );
     if (error) {
+      console.log("API ==> error", error);
       return { message: error, type: "server", error, data: null };
     }
 
