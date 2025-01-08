@@ -1,14 +1,13 @@
-'use client';
+"use client";
 import { useState } from "react";
 import { Button } from "../ui/shadcn/button";
 import { ButtonPreloader } from "../ui/Preloader";
 
-
 interface BaseButtonProps {
   children: React.ReactNode;
   handleClick?: () => void;
-  variant?:  'secondary';
-  type?: 'button' | 'submit' | 'reset';
+  variant?: "secondary" | "link" | "ghost" | "default";
+  type?: "button" | "submit" | "reset";
   preloader?: boolean;
   customStyles?: string;
   disabled?: boolean;
@@ -19,9 +18,10 @@ interface ButtonProps {
   handleClick?: () => void;
   preloader?: boolean;
   className?: string;
-  disabled?:boolean
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
+  variant?: "secondary" | "link" | "ghost";
 }
-
 
 function BaseButton(props: BaseButtonProps) {
   const {
@@ -31,43 +31,62 @@ function BaseButton(props: BaseButtonProps) {
     customStyles,
     preloader,
     handleClick,
-    disabled} = props;
+    disabled,
+  } = props;
 
   const [loading, setLoading] = useState(false);
 
-  const onClick = () => {
+  const onClick = async () => {
     if (preloader) {
       setLoading(true);
     }
     if (handleClick !== undefined) {
-      handleClick();
+      await handleClick();
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <Button disabled={disabled} variant={variant || "default"} type={type}
+    <Button
+      disabled={disabled}
+      variant={variant || "default"}
+      type={type}
       className={`w-full max-w-[320px] h-14 rounded-[12px] flex items-center 
       justify-center gap-2 hover:bg-primary-dark hover:text-white active:bg-primary-dark active:text-white focus:outline-none focus:bg-primary-dark focus:text-white
-      ${variant !== 'secondary'
-      ? 'bg-primary text-white'
-      : 'bg-surface text-primary-dark border-2 border-primary-dark'}
+      ${
+        variant !== "secondary"
+          ? "bg-primary text-white"
+          : "bg-surface text-primary-dark border-2 border-primary-dark"
+      }
       ${customStyles}`}
       onClick={onClick}
     >
       {children}
       {loading && <ButtonPreloader />}
     </Button>
-  )
+  );
 }
 
 export function ButtonPrimary(props: ButtonProps) {
   return (
-    <BaseButton {...props} disabled={props.disabled} customStyles={props.className} type="submit" />
+    <BaseButton
+      {...props}
+      disabled={props.disabled}
+      customStyles={props.className}
+      type={props.type || "submit"}
+      variant={props.variant || "default"}
+    />
   );
 }
 
 export function ButtonSecondary(props: ButtonProps) {
   return (
-    <BaseButton {...props} disabled={props.disabled} customStyles={props.className} variant='secondary' type="submit" />
+    <BaseButton
+      {...props}
+      disabled={props.disabled}
+      customStyles={props.className}
+      type={props.type || "submit"}
+      variant={props.variant || "default"}
+    />
   );
 }

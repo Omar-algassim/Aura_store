@@ -63,6 +63,44 @@ class APIClient {
       };
     }
   }
+
+  async requestResetPwdCode(
+    indicatorType: "email" | "phone_number",
+    indicator: string
+  ) {
+    console.log(
+      `API => request reset password code with ${indicatorType}: ${indicator}`
+    );
+    try {
+      const result = await this.api.post("/auth/forgot-password", {
+        [indicatorType]: indicator,
+      });
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    }
+  }
+
+  async resetPassword(code: string, password: string, confirmPassword: string) {
+    console.log(`API => reset password with code: ${code}`);
+    try {
+      const result = await this.api.post("/auth/reset-password", {
+        code,
+        password,
+        passwordConfirmation: confirmPassword,
+      });
+      console.log(JSON.stringify(result.data, null, 2));
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    }
+  }
 }
 
 export const apiClient = new APIClient();

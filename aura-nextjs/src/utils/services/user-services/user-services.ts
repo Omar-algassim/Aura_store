@@ -12,3 +12,22 @@ export const getUserMe = async (jwt: string | undefined) => {
   }
   return await apiClient.getMe(jwt);
 };
+
+export const requestResetPwdCode = async (
+  indicatorType: "email" | "phone_number",
+  indicator: string
+) => {
+  console.log(
+    `request reset password code with ${indicatorType}: ${indicator}`
+  );
+  return await apiClient.requestResetPwdCode(indicatorType, indicator);
+};
+
+export const resetPassword = async (
+  code: string,
+  password: string,
+  confirmPassword: string
+) => {
+  console.log(`reset password with code: ${code}`);
+  return await apiClient.resetPassword(code, password, confirmPassword);
+};
