@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Alexandria } from "next/font/google";
 import "./globals.css";
 import UserContextProvider from "@/components/context/UserContext";
+import CartContextProvider from "@/components/context/CartContext";
 // import {Input} from "@/components/ui/shadcn/input";
 
 const alexandria = Alexandria({
@@ -39,7 +40,9 @@ export default function RootLayout({
         `}
       >
         <UserContextProvider>
-          {children}
+          <CartContextProvider>
+            {children}
+          </CartContextProvider>
         </UserContextProvider>
       </body>
     </html>

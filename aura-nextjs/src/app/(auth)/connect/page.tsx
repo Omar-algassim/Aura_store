@@ -1,30 +1,35 @@
-'use client';
-import React, { useEffect } from 'react'
-import { useUserDispatch } from '@/components/context/UserContext';
-import { useRouter, useSearchParams } from 'next/navigation';
-import  cookie from "js-cookie";
+"use client";
+import React, { useEffect } from "react";
+import { useUserDispatch } from "@/components/context/UserContext";
+import { useRouter, useSearchParams } from "next/navigation";
+import cookie from "js-cookie";
+import { useCart, useCartDispatcher } from "@/components/context";
+import { CartEntity } from "@/entities/cart-entity";
 
 function Connect() {
   const searchParams = useSearchParams();
   const userDispatcher = useUserDispatch();
+  const cartDispatcher = useCartDispatcher();
+  const cart = useCart() as CartEntity;
   const router = useRouter();
-  const data = searchParams.get('data');
-  
+  const data = searchParams.get("data");
+
   useEffect(() => {
-    //console.log('data ===> ', data);
+    // I think we need to convert it to async function
+    //console.log('data ===> ', data)
     if (!data) {
-      router.replace('/login');
+      router.replace("/login");
       return;
     }
-    const nextPage = cookie.get('nextPage');
-    userDispatcher({type: 'LOGIN', payload: {userData: JSON.parse(data)}});
-    router.replace(nextPage || '/');
+    const nextPage = cookie.get("nextPage");
+    userDispatcher({ type: "LOGIN", payload: { userData: JSON.parse(data) } });
+    cart.sync(JSON.parse(data).user.documentId).then(() => {
+      cartDispatcher({ type: "UPDATE", payload: { cart: cart } });
+    });
+    router.replace(nextPage || "/");
   });
 
-
-  return (
-    <div></div>
-  )
+  return <div></div>;
 }
 
-export default Connect
+export default Connect;
