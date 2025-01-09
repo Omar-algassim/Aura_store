@@ -7,18 +7,28 @@ import {
   InputOTPSlot,
 } from "@/components/ui/shadcn/input-otp";
 import { useUser } from "@/components/context";
+import {
+  requestPhoneConfirmCode,
+  requestResetPwdCode,
+  sendPhoneConfirmationCode,
+} from "@/utils/services/user-services";
+import { useSearchParams } from "next/navigation";
 
 interface ConfirmPhonePageProps {
   title?: string;
   description?: string;
+  indicator?: string;
   buttonTitle?: string;
   onSubmitted?: (code: string) => Promise<void>;
 }
 
 function ConfirmPhonePage(props: ConfirmPhonePageProps) {
-  const { title, description, buttonTitle, onSubmitted } = props;
+  const { title, description, indicator, buttonTitle, onSubmitted } = props;
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
   const user = useUser();
-  const [code, setCode] = React.useState("");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
   const [canResend, setCanResend] = useState(false);
   const [remainingTime, setRemainingTime] = useState(45);
 
@@ -38,6 +48,27 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
     }
   }, [remainingTime]);
 
+  const resendCode = async () => {
+    let error: string = "";
+    if (indicator) {
+      console.log(`request reset password code with phone: ${indicator}`);
+      const data = await requestResetPwdCode("phone_number", indicator);
+      error = data.error;
+    } else {
+      console.log(
+        `request phone confirm code with phone: ${user.phone_number}`
+      );
+      const data = await requestPhoneConfirmCode(user.phone_number as string);
+      error = data.error;
+    }
+    if (error) {
+      setError(error);
+      console.log(error);
+    }
+    setCanResend(false);
+    setRemainingTime(45);
+  };
+
   const handleSubmit = async () => {
     if (onSubmitted) {
       await onSubmitted(code);
@@ -46,11 +77,25 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
     console.log(
       `submitting code ${code}for user ${user.username} with ${user.documentId}`
     );
+    const { error } = await sendPhoneConfirmationCode(code);
+    if (error) {
+      setError(error);
+    }
+
+    setCanResend(false);
+    setRemainingTime(45);
     setCode("");
   };
 
   return (
     <div className="flex flex-col w-[364px] tablet:w-full tablet:max-w-[880px] border-none rounded-3xl pt-10 pb-6 px-6 gap-8 tablet:mt-20 bg-white justify-center items-center">
+      {message && (
+        <div className="absolute top-20 left-0 w-full h-[120px] bg-transparent flex flex-col items-center justify-center">
+          <span className="relative w-full max-w-[460px] p-3 text-primary-dark text-lg text-center font-[400] font-alex text-wrap bg-white border-none rounded-lg ">
+            {message}
+          </span>
+        </div>
+      )}
       <div className="w-full flex items-center justify-center">
         <h1 className="w-full text-center text-lg tablet:text-3xl font-[700]">
           {title || "تأكيد رقم الهاتف"}
@@ -59,8 +104,10 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
 
       <div className="w-full flex flex-col gap-3 items-center justify-center">
         <p className="w-full text-center text-[14px] tablet:text-[24px] font-[500] tablet:font-[400] font-alex">
-          {description ||
-            "لقد تم إرسال رمز تأكيد إلى رقم هاتفك، يرجى إدخال الرمز المرسل"}
+          {error.length > 0
+            ? error
+            : description ||
+              "لقد تم إرسال رمز تأكيد إلى رقم هاتفك، يرجى إدخال الرمز المرسل"}
         </p>
 
         <InputOTP
@@ -93,7 +140,8 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
       <div className="w-full flex flex-col items-center justify-center space-y-2">
         <ButtonSecondary
           disabled={!canResend}
-          className="bg-white border-none hover:bg-white hover:text-primary-dark active:bg-white active:text-primary-dark focus:outline-none focus:bg-white focus:text-primary-dark flex flex-col gap-1"
+          className="bg-white text-primary-dark border-none hover:bg-white hover:text-primary-dark active:bg-white active:text-primary-dark focus:outline-none focus:bg-white focus:text-primary-dark flex flex-col gap-1"
+          handleClick={resendCode}
         >
           إعادة إرسال الرمز
           <p

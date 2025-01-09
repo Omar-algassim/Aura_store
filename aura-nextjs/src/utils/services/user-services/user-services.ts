@@ -31,3 +31,18 @@ export const resetPassword = async (
   console.log(`reset password with code: ${code}`);
   return await apiClient.resetPassword(code, password, confirmPassword);
 };
+
+export const requestEmailConfirmationCode = async (email: string) => {
+  console.log(`request email confirm code with email: ${email}`);
+  return await apiClient.requestEmailConfirmationCode(email);
+};
+
+export const requestPhoneConfirmCode = async (phone: string) => {
+  console.log(`request  phone confirm code with phone: ${phone}`);
+  return await apiClient.requestPhoneConfirmCode(phone);
+};
+
+export const sendPhoneConfirmationCode = async (code: string) => {
+  console.log(`send phone confirm code with code: ${code}`);
+  return await apiClient.sendPhoneConfirmationCode(code);
+};

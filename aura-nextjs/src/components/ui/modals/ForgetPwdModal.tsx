@@ -60,6 +60,7 @@ function ForgetPwdModal({ closeModal }: ForgetPwdFormProps) {
           <ConfirmEmailPage
             title="تأكيد البريد الإلكتروني"
             description="لقد تم إرسال رابط تغير كلمة السر إلى بريدك الإلكتروني، يرجى التحقق من بريدك الإلكتروني والضغط على الرابط المرسل"
+            indicator={indicator}
           />
         )}
         {/* submitting the OTP form*/}
@@ -68,6 +69,7 @@ function ForgetPwdModal({ closeModal }: ForgetPwdFormProps) {
             title="تأكيد رقم الهاتف"
             description="لقد تم إرسال رمز تأكيد إلى رقم هاتفك، يرجى إدخال الرمز المرسل"
             buttonTitle="تأكيد"
+            indicator={indicator}
             onSubmitted={async (code: string) => {
               router.push(`/reset-password?code=${code}`);
             }}

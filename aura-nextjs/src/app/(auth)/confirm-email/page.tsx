@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { ButtonSecondary } from "@/components/common/Buttons";
 import { useUser } from "@/components/context";
-import { requestResetPwdCode } from "@/utils/services/user-services";
+import {
+  requestEmailConfirmationCode,
+  requestResetPwdCode,
+} from "@/utils/services/user-services";
 
 interface ConfirmEmailPageProps {
   title?: string;
@@ -34,10 +37,14 @@ function ConfirmEmailPage(params: ConfirmEmailPageProps) {
   }, [remainingTime]);
 
   const resendCode = async () => {
-    const { error } = await requestResetPwdCode(
-      "email",
-      user.email || (indicator as string)
-    );
+    let error: string = "";
+    if (indicator) {
+      const data = await requestResetPwdCode("email", indicator as string);
+      error = data.error;
+    } else {
+      const data = await requestEmailConfirmationCode(user.email as string);
+      error = data.error;
+    }
     if (error) {
       console.log(error);
     }

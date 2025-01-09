@@ -119,6 +119,50 @@ class APIClient {
       return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     }
   }
+
+  async requestPhoneConfirmCode(phone: string) {
+    try {
+      const result = await this.api.post("/auth/send-email-confirmation", {
+        phone_number: phone,
+      });
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error);
+      return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    }
+  }
+  async sendPhoneConfirmationCode(code: string) {
+    try {
+      const result = await this.api.get(
+        `/auth/email-confirmation?confirmation=${code}`
+      );
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error);
+      return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    }
+  }
+
+  async requestEmailConfirmationCode(email: string) {
+    try {
+      const result = await this.api.post("/auth/send-email-confirmation", {
+        indicator: email,
+      });
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error);
+      return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    }
+  }
 }
 
 export const apiClient = new APIClient();
