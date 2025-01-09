@@ -38,40 +38,43 @@ const sanitizeUser = (user: any, ctx: any) => {
 const sendWhatsappMessage = async (
   user: any,
   token: string,
-  tamplate: string,
+  template: string
 ) => {
   const phone_number = user.phone_number;
   if (!phone_number) {
     throw new ApplicationError("cannot find the user phone number");
   }
-      //send whatsapp message using facebook api
-      const whats_token = 'EAAPZCARdfZCBIBO44qJQayzYyGEie1XM8SJ10oaw7JyYpIojuUvj2M2fmCFa7UFTSs8aPXOmJwD2F7edZAmzuWxBI0K4VdRYZCEsQtp1BUX9sAEOqSr5inPfajjaPI3QuT8ziFEKb6ET7f1d2mMutWoC6ucevxAZByGtUcPcZA4KeHohwRNTFjT0tfOx7QF2kMsVZCfLW3WymUUefazbMauQnS6vaQZD';
-      const sender = '487217607808179';
-      const url = `https://graph.facebook.com/v12.0/${sender}/messages`;
-      const phone_num = phone_number.replace(/\s/g, '');
-      const clean_num = phone_num ? `${phone_num.slice(1)}` : phone_num;
-      const sep_token = `${token.slice(0, 3)}-${token.slice(3, 6)}`;
-      const headrs = {
-        Authorization: `Bearer ${whats_token}`,
-        'Content-Type': 'application/json'
-      };
-      const data = {
-        messaging_product: "whatsapp",
-        to: clean_num,
-       "template": {
-        "name": tamplate,
-        "language": {
-          "code": "en_US"
+  //send whatsapp message using facebook api
+  const whats_token =
+    "EAAPZCARdfZCBIBO6B602HIXYHdELBub6z5Mxi3899aq8pSiI0LZAL1oiD2hmG0JWwSGaZCq6pVcpjqRLCGvZA8TbUUMd4W8JmwyZAjZCplULIWWjDtDbPdg5G6ThePSqqZAHfUlK4OWZCPG5wCUcHBeuXwfA4IDx8Flz3UDDj1lPo0uhaZCZAMXZCCfcWPxcVVvi8XTl8Bz4AuQM2NJ5PslNbQZBK95m5E50RDwZDZD";
+  const sender = "487217607808179";
+  const url = `https://graph.facebook.com/v12.0/${sender}/messages`;
+  const phone_num = phone_number.replace(/\s/g, "");
+  const clean_num = phone_num ? `${phone_num.slice(1)}` : phone_num;
+  const sep_token = `${token.slice(0, 3)}-${token.slice(3, 6)}`;
+  console.log("clean_num", clean_num);
+  const headrs = {
+    Authorization: `Bearer ${whats_token}`,
+    "Content-Type": "application/json",
+  };
+  const data = {
+    messaging_product: "whatsapp",
+    to: clean_num,
+    type: "template",
+    template: {
+      name: template,
+      language: {
+        code: "en_US",
       },
       components: [
         {
           type: "body",
           parameters: [
             {
-              "type": "text",
-              "text": sep_token
-            }
-          ]
+              type: "text",
+              text: sep_token,
+            },
+          ],
         },
         {
           type: "button",
@@ -120,7 +123,6 @@ const validateSendEmailConfirmationBody = async (body: ForgotPasswordBody) => {
   }
   return body;
 };
-
 const validateForgotPasswordBody = async (body: ForgotPasswordBody) => {
   if (!body.email && !body.phone_number) {
     throw new ApplicationError("Either email or phone number is required");
@@ -135,6 +137,14 @@ const validateForgotPasswordBody = async (body: ForgotPasswordBody) => {
   }
 
   return body;
+};
+const validateEmailConfirmationBody = async (query: any) => {
+  const { confirmation } = query;
+  if (!confirmation) {
+    throw new ApplicationError("Confirmation token is required");
+  }
+
+  return { confirmation };
 };
 
 const validateRegistrationData = (data: CustomRegistrationBody) => {
@@ -154,8 +164,6 @@ const validateRegistrationData = (data: CustomRegistrationBody) => {
 export default async (plugin: any) => {
   const baseControllers = await plugin.controllers.auth;
 
-  // TODO: Implement the sms code confirmation service
-
   const register = async (ctx: Context) => {
     const { body } = ctx.request;
     const pluginStore = await strapi.store({
@@ -167,8 +175,6 @@ export default async (plugin: any) => {
     if (!settings.allow_register) {
       throw new ApplicationError("Register action is currently disabled");
     }
-
-    // const { register } = strapi.config.get('plugin::users-permissions');
 
     const alwaysAllowedKeys = ["username", "password", "email", "phone_number"];
     // Validate request body
@@ -202,7 +208,7 @@ export default async (plugin: any) => {
 
     if (userExists) {
       throw new ApplicationError(
-        "Username, email, or phone number already taken",
+        "Username, email, or phone number already taken"
       );
     }
 
@@ -222,13 +228,14 @@ export default async (plugin: any) => {
 
     if (settings.email_confirmation) {
       try {
-        if (body.email) {
-          await strapi
-            .service("plugin::users-permissions.user")
-            .sendConfirmationEmail(user);
-        } else {
-          sendWhatsappMessage(user, "1234", "account_verify");
-        }
+        sendEmailConfirmation(ctx);
+        // if (body.email) {
+        //   await strapi
+        //     .service("plugin::users-permissions.user")
+        //     .sendConfirmationEmail(user);
+        // } else {
+        //   sendWhatsappMessage(user, "1234", "account_verify");
+        // }
       } catch (err) {
         return ctx.badRequest([
           { messages: [{ id: "Auth.error.email.invalid" }] },
@@ -248,9 +255,129 @@ export default async (plugin: any) => {
     });
   };
 
+  const emailConfirmation = async (
+    ctx: Context,
+    next: Request,
+    returnUser: boolean
+  ) => {
+    const { confirmation: confirmationToken } =
+      await validateEmailConfirmationBody(ctx.query);
+
+    const userService = getService("user");
+    const jwtService = getService("jwt");
+
+    const [user] = await userService.fetchAll({
+      filters: { confirmationToken },
+    });
+
+    if (!user) {
+      throw new ValidationError("Invalid token");
+    }
+
+    await userService.edit(user.id, {
+      confirmed: true,
+      confirmationToken: null,
+    });
+
+    if (returnUser || confirmationToken.length === 6) {
+      ctx.send({
+        jwt: jwtService.issue({ id: user.id }),
+        user: await sanitizeUser(user, ctx),
+      });
+    } else {
+      const settings: any = await strapi
+        .store({ type: "plugin", name: "users-permissions", key: "advanced" })
+        .get();
+
+      ctx.redirect(settings.email_confirmation_redirection || "/");
+    }
+  };
+
+  const forgotPassword = async (ctx: Context) => {
+    const { email } = await validateForgotPasswordBody(ctx.request.body);
+
+    const pluginStore = await strapi.store({
+      type: "plugin",
+      name: "users-permissions",
+    });
+
+    const emailSettings = await pluginStore.get({ key: "email" });
+    const advancedSettings: any = await pluginStore.get({ key: "advanced" });
+
+    // Find the user by email or phone number.
+    if (email) {
+      var user = await strapi.db
+        .query("plugin::users-permissions.user")
+        .findOne({ where: { email: email.toLowerCase() } });
+    } else {
+      const { phone_number } = await validateForgotPasswordBody(
+        ctx.request.body
+      );
+      var user = await strapi.db
+        .query("plugin::users-permissions.user")
+        .findOne({ where: { phone_number } });
+    }
+    if (!user || user.blocked) {
+      return ctx.send({ error: "user Blocked or not found" });
+    }
+
+    const userInfo = await sanitizeUser(user, ctx);
+
+    // Generate random token.
+    const resetPasswordToken = crypto.randomBytes(3).toString("hex");
+
+    const resetPasswordSettings: any = _.get(
+      emailSettings,
+      "reset_password.options",
+      {}
+    );
+    const emailBody = await getService("users-permissions").template(
+      resetPasswordSettings.message,
+      {
+        URL: advancedSettings.email_reset_password,
+        SERVER_URL: strapi.config.get("server.absoluteUrl"),
+        ADMIN_URL: strapi.config.get("admin.absoluteUrl"),
+        USER: userInfo,
+        TOKEN: resetPasswordToken,
+      }
+    );
+
+    const emailObject = await getService("users-permissions").template(
+      resetPasswordSettings.object,
+      {
+        USER: userInfo,
+      }
+    );
+
+    const emailToSend = {
+      to: user.email,
+      from:
+        resetPasswordSettings.from.email || resetPasswordSettings.from.name
+          ? `${resetPasswordSettings.from.name} <${resetPasswordSettings.from.email}>`
+          : undefined,
+      replyTo: resetPasswordSettings.response_email,
+      subject: emailObject,
+      text: emailBody,
+      html: emailBody,
+    };
+
+    // NOTE: Update the user before sending the email so an Admin can generate the link if the email fails
+    await getService("user").edit(user.id, { resetPasswordToken });
+
+    // Send an email to the user or whatsapp message if there use phone number.
+    if (email) {
+      await strapi.plugin("email").service("email").send(emailToSend);
+    } else {
+      await sendWhatsappMessage(user, resetPasswordToken, "reset_password");
+      ctx.send({ res: 200 });
+    }
+
+    ctx.send({ ok: true, email });
+  };
+
   const sendEmailConfirmation = async (ctx: Context) => {
     const { email, phone_number } = await validateSendEmailConfirmationBody(
-      ctx.request.body,
+      ctx.request.body
     );
     if (!email) {
       var user = await strapi.db
@@ -278,21 +405,21 @@ export default async (plugin: any) => {
       throw new ApplicationError("User blocked");
     }
     if (email) {
-    await getService('user').sendConfirmationEmail(user);
-    ctx.send({
-      email: user.email,
-      sent: true,
-    });
+      await getService("user").sendConfirmationEmail(user);
+      ctx.send({
+        email: user.email,
+        sent: true,
+      });
     } else {
-      const confirmationToken = crypto.randomBytes(3).toString('hex');
-      await getService('user').edit(user.id, { confirmationToken });
-      sendWhatsappMessage(user, confirmationToken, 'verify_code');
+      const confirmationToken = crypto.randomBytes(3).toString("hex");
+      await getService("user").edit(user.id, { confirmationToken });
+      sendWhatsappMessage(user, confirmationToken, "verify_code");
       ctx.send({
         email: user.phone_number,
         sent: true,
       });
     }
-  }
+  };
 
   const callback = async (ctx: Context) => {
     const provider = ctx.params.provider || "local";
@@ -335,7 +462,7 @@ export default async (plugin: any) => {
 
       const validPassword = await getService("user").validatePassword(
         params.password,
-        user.password,
+        user.password
       );
 
       if (!validPassword) {
@@ -345,7 +472,7 @@ export default async (plugin: any) => {
       const advancedSettings = await store.get({ key: "advanced" });
       const requiresConfirmation = _.get(
         advancedSettings,
-        "email_confirmation",
+        "email_confirmation"
       );
 
       if (requiresConfirmation && user.confirmed !== true) {
@@ -354,7 +481,7 @@ export default async (plugin: any) => {
 
       if (user.blocked === true) {
         throw new ApplicationError(
-          "Your account has been blocked by an administrator",
+          "Your account has been blocked by an administrator"
         );
       }
 
@@ -370,7 +497,7 @@ export default async (plugin: any) => {
 
       if (user.blocked) {
         throw new ForbiddenError(
-          "Your account has been blocked by an administrator",
+          "Your account has been blocked by an administrator"
         );
       }
 
@@ -389,83 +516,8 @@ export default async (plugin: any) => {
       register,
       sendEmailConfirmation,
       callback,
-      async forgotPassword(ctx: Context) {
-        const { email } = await validateForgotPasswordBody(ctx.request.body);
-
-        const pluginStore = await strapi.store({
-          type: "plugin",
-          name: "users-permissions",
-        });
-
-        const emailSettings = await pluginStore.get({ key: "email" });
-        const advancedSettings = await pluginStore.get({ key: "advanced" });
-
-        // Find the user by email or phone number.
-        if (email) {
-          var user = await strapi.db
-            .query("plugin::users-permissions.user")
-            .findOne({ where: { email: email.toLowerCase() } });
-        } else {
-          const { phone_number } = await validateForgotPasswordBody(
-            ctx.request.body,
-          );
-          var user = await strapi.db
-            .query("plugin::users-permissions.user")
-            .findOne({ where: { phone_number } });
-        }
-        if (!user || user.blocked) {
-          return ctx.send({ error: "user Blocked or not found" });
-        }
-
-        const userInfo = await sanitizeUser(user, ctx);
-
-        // Generate random token.
-        const resetPasswordToken = crypto.randomBytes(3).toString('hex');
-    
-        const resetPasswordSettings = _.get(emailSettings, 'reset_password.options', {});
-        const emailBody = await getService('users-permissions').template(
-          resetPasswordSettings.message,
-          {
-            URL: advancedSettings.email_reset_password,
-            SERVER_URL: strapi.config.get("server.absoluteUrl"),
-            ADMIN_URL: strapi.config.get("admin.absoluteUrl"),
-            USER: userInfo,
-            TOKEN: resetPasswordToken,
-          },
-        );
-
-        const emailObject = await getService("users-permissions").template(
-          resetPasswordSettings.object,
-          {
-            USER: userInfo,
-          },
-        );
-
-        const emailToSend = {
-          to: user.email,
-          from:
-            resetPasswordSettings.from.email || resetPasswordSettings.from.name
-              ? `${resetPasswordSettings.from.name} <${resetPasswordSettings.from.email}>`
-              : undefined,
-          replyTo: resetPasswordSettings.response_email,
-          subject: emailObject,
-          text: emailBody,
-          html: emailBody,
-        };
-
-        // NOTE: Update the user before sending the email so an Admin can generate the link if the email fails
-        await getService("user").edit(user.id, { resetPasswordToken });
-
-        // Send an email to the user or whatsapp message if there use phone number.
-        if (email) {
-          await strapi.plugin("email").service("email").send(emailToSend);
-        } else {
-          await sendWhatsappMessage(user, resetPasswordToken, "reset_password");
-          ctx.send({ res: 200 });
-        }
-
-        ctx.send({ ok: true, email });
-      },
+      emailConfirmation,
+      forgotPassword,
     };
   };
   return plugin;

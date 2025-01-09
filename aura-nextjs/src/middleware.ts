@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   if (isProtectedRoute(currentPath) && user.ok === false) {
     // update the last visited page cookie
     cookieStore.set("nextPage", currentPath);
-    if (userFromCookie?.documentId.length) {
+    if (userFromCookie?.documentId?.length) {
       // redirect to confirm page
       if (userFromCookie.phone_number) {
         // redirect to confirm phone page
@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
   if (["/login", "/register"].includes(currentPath)) {
     if (user.ok) {
       return NextResponse.redirect(new URL("/profile", request.url));
-    } else if (userFromCookie?.documentId.length) {
+    } else if (userFromCookie?.documentId?.length) {
       if (userFromCookie.phone_number) {
         // redirect to confirm phone page
         return NextResponse.redirect(

@@ -139,7 +139,7 @@ class APIClient {
       const result = await this.api.get(
         `/auth/email-confirmation?confirmation=${code}`
       );
-      if (result.status === 200 || result.status === 201) {
+      if (result.status === 200 || result.status === 201 || result.status === 302) {
         return { data: result.data };
       }
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };

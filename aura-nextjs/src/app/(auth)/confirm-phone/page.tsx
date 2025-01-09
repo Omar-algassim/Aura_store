@@ -4,15 +4,16 @@ import { ButtonPrimary, ButtonSecondary } from "@/components/common/Buttons";
 import {
   InputOTP,
   InputOTPGroup,
+  InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/shadcn/input-otp";
-import { useUser } from "@/components/context";
+import { useUser, useUserDispatch } from "@/components/context";
 import {
   requestPhoneConfirmCode,
   requestResetPwdCode,
   sendPhoneConfirmationCode,
 } from "@/utils/services/user-services";
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 
 interface ConfirmPhonePageProps {
   title?: string;
@@ -27,10 +28,11 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
   const user = useUser();
+  const userDispatcher = useUserDispatch();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [canResend, setCanResend] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(45);
+  const [remainingTime, setRemainingTime] = useState(10);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -66,7 +68,7 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
       console.log(error);
     }
     setCanResend(false);
-    setRemainingTime(45);
+    setRemainingTime(10);
   };
 
   const handleSubmit = async () => {
@@ -77,13 +79,18 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
     console.log(
       `submitting code ${code}for user ${user.username} with ${user.documentId}`
     );
-    const { error } = await sendPhoneConfirmationCode(code);
+    const { error, data } = await sendPhoneConfirmationCode(code);
     if (error) {
       setError(error);
     }
+    else if (data) {
+      console.log("user data", JSON.stringify(data, null, 2));
+      userDispatcher({ type: "LOGIN", payload: { userData: data } });
+      redirect("/profile");
+    }
 
     setCanResend(false);
-    setRemainingTime(45);
+    setRemainingTime(10);
     setCode("");
   };
 
@@ -112,7 +119,7 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
 
         <InputOTP
           dir="ltr"
-          maxLength={4}
+          maxLength={6}
           value={code}
           onChange={(value) => setCode(value)}
         >
@@ -129,9 +136,18 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
               className="w-[52px] h-[52px] rounded-[3px] bg-surface border-none text-2xl  "
               index={2}
             />
+            <InputOTPSeparator />
             <InputOTPSlot
               className="w-[52px] h-[52px] rounded-[3px] bg-surface border-none text-2xl  "
               index={3}
+            />
+            <InputOTPSlot
+              className="w-[52px] h-[52px] rounded-[3px] bg-surface border-none text-2xl  "
+              index={4}
+            />
+            <InputOTPSlot
+              className="w-[52px] h-[52px] rounded-[3px] bg-surface border-none text-2xl  "
+              index={5}
             />
           </InputOTPGroup>
         </InputOTP>
@@ -152,7 +168,7 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
             إعادة إرسال الرابط بعد {remainingTime} ثانية
           </p>
         </ButtonSecondary>
-        <ButtonPrimary disabled={code.length !== 4} handleClick={handleSubmit}>
+        <ButtonPrimary disabled={code.length !== 6} handleClick={handleSubmit}>
           {buttonTitle || "إنشاء الحساب"}
         </ButtonPrimary>
       </div>
