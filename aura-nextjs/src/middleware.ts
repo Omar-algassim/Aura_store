@@ -1,6 +1,7 @@
 import { getUserMe } from "@/utils/services/user-services";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { User } from "./entities/user-entity";
 
 const protectedRoutes = ["/checkout", "/profile"];
 const isProtectedRoute = (path: string) => {
@@ -12,16 +13,50 @@ export async function middleware(request: NextRequest) {
   const currentPath = request.nextUrl.pathname;
   const jwt = cookieStore.get("jwt")?.value;
   const user = await getUserMe(jwt);
+  const userFromCookie = JSON.parse(
+    cookieStore.get("user")?.value || "{}"
+  ) as User;
+
+  const message = {
+    phone_number: "الرجاء تأكيد رقم الهاتف للمتابعة",
+    email: "الرجاء تأكيد البريد الالكتروني للمتابعة",
+  };
 
   if (isProtectedRoute(currentPath) && user.ok === false) {
     // update the last visited page cookie
     cookieStore.set("nextPage", currentPath);
+    if (userFromCookie?.documentId.length) {
+      // redirect to confirm page
+      if (userFromCookie.phone_number) {
+        // redirect to confirm phone page
+        return NextResponse.redirect(
+          new URL(`/confirm-phone?message=${message.phone_number}`, request.url)
+        );
+      } else {
+        return NextResponse.redirect(
+          new URL(`/confirm-email?message=${message.email}`, request.url)
+        );
+      }
+    }
     console.log("redirecting to login, next page", currentPath);
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (["/login", "/register"].includes(currentPath) && user.ok) {
-    return NextResponse.redirect(new URL("/profile", request.url));
+  if (["/login", "/register"].includes(currentPath)) {
+    if (user.ok) {
+      return NextResponse.redirect(new URL("/profile", request.url));
+    } else if (userFromCookie?.documentId.length) {
+      if (userFromCookie.phone_number) {
+        // redirect to confirm phone page
+        return NextResponse.redirect(
+          new URL(`/confirm-phone?message=${message.phone_number}`, request.url)
+        );
+      } else {
+        return NextResponse.redirect(
+          new URL(`/confirm-email?message=${message.email}`, request.url)
+        );
+      }
+    }
   }
 
   return NextResponse.next();
