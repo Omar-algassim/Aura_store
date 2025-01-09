@@ -6,6 +6,7 @@ import axios from 'axios';
 import crypto from 'crypto';
 import _ from 'lodash';
 import { env } from '@strapi/utils'
+
 const { ApplicationError, ForbiddenError , ValidationError} = errors;
 
 interface CallbackBody {
@@ -40,11 +41,12 @@ const sendWhatsappMessage = async (user: any, token: string, tamplate: string) =
     throw new ApplicationError('cannot find the user phone number')
   }
       //send whatsapp message using facebook api
-      const whats_token = 'EAAPZCARdfZCBIBO7QqXBy8VS2VwLJUIaTjivaovEfutacKohzG2baEtQX9oRYoZBnEDWoasZB2NgbR6pBbZAVZC8tv1dAnAUXJHw1DkWLtzvm5UZAZBfOeTfbeumdJRZAKWQ6Ho8MJiF52IayyoIEWZC1i9Jig6MXeIkNordt7cpO2Prw0lh73JT41MbE9vrGvUH2UWJD5ZAKZBW6ZAgCMIeLkDeHorZC0w1kZD';
+      const whats_token = 'EAAPZCARdfZCBIBO44qJQayzYyGEie1XM8SJ10oaw7JyYpIojuUvj2M2fmCFa7UFTSs8aPXOmJwD2F7edZAmzuWxBI0K4VdRYZCEsQtp1BUX9sAEOqSr5inPfajjaPI3QuT8ziFEKb6ET7f1d2mMutWoC6ucevxAZByGtUcPcZA4KeHohwRNTFjT0tfOx7QF2kMsVZCfLW3WymUUefazbMauQnS6vaQZD';
       const sender = '487217607808179';
       const url = `https://graph.facebook.com/v12.0/${sender}/messages`;
       const phone_num = phone_number.replace(/\s/g, '');
       const clean_num = phone_num ? `${phone_num.slice(1)}` : phone_num;
+      const sep_token = `${token.slice(0, 3)}-${token.slice(3, 6)}`;
       const headrs = {
         Authorization: `Bearer ${whats_token}`,
         'Content-Type': 'application/json'
@@ -55,7 +57,7 @@ const sendWhatsappMessage = async (user: any, token: string, tamplate: string) =
        "template": {
         "name": tamplate,
         "language": {
-          "code": "AR"
+          "code": "en_US"
       },
       "components": [
         {
@@ -63,7 +65,7 @@ const sendWhatsappMessage = async (user: any, token: string, tamplate: string) =
           "parameters": [
             {
               "type": "text",
-              "text": token
+              "text": sep_token
             }
           ]
         },
@@ -236,10 +238,12 @@ export default async (plugin: any) => {
       var user = await strapi.db.query('plugin::users-permissions.user').findOne({
         where: { phone_number },
       });
+      console.log('sending to number');
     } else {
       var user = await strapi.db.query('plugin::users-permissions.user').findOne({
         where: { email: email.toLowerCase() },
-    });
+      });
+      console.log('sending to email');
   }
 
     if (!user) {
@@ -255,15 +259,19 @@ export default async (plugin: any) => {
     }
     if (email) {
     await getService('user').sendConfirmationEmail(user);
-    } else {
-      const confirmationToken = crypto.randomBytes(6).toString('hex');
-      await getService('user').edit(user.id, { confirmationToken });
-      sendWhatsappMessage(user, confirmationToken, 'account_verify')
-    }
     ctx.send({
       email: user.email,
       sent: true,
     });
+    } else {
+      const confirmationToken = crypto.randomBytes(3).toString('hex');
+      await getService('user').edit(user.id, { confirmationToken });
+      sendWhatsappMessage(user, confirmationToken, 'verify_code');
+      ctx.send({
+        email: user.phone_number,
+        sent: true,
+      });
+    }
   }
 
   const callback = async (ctx: Context) => {
@@ -376,7 +384,7 @@ export default async (plugin: any) => {
         
         
         // Generate random token.
-        const resetPasswordToken = crypto.randomBytes(6).toString('hex');
+        const resetPasswordToken = crypto.randomBytes(3).toString('hex');
     
         const resetPasswordSettings = _.get(emailSettings, 'reset_password.options', {});
         const emailBody = await getService('users-permissions').template(
