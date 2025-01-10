@@ -2,28 +2,18 @@
 
 import { Context } from "koa";
 import { errors } from "@strapi/utils";
-import axios from "axios";
+import sendWhatsappMessage from "./service";
 import crypto from "crypto";
 import _ from "lodash";
-import { env } from "@strapi/utils";
+import {   
+  validateCallbackBody,
+  validateSendEmailConfirmationBody,
+  validateForgotPasswordBody,
+  validateEmailConfirmationBody,
+  validateRegistrationData } from "./validation";
 
 const { ApplicationError, ForbiddenError, ValidationError } = errors;
 
-interface CallbackBody {
-  identifier: string;
-  password: string;
-}
-interface ForgotPasswordBody {
-  email?: string;
-  phone_number?: string;
-}
-
-interface CustomRegistrationBody {
-  email?: string;
-  phone_number?: string;
-  password: string;
-  username?: string;
-}
 
 const getService = (name: string) => {
   return strapi.plugin("users-permissions").service(name);
@@ -34,131 +24,6 @@ const sanitizeUser = (user: any, ctx: any) => {
   const userSchema = strapi.getModel("plugin::users-permissions.user");
 
   return strapi.contentAPI.sanitize.output(user, userSchema, { auth });
-};
-const sendWhatsappMessage = async (
-  user: any,
-  token: string,
-  template: string
-) => {
-  const phone_number = user.phone_number;
-  if (!phone_number) {
-    throw new ApplicationError("cannot find the user phone number");
-  }
-  //send whatsapp message using facebook api
-  const whats_token =
-    "EAAPZCARdfZCBIBO6B602HIXYHdELBub6z5Mxi3899aq8pSiI0LZAL1oiD2hmG0JWwSGaZCq6pVcpjqRLCGvZA8TbUUMd4W8JmwyZAjZCplULIWWjDtDbPdg5G6ThePSqqZAHfUlK4OWZCPG5wCUcHBeuXwfA4IDx8Flz3UDDj1lPo0uhaZCZAMXZCCfcWPxcVVvi8XTl8Bz4AuQM2NJ5PslNbQZBK95m5E50RDwZDZD";
-  const sender = "487217607808179";
-  const url = `https://graph.facebook.com/v12.0/${sender}/messages`;
-  const phone_num = phone_number.replace(/\s/g, "");
-  const clean_num = phone_num ? `${phone_num.slice(1)}` : phone_num;
-  const sep_token = `${token.slice(0, 3)}-${token.slice(3, 6)}`;
-  console.log("clean_num", clean_num);
-  const headrs = {
-    Authorization: `Bearer ${whats_token}`,
-    "Content-Type": "application/json",
-  };
-  const data = {
-    messaging_product: "whatsapp",
-    to: clean_num,
-    type: "template",
-    template: {
-      name: template,
-      language: {
-        code: "en_US",
-      },
-      components: [
-        {
-          type: "body",
-          parameters: [
-            {
-              type: "text",
-              text: sep_token,
-            },
-          ],
-        },
-        {
-          type: "button",
-          sub_type: "url",
-          index: "0",
-          parameters: [
-            {
-              type: "text",
-              text: token,
-            },
-          ],
-        },
-      ],
-    },
-  };
-
-  axios
-    .post(url, data, { headers: headrs })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(JSON.stringify(error, null, 2));
-    });
-};
-const validateCallbackBody = async (params: CallbackBody) => {
-  if (!params.identifier || !params.password) {
-    throw new ApplicationError("identifier and password is required");
-  }
-};
-const validateSendEmailConfirmationBody = async (body: ForgotPasswordBody) => {
-  if (!body.email && !body.phone_number) {
-    throw new ApplicationError("Either email or phone number isrequired");
-  }
-
-  if (body.email && body.phone_number) {
-    throw new ApplicationError("please provide Email or phone number not both");
-  }
-
-  if (body.phone_number && !/^\+?[\d\s-]{10,}$/.test(body.phone_number)) {
-    throw new ApplicationError("Please provide a valid phone number");
-  }
-
-  if (body.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
-    throw new ApplicationError("Please provide a valid email");
-  }
-  return body;
-};
-const validateForgotPasswordBody = async (body: ForgotPasswordBody) => {
-  if (!body.email && !body.phone_number) {
-    throw new ApplicationError("Either email or phone number is required");
-  }
-
-  if (body.phone_number && !/^\+?[\d\s-]{10,}$/.test(body.phone_number)) {
-    throw new ApplicationError("Please provide a valid phone number");
-  }
-
-  if (body.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
-    throw new ApplicationError("Please provide a valid email");
-  }
-
-  return body;
-};
-const validateEmailConfirmationBody = async (query: any) => {
-  const { confirmation } = query;
-  if (!confirmation) {
-    throw new ApplicationError("Confirmation token is required");
-  }
-
-  return { confirmation };
-};
-
-const validateRegistrationData = (data: CustomRegistrationBody) => {
-  if (!data.email && !data.phone_number) {
-    throw new Error("Either email or phone number is required");
-  }
-
-  if (data.email && data.phone_number) {
-    throw new Error("Please provide either email or phone number, not both");
-  }
-
-  if (data.phone_number && !/^\+?[\d\s-]{10,}$/.test(data.phone_number)) {
-    throw new Error("Please provide a valid phone number");
-  }
 };
 
 export default async (plugin: any) => {
@@ -368,7 +233,11 @@ export default async (plugin: any) => {
     if (email) {
       await strapi.plugin("email").service("email").send(emailToSend);
     } else {
-      await sendWhatsappMessage(user, resetPasswordToken, "reset_password");
+      const data = {
+        template: "reset_password",
+        token: resetPasswordToken,
+      };
+      await sendWhatsappMessage(user, data);
       ctx.send({ res: 200 });
     }
 
@@ -413,7 +282,13 @@ export default async (plugin: any) => {
     } else {
       const confirmationToken = crypto.randomBytes(3).toString("hex");
       await getService("user").edit(user.id, { confirmationToken });
-      sendWhatsappMessage(user, confirmationToken, "verify_code");
+
+      const data = {
+        template: "verify_code",
+        token: confirmationToken,
+      };
+
+      await sendWhatsappMessage(user, data);
       ctx.send({
         email: user.phone_number,
         sent: true,
