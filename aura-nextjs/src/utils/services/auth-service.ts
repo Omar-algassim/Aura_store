@@ -2,6 +2,7 @@
 import { signInSchema, signUpSchema } from "@/components/ui/forms/schemas";
 import { SignupDTO } from "@/interfaces/dto";
 import { apiClient } from "../api/api-client";
+import { AxiosError } from "axios";
 
 /**
  * signupAction is an async function that takes a form data object and run client side validation on it before sending it to the server endpoint
@@ -16,6 +17,7 @@ export const signupAction = async (
     // extract the data from the form data object
     const rowData = {
       email: formData.get("email")?.toString(),
+      countryCode: formData.get("countryCode")?.toString(),
       phone: formData.get("phone")?.toString(),
       firstName: formData.get("firstName")?.toString(),
       lastName: formData.get("lastName")?.toString(),
@@ -23,6 +25,7 @@ export const signupAction = async (
       confirmPassword: formData.get("confirmPassword")?.toString(),
     };
 
+    // console.log(JSON.stringify(rowData));
     // validate the data using zod
     const validation = signUpSchema.safeParse(rowData);
     // console.log(JSON.stringify(validation));
@@ -60,8 +63,13 @@ export const signupAction = async (
       // console.log("user data", JSON.stringify(userData, null, 2));
     } else {
       // if it's a phone number, call the phone signup API
-      data.phone_number = rowData.phone;
-      // console.log("phone signup", JSON.stringify(data, null, 2));
+      const phone = validation.data.phone?.startsWith("0")
+        ? validation.data.phone?.slice(1)
+        : validation.data.phone;
+      data.phone_number = `${validation.data.countryCode}${phone}`;
+      console.log("phone signup", JSON.stringify(data, null, 2));
+      // return { message: "تم التسجيل بنجاح", error: data };
+
       const response = await apiClient.signup(data);
       userData = response.data;
       error = response.error;
@@ -69,7 +77,8 @@ export const signupAction = async (
     }
 
     if (error) {
-      return { message: error, type: "server", error, data: null };
+      // return { message: error, type: "server", error, data: null };
+      return handleError(error);
     }
     return { message: "تم التسجيل بنجاح", data: userData };
   } catch (error: any) {
@@ -147,4 +156,30 @@ export const signinProvider = async (
       error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى",
     };
   }
+};
+
+const handleError = (error: any) => {
+  const errorType = error?.response?.data?.error?.name;
+  console.log("Error Message: ", errorType);
+  if (error.code === AxiosError.ERR_NETWORK) {
+    return {
+      message: error.code,
+      type: "server",
+      error: "خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا",
+      data: null,
+    };
+  } else if (errorType === "ApplicationError") {
+    return {
+      message: errorType,
+      type: "server",
+      error: "اسم المستخدم, رقم الهاتف, او البريد الالكتروني مستعمل بالفعل",
+      data: null,
+    };
+  }
+  return {
+    message: error,
+    type: "server",
+    error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+    data: null,
+  };
 };

@@ -2,14 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-}
-
 body {
+  scrollbar-width: 0;
+  -ms-overflow-style: none;
   font-family: var(--font-alexandria);
 }
 
 @layer base {
+  ::-webkit-scrollbar {
+      width: 0px;
+      height: 10px;
+      /* display: none; */
+      background-color: var(--foreground);
+      color: var(--primary);
+      border-radius: 16px;
+    }
   :root {
     --surface: #dde1f2;
     --white: #f8f8f8;

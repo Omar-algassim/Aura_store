@@ -5,10 +5,12 @@ import { Eye, EyeClosed } from "lucide-react";
 interface InputProps {
   name: string;
   type?: "text" | "password" | "number" | "email" | "tel";
+  hidden?: boolean;
   defaultValue?: string;
-  placeholder: string;
+  placeholder?: string;
   customStyles?: string;
   value?: string | number;
+  readonly?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -19,9 +21,13 @@ function InputComponent(props: InputProps) {
   const [inputType, setInputType] = useState(type);
   return (
     <div
-      className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right font-[400] font-alex ${customStyles} `}
+      className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right font-[400] font-alex ${customStyles} ${
+        props.hidden && "hidden"
+      } `}
     >
       <Input
+        readOnly={props.readonly}
+        hidden={props.hidden}
         formNoValidate
         value={value}
         defaultValue={defaultValue}

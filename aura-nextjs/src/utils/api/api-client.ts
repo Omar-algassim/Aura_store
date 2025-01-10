@@ -34,14 +34,15 @@ class APIClient {
     try {
       const result = await this.api.post("/auth/local/register", data);
       // console.log(JSON.stringify(result.data));
-      if (result.status === 200) {
+      if (result.status === 200 || result.status === 201) {
         return { data: result.data };
       }
-      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+      // return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+      throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
     } catch (error: any) {
       console.error(error);
       return {
-        error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+        error,
       };
     }
   }
@@ -131,7 +132,7 @@ class APIClient {
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
       console.log(error);
-      return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+      return { error: error.code || "UNKNOWN" };
     }
   }
   async sendPhoneConfirmationCode(code: string) {
@@ -139,13 +140,17 @@ class APIClient {
       const result = await this.api.get(
         `/auth/email-confirmation?confirmation=${code}`
       );
-      if (result.status === 200 || result.status === 201 || result.status === 302) {
+      if (
+        result.status === 200 ||
+        result.status === 201 ||
+        result.status === 302
+      ) {
         return { data: result.data };
       }
-      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+      return { error: "UNKNOWN" };
     } catch (error: any) {
       console.log(error);
-      return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+      return { error: error.code || "UNKNOWN" };
     }
   }
 
