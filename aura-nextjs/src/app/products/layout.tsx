@@ -1,12 +1,16 @@
-import React from 'react'
+import { Footer } from "@/components/ui";
+import React from "react";
 
 function ProductsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
-      <h1>ProductsLayout</h1>
-      {children}
-    </div>
-  )
+    <>
+      <main className="flex flex-col items-center min-h-screen py-2">
+        <h1>ProductsLayout</h1>
+        {children}
+      </main>
+      <Footer />
+    </>
+  );
 }
 
-export default ProductsLayout
+export default ProductsLayout;

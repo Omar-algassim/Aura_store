@@ -1,3 +1,4 @@
+"use client";
 import { signupAction } from "@/utils/services/auth-service";
 import React, { useActionState, useEffect } from "react";
 import Input from "@/components/common/Input";

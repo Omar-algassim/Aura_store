@@ -168,6 +168,23 @@ class APIClient {
       return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     }
   }
+
+  async fetchPage(slug: string) {
+    try {
+      const result = await this.api.get(`/${slug}`);
+      console.log(JSON.stringify(result.data, null, 2));
+      if (result.status === 200) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      return {
+        error:
+          error?.response?.data?.error?.message ||
+          "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+      };
+    }
+  }
 }
 
 export const apiClient = new APIClient();
