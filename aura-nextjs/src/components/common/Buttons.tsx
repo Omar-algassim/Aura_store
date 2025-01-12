@@ -6,9 +6,10 @@ import { ButtonPreloader } from "../ui/Preloader";
 interface BaseButtonProps {
   children: React.ReactNode;
   handleClick?: () => void;
-  variant?: "secondary" | "link" | "ghost" | "default";
+  variant?: "secondary" | "link" | "ghost" | "outline" | "default";
   type?: "button" | "submit" | "reset";
   preloader?: boolean;
+  preloaderColor?: string;
   customStyles?: string;
   disabled?: boolean;
 }
@@ -20,7 +21,7 @@ interface ButtonProps {
   className?: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
-  variant?: "secondary" | "link" | "ghost";
+  variant?: "secondary" | "link" | "ghost" | "outline" | "default";
 }
 
 function BaseButton(props: BaseButtonProps) {
@@ -30,6 +31,7 @@ function BaseButton(props: BaseButtonProps) {
     type,
     customStyles,
     preloader,
+    preloaderColor,
     handleClick,
     disabled,
   } = props;
@@ -62,7 +64,7 @@ function BaseButton(props: BaseButtonProps) {
       onClick={onClick}
     >
       {children}
-      {loading && <ButtonPreloader />}
+      {loading && <ButtonPreloader color={preloaderColor} />}
     </Button>
   );
 }
@@ -87,6 +89,7 @@ export function ButtonSecondary(props: ButtonProps) {
       customStyles={props.className}
       type={props.type || "submit"}
       variant={props.variant || "default"}
+      preloaderColor="#8b0e50"
     />
   );
 }

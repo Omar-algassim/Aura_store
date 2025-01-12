@@ -10,6 +10,7 @@ import {
 } from "@/components/context";
 import { redirect } from "next/navigation";
 import { CartEntity } from "@/entities/cart-entity";
+import { CountriesDropdown } from "../CountriesDropdown";
 
 const initialState = {
   message: "",
@@ -18,14 +19,21 @@ const initialState = {
   error: [],
 };
 
-const getError = (
+const getFieldError = (
   error: { message: string; path: string[] }[],
   key: string
 ) => {
-  if (typeof error === "string") {
-    return [];
+  if (Array.isArray(error)) {
+    return error?.filter((err) => err.path.includes(key)) || [];
   }
-  return error?.filter((err) => err.path.includes(key)) || [];
+  return [];
+};
+
+const getFormError = (
+  error: { message: string; path: string[] }[] | string
+) => {
+  if (typeof error === "string") return error;
+  return null;
 };
 
 export function SignupForm({ type }: { type: "phone" | "email" }) {
@@ -33,20 +41,25 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
   const UserDispatcher = useUserDispatch();
   const CartDispatcher = useCartDispatcher();
   const cart = useCart() as CartEntity;
+  const [countryKey, setCountryKey] = React.useState("");
   const [formState, formAction, isPending] = useActionState(
     signupAction,
     initialState
   );
 
-  const emailError = getError(formState.error, "email");
-  const phoneError = getError(formState.error, "phone");
-  const firstNameError = getError(formState.error, "firstName");
-  const lastNameError = getError(formState.error, "lastName");
-  const passwordError = getError(formState.error, "password");
-  const confirmPasswordError = getError(formState.error, "confirmPassword");
+  const emailError = getFieldError(formState.error, "email");
+  const phoneError = getFieldError(formState.error, "phone");
+  const firstNameError = getFieldError(formState.error, "firstName");
+  const lastNameError = getFieldError(formState.error, "lastName");
+  const passwordError = getFieldError(formState.error, "password");
+  const confirmPasswordError = getFieldError(
+    formState.error,
+    "confirmPassword"
+  );
 
-  const formError =
-    typeof formState.error === "string" ? formState.error : null;
+  phoneError.concat(getFieldError(formState.error, "countryCode"));
+
+  const formError = getFormError(formState.error);
 
   useEffect(() => {
     // I think we need to convert it to async function
@@ -94,65 +107,98 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
           ))}
         </div>
       ) : (
-        <div className="w-full">
-          <Input type="tel" name="phone" placeholder="+249xxxxxxxxxx" />
-          {phoneError.map((error, index) => (
-            <span
-              key={index}
-              className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] text-wrap"
-            >
-              {error.message}
-            </span>
-          ))}
+        <div className="w-full flex flex-col items-start justify-start">
+          <div className="w-full flex items-center justify-center gap-2">
+            <Input
+              type="text"
+              name="countryCode"
+              value={countryKey}
+              hidden={true}
+              readonly={true}
+            />
+            <Input
+              customStyles="flex-1"
+              type="tel"
+              name="phone"
+              placeholder="9xxxxxxxxxx"
+            />
+            <CountriesDropdown setCountryKey={setCountryKey} />
+          </div>
+          <div className="w-full ">
+            {phoneError.map((error, index) => (
+              <span
+                key={index}
+                className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] text-wrap"
+              >
+                {error.message}
+              </span>
+            ))}
+          </div>
         </div>
       )}
       <div className="w-full tablet:max-w-[290px]">
         <Input name="firstName" placeholder="الاسم الاول*" />
-        {firstNameError.map((error, index) => (
-          <span
-            key={index}
-            className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-          >
-            {error.message}
-          </span>
-        ))}
+        {firstNameError.length > 0 ? (
+          firstNameError.map((error, index) => (
+            <span
+              key={index}
+              className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+            >
+              {error.message}
+            </span>
+          ))
+        ) : (
+          <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+        )}
       </div>
       <div className="w-full tablet:max-w-[290px]">
         <Input name="lastName" placeholder="الاسم الاخير*" />
-        {lastNameError.map((error, index) => (
-          <span
-            key={index}
-            className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-          >
-            {error.message}
-          </span>
-        ))}
+        {lastNameError.length > 0 ? (
+          lastNameError.map((error, index) => (
+            <span
+              key={index}
+              className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+            >
+              {error.message}
+            </span>
+          ))
+        ) : (
+          <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+        )}
       </div>
-      <div className="w-full tablet:max-w-[290px]">
+      <div className="w-full tablet:max-w-[290px] flex flex-col items-start justify-start">
         <Input name="password" placeholder="كلمة المرور*" type="password" />
-        {passwordError.map((error, index) => (
-          <span
-            key={index}
-            className="text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] text-wrap"
-          >
-            {error.message}
-          </span>
-        ))}
+        {passwordError.length > 0 ? (
+          passwordError.map((error, index) => (
+            <span
+              key={index}
+              className="text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] text-wrap"
+            >
+              {error.message}
+            </span>
+          ))
+        ) : (
+          <span className="text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] tablet:h-8 text-wrap tablet:block"></span>
+        )}
       </div>
-      <div className="w-full tablet:max-w-[290px]">
+      <div className="w-full tablet:max-w-[290px] flex flex-col items-start justify-start">
         <Input
           name="confirmPassword"
           placeholder="تأكيد كلمة المرور*"
           type="password"
         />
-        {confirmPasswordError.map((error, index) => (
-          <span
-            key={index}
-            className="text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] text-wrap"
-          >
-            {error.message}
-          </span>
-        ))}
+        {confirmPasswordError.length > 0 ? (
+          confirmPasswordError.map((error, index) => (
+            <span
+              key={index}
+              className="text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap "
+            >
+              {error.message}
+            </span>
+          ))
+        ) : (
+          <span className="text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap block"></span>
+        )}
       </div>
       <div className="pt-4 w-full flex items-center justify-center">
         <ButtonPrimary className="self-center w-[318px]">التالي</ButtonPrimary>

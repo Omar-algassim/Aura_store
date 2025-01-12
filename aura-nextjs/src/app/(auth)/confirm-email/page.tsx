@@ -6,6 +6,8 @@ import {
   requestEmailConfirmationCode,
   requestResetPwdCode,
 } from "@/utils/services/user-services";
+import { useSearchParams } from "next/navigation";
+import { AlertError } from "@/components/common/Alerts";
 
 interface ConfirmEmailPageProps {
   title?: string;
@@ -17,8 +19,15 @@ interface ConfirmEmailPageProps {
 function ConfirmEmailPage(params: ConfirmEmailPageProps) {
   const { title, description, resendLinkText, indicator } = params;
   const user = useUser();
+  const searchParams = useSearchParams();
+  const [message, setMessage] = useState("");
   const [canResend, setCanResend] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(45);
+  const [remainingTime, setRemainingTime] = useState(20);
+
+  useEffect(() => {
+    setMessage(searchParams.get("message") || "");
+    window.history.pushState({}, "", "/confirm-email");
+  }, [searchParams]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -37,6 +46,7 @@ function ConfirmEmailPage(params: ConfirmEmailPageProps) {
   }, [remainingTime]);
 
   const resendCode = async () => {
+    setCanResend(false);
     let error: string = "";
     if (indicator) {
       const data = await requestResetPwdCode("email", indicator as string);
@@ -49,10 +59,18 @@ function ConfirmEmailPage(params: ConfirmEmailPageProps) {
       console.log(error);
     }
     setCanResend(false);
-    setRemainingTime(45);
+    setRemainingTime(20);
   };
   return (
-    <div className="flex flex-col w-[364px] tablet:w-full tablet:max-w-[880px] border-none rounded-3xl pt-10 pb-6 px-6 gap-8 mt-20 bg-white justify-center items-center">
+    <div className="flex flex-col w-[364px] tablet:w-full tablet:max-w-[880px] border-none rounded-3xl pt-20 pb-6 px-6 gap-8 mt-20 bg-white justify-center items-center">
+      {message && (
+        <div className="absolute top-20 left-0 w-full h-[120px] bg-transparent flex flex-col items-center justify-center">
+          <AlertError
+            description={message}
+            className="w-full max-w-screen-tablet"
+          />
+        </div>
+      )}
       <div className="w-full flex items-center justify-center">
         <h1 className="w-full text-center text-lg tablet:text-3xl font-[700]">
           {title || "تأكيد البريد الإلكتروني"}
@@ -70,13 +88,14 @@ function ConfirmEmailPage(params: ConfirmEmailPageProps) {
         <ButtonSecondary
           disabled={!canResend}
           handleClick={resendCode}
-          className="bg-white  ring-1 ring-primary-light hover:bg-white text-primary-dark hover:text-primary-dark active:bg-white active:text-primary-dark focus:outline-none focus:bg-white focus:text-primary-dark"
+          preloader={true}
+          className="bg-white text-primary-dark border-none hover:bg-white hover:text-primary-dark active:bg-white active:text-primary-dark focus:outline-none focus:bg-white focus:text-primary-dark flex flex-col gap-1"
         >
           {resendLinkText || "إعادة إرسال الرابط"}
         </ButtonSecondary>
         <p
           className={`text-center text-[14px] font-[400] font-alex text-secondary ${
-            canResend ? "hidden" : "block"
+            remainingTime <= 0 ? "hidden" : "block"
           }`}
         >
           إعادة إرسال الرابط بعد {remainingTime} ثانية

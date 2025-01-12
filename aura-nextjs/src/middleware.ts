@@ -59,6 +59,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  if (
+    ["/confirm-email", "/confirm-phone"].includes(currentPath) &&
+    !userFromCookie.documentId
+  ) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   return NextResponse.next();
 }
 
