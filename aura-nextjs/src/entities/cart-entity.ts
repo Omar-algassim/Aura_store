@@ -9,17 +9,20 @@ export class CartEntity {
   documentId: string;
   user_id: string;
   total_pay: number;
+  total_items: number;
   products: CartProductsDTO;
 
   constructor(
     documentId: string = "",
     user_id: string = "",
     total_pay: number = 0,
+    total_items: number = 0,
     products: CartProductsDTO = {}
   ) {
     this.documentId = documentId;
     this.user_id = user_id;
     this.total_pay = total_pay;
+    this.total_items = total_items;
     this.products = products;
   }
 
@@ -39,6 +42,7 @@ export class CartEntity {
       this.products[product.documentId] = { product, amount };
     }
     this.total_pay += product.price * amount;
+    this.total_items += amount;
   }
 
   /**
@@ -52,9 +56,11 @@ export class CartEntity {
       if (this.products[product.documentId].amount > amount) {
         this.products[product.documentId].amount -= amount;
         this.total_pay -= product.price * amount;
+        this.total_items -= amount;
       } else {
         this.total_pay -=
           product.price * this.products[product.documentId].amount;
+        this.total_items -= this.products[product.documentId].amount;
         delete this.products[product.documentId];
       }
     }

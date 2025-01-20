@@ -24,6 +24,7 @@ body {
     --primary: #d5167b;
     --primary-light: #ffeee7;
     --primary-dark: #8b0e50;
+    --blue-shade: #EDF1F7;
     --secondary: #ac93ba;
     /* shadcn variables */
     --background: var(--white);
