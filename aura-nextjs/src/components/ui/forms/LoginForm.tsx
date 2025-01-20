@@ -1,3 +1,4 @@
+"use client";
 import cookie from "js-cookie";
 import Input from "@/components/common/Input";
 import { signinAction } from "@/utils/services/auth-service";

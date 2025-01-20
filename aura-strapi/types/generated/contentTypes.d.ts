@@ -369,6 +369,43 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAboutAuraAboutAura extends Struct.SingleTypeSchema {
+  collectionName: "about_auras";
+  info: {
+    displayName: "About-Aura";
+    pluralName: "about-auras";
+    singularName: "about-aura";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    body: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::about-aura.about-aura"
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiAvailableCitieAvailableCitie
   extends Struct.CollectionTypeSchema {
   collectionName: "available_cities";
@@ -494,6 +531,44 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiExchangeReturnExchangeReturn
+  extends Struct.SingleTypeSchema {
+  collectionName: "exchange_returns";
+  info: {
+    displayName: "Exchange Return";
+    pluralName: "exchange-returns";
+    singularName: "exchange-return";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    body: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::exchange-return.exchange-return"
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiHotRegionHotRegion extends Struct.CollectionTypeSchema {
   collectionName: "hot_regions";
   info: {
@@ -609,6 +684,43 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
       "oneToOne",
       "plugin::users-permissions.user"
     >;
+  };
+}
+
+export interface ApiPrivacyPolicyPrivacyPolicy extends Struct.SingleTypeSchema {
+  collectionName: "privacy_policies";
+  info: {
+    displayName: "Privacy Policy";
+    pluralName: "privacy-policies";
+    singularName: "privacy-policy";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    body: Schema.Attribute.RichText &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::privacy-policy.privacy-policy"
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1250,13 +1362,16 @@ declare module "@strapi/strapi" {
       "admin::transfer-token": AdminTransferToken;
       "admin::transfer-token-permission": AdminTransferTokenPermission;
       "admin::user": AdminUser;
+      "api::about-aura.about-aura": ApiAboutAuraAboutAura;
       "api::available-citie.available-citie": ApiAvailableCitieAvailableCitie;
       "api::best-selling.best-selling": ApiBestSellingBestSelling;
       "api::brand.brand": ApiBrandBrand;
       "api::category.category": ApiCategoryCategory;
+      "api::exchange-return.exchange-return": ApiExchangeReturnExchangeReturn;
       "api::hot-region.hot-region": ApiHotRegionHotRegion;
       "api::order-item.order-item": ApiOrderItemOrderItem;
       "api::order.order": ApiOrderOrder;
+      "api::privacy-policy.privacy-policy": ApiPrivacyPolicyPrivacyPolicy;
       "api::product.product": ApiProductProduct;
       "api::review.review": ApiReviewReview;
       "api::steady-selling.steady-selling": ApiSteadySellingSteadySelling;
