@@ -1,11 +1,18 @@
+'use client'
 import React, { useEffect, useState, Suspense } from 'react';
 import  InputComponent  from '../common/Input';
 import Image from 'next/image';
 import { search } from '@/utils/services/search';
-import { set } from 'zod';
+import Highlighter from "react-highlight-words";
 
-function Result(Result: any) {
-  if (!Result.Result) {
+
+interface ResultProps {
+  Result: any;
+  word: string;
+}
+
+const Result: React.FC<ResultProps> = ({ Result, word }) => {
+  if (!Result) {
     console.log('there is no data');
     return (
       <div className='flex flex-col justify-start bg-blue_shade w-[495px] m-[2px]'>
@@ -17,8 +24,14 @@ function Result(Result: any) {
   return (
     <div className='flex flex-col justify-start bg-blue_shade w-[495px] m-[2px]'>
         <div className='p-[20px] flex flex-col cursor-pointer' key={Result.documentId} >
-          <p>{Result.Result.title}</p>
-          <p className='pt-2'>{Result.Result.price} SDG</p>
+        <Highlighter
+          autoEscape={true}
+          highlightClassName={'bg-primary text-white rounded-[5px] p-[2px]'}
+          highlightStyle={{ fontWeight: 'normal' }}
+          searchWords={word?.split(' ')}
+          textToHighlight={Result.title}
+        />
+          <p className='pt-2'>{Result.price} SDG</p>
         </div>
     </div>
   
@@ -41,11 +54,11 @@ export function Search() {
       setTyping(false);
       console.log('Search component mounted');
       const fetchData = async () => {
-        const data = await search(key);
-        setResults(data.data);
-        data.data.forEach((item: any) => {
-          console.log(item);
-        });
+        const data: any = await search(key);
+        setResults(data);
+        // data.forEach((item: any) => {
+        //   console.log(item);
+        // });
       };
       fetchData();
     }, 1000);
@@ -70,7 +83,7 @@ export function Search() {
               />
             </div>
               { results.map((product: any) => (
-              <Result Result={product} key={product.documentId} /> 
+              <Result Result={product} word={key} key={product.documentId} /> 
             ))}
       </div>
   )

@@ -1,28 +1,37 @@
 import qs from 'qs';
 import { apiClient } from '../api/api-client';
+import miniserach from 'minisearch';
+
+let miniSearch = new miniserach({
+  fields: ['title', 'name'],
+  storeFields: ['title', 'name', 'price', 'documentId'],
+});
 
 export const search = async (key: string) => {
-  const keyList = key.trim().split(' ');
+  // const keyList = key.trim().split(' ');
   const query = qs.stringify({
       filters: {
         $or: [
           {
             title: {
-              $startsWith: keyList,
+              $startsWith: key,
             },
           },
           {
             title: {
-              $containsi: keyList,
+              $containsi: key,
             },
           },
         ],
-        title: {
-          $containsi: keyList,
-        },
       },
     }, {
       encodeValuesOnly: true, // prettify URL
     });
-    return await apiClient.search(query);
+    const data = await apiClient.search(query);
+    miniSearch.addAll(data.data);
+    const allData = [...data.data];
+    const prefixMatch = miniSearch.search(key, {prefix: true});
+    console.log('prefix dATA IS', prefixMatch);
+    miniSearch.removeAll();
+    return [...allData];
 };
