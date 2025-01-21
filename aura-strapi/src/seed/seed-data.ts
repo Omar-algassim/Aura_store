@@ -112,7 +112,7 @@ const generateProducts = (
   });
 };
 
-export const seedData = async (strapi) => {
+export const seedData = async (strapi: Core.Strapi) => {
   console.log("Seeding data...");
 
   const images = [
@@ -203,7 +203,7 @@ export const seedData = async (strapi) => {
     "CharmCouture",
     "SilkenHaven",
   ];
-  const products = generateProducts(20, categoryNames, brandNames, images);
+  // const products = generateProducts(20, categoryNames, brandNames, images);
 
   // Insert categories
   // for (const category of categories) {
@@ -227,12 +227,21 @@ export const seedData = async (strapi) => {
 
   console.log("Brands seeded.");
 
-  // Insert products
+  // retrieve products
+  const products = await strapi.query("api::product.product").findMany();
   for (const product of products) {
-    await strapi.documents("api::product.product").create({
-      data: product,
-      status: "published",
-      populate: ["categories", "brand"],
+    console.log(JSON.stringify(product, null, 2));
+    strapi.documents("api::product.product").update({
+      documentId: product.documentId,
+      data: {
+        images: [
+          images[Math.floor(Math.random() * images.length)],
+          images[Math.floor(Math.random() * images.length)],
+          images[Math.floor(Math.random() * images.length)],
+          images[Math.floor(Math.random() * images.length)],
+        ],
+        thumbnail: images[Math.floor(Math.random() * images.length)].url,
+      },
     });
   }
 
