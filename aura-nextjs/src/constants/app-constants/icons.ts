@@ -16,3 +16,4 @@ export const menu = "/icons/menu.svg";
 export const search = "/icons/search.svg";
 export const user = "/icons/user.svg";
 export const whatsapp = "/icons/whatsapp.svg";
+export const starIcon = "/icons/star-icon.svg";

@@ -55,11 +55,6 @@ function BaseButton(props: BaseButtonProps) {
       type={type}
       className={`w-full max-w-[320px] h-14 rounded-[12px] flex items-center 
       justify-center gap-2 hover:bg-primary-dark hover:text-white active:bg-primary-dark active:text-white focus:outline-none focus:bg-primary-dark focus:text-white
-      ${
-        variant !== "secondary"
-          ? "bg-primary text-white"
-          : "bg-surface text-primary-dark border-2 border-primary-dark"
-      }
       ${customStyles}`}
       onClick={onClick}
     >
