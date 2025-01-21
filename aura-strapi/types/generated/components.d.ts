@@ -1,5 +1,16 @@
 import type { Schema, Struct } from "@strapi/strapi";
 
+export interface ImagesImages extends Struct.ComponentSchema {
+  collectionName: "components_images_images";
+  info: {
+    description: "";
+    displayName: "images";
+  };
+  attributes: {
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface LocationDeliveryAddress extends Struct.ComponentSchema {
   collectionName: "components_location_delivery_addresses";
   info: {
@@ -29,6 +40,7 @@ export interface LocationLocation extends Struct.ComponentSchema {
 declare module "@strapi/strapi" {
   export module Public {
     export interface ComponentSchemas {
+      "images.images": ImagesImages;
       "location.delivery-address": LocationDeliveryAddress;
       "location.location": LocationLocation;
     }

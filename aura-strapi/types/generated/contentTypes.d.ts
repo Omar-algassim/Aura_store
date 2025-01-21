@@ -747,7 +747,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
     discount: Schema.Attribute.Decimal;
-    images: Schema.Attribute.Media<"images" | "videos", true>;
+    images: Schema.Attribute.Component<"images.images", true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -764,7 +764,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     specification: Schema.Attribute.Text;
     stock: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<"0">;
-    thumbnail: Schema.Attribute.Media<"images"> & Schema.Attribute.Required;
+    thumbnail: Schema.Attribute.String & Schema.Attribute.Required;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
