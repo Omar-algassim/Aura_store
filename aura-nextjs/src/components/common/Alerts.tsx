@@ -1,6 +1,6 @@
 import { AlertCircle } from "lucide-react";
 
-import { Alert, AlertTitle } from "@/components/ui/shadcn/alert";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertErrorProps } from "@/interfaces/props";
 import { useEffect, useState } from "react";
 

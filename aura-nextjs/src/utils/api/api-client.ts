@@ -135,7 +135,6 @@ class APIClient {
       return { error: error.code || "UNKNOWN" };
     }
   }
-
   async sendPhoneConfirmationCode(code: string) {
     try {
       const result = await this.api.get(
@@ -184,78 +183,6 @@ class APIClient {
           error?.response?.data?.error?.message ||
           "حدث خطأ ما, الرجاء المحاوله مره اخرى",
       };
-    }
-  }
-
-  async fetchProducts(query: string) {
-    console.log(query);
-    try {
-      const fetchedProducts = await this.api.get(`/products?${query}`);
-
-      if (fetchedProducts.status !== 200) {
-        console.log(JSON.stringify(fetchedProducts.data, null, 2));
-        throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
-      }
-      console.log(JSON.stringify(fetchedProducts.data, null, 2));
-      return { data: fetchedProducts.data.data };
-    } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
-      return { error: error.message };
-    }
-  }
-
-  /**
-   * Fetch a single product from the api using the provided id
-   * @param id the product id to fetch
-   * @param query determines the fields to populate
-   * @returns a Promise which resolved to the fetched product data or an error
-   */
-  async fetchProduct(id: string, query: string) {
-    try {
-      const fetchedProduct = await this.api.get(`/products/${id}?${query}`);
-      if (fetchedProduct.status !== 200) {
-        throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
-      }
-      return { data: fetchedProduct.data };
-    } catch (error: any) {
-      return { error: error.message };
-    }
-  }
-
-  /**
-   * Fetch categories from the api
-   * @returns a Promise which resolved to the fetched categories data or an error
-   */
-  async fetchCategories() {
-    try {
-      const fetchedCategories = await this.api.get("/categories");
-      if (fetchedCategories.status !== 200) {
-        console.log(JSON.stringify(fetchedCategories.data, null, 2));
-        throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
-      }
-      // console.log(JSON.stringify(fetchedCategories, null, 2));
-      return { data: fetchedCategories.data };
-    } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
-      return { error: error.message };
-    }
-  }
-
-  /**
-   * Fetch brands from the api
-   * @returns a Promise which resolved to the fetched brands data or an error
-   */
-  async fetchBrands() {
-    try {
-      const fetchedBrands = await this.api.get("/brands");
-      if (fetchedBrands.status !== 200) {
-        console.log(JSON.stringify(fetchedBrands.data, null, 2));
-        throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
-      }
-      return { data: fetchedBrands.data };
-    } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
-      return { error: error.message };
     }
   }
 }
