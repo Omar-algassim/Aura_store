@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { ButtonPrimary } from "@/components/common/Buttons";
 import { useRouter } from "next/navigation";
+import ProductsCarousel from "@/components/ui/product/ProductsCarousel";
 
 function Home() {
   const router = useRouter();
@@ -11,7 +12,7 @@ function Home() {
   return (
     <>
       <Header />
-      <main className="flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24">
+      <main className="flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white">
         {/* main hero /only displayed in big screens/ */}
         <section className="hidden mt-24 tablet:flex tablet:w-full desktop:max-w-screen-laptop items-center justify-center">
           <Image
@@ -19,14 +20,13 @@ function Home() {
             width={1140}
             height={600}
             alt={"cover image"}
-            objectFit="cover"
-            objectPosition="center"
+            content="center"
             className="w-full border border-none tablet:rounded-lg"
           />
         </section>
 
         {/* product list (Offers) */}
-        <section className="flex flex-col items-center w-full desktop:max-w-screen-laptop overflow-hidden mt-12 tablet:mt-0">
+        <section className="flex flex-col items-center justify-center w-full desktop:max-w-screen-laptop mt-12 px-[17px] tablet:mt-0">
           <div className="w-full flex items-center">
             <h2 className="text-lg tablet:text-xl laptop:text-2xl font-alex font-bold text-center">
               العروض
@@ -34,10 +34,12 @@ function Home() {
           </div>
 
           {/* product list (offers) items */}
-          <div className="w-full min-h-[526px] flex items-center justify-center gap-4 border border-red"></div>
+          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4">
+            <ProductsCarousel productsType="offers" />
+          </div>
 
           {/* view all */}
-          <div className="w-full flex items-center justify-center">
+          <div className="w-full flex items-center justify-center  mt-6 tablet:mt-10">
             {/* pass query params for the products to filter-by (offers) */}
             <ButtonPrimary
               variant="link"
@@ -56,14 +58,13 @@ function Home() {
             width={1140}
             height={600}
             alt={"cover image"}
-            objectFit="cover"
-            objectPosition="center"
+            content="center"
             className="w-full border border-none tablet:rounded-lg"
           />
         </section>
 
         {/* products list (latest) */}
-        <section className="flex flex-col items-center w-full desktop:max-w-screen-laptop overflow-hidden">
+        <section className="flex flex-col items-center justify-center w-full desktop:max-w-screen-laptop mt-12 px-[17px] tablet:mt-0">
           <div className="w-full flex items-center">
             <h2 className="text-lg tablet:text-xl laptop:text-2xl font-alex font-bold text-center">
               وصل حديثا
@@ -71,7 +72,9 @@ function Home() {
           </div>
 
           {/* product list (latest) items */}
-          <div className="w-full min-h-[526px] flex items-center justify-center gap-4 border border-red"></div>
+          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4">
+            <ProductsCarousel productsType="recent" />
+          </div>
 
           {/* view all */}
           <div className="w-full flex items-center justify-center">
@@ -93,14 +96,13 @@ function Home() {
             width={1140}
             height={600}
             alt={"cover image"}
-            objectFit="cover"
-            objectPosition="center"
+            content="center"
             className="w-full border border-none tablet:rounded-lg"
           />
         </section>
 
         {/* product list (top selling) */}
-        <section className="flex flex-col items-center w-full desktop:max-w-screen-laptop overflow-hidden">
+        <section className="flex flex-col items-center justify-center w-full desktop:max-w-screen-laptop mt-12 px-[17px] tablet:mt-0">
           <div className="w-full flex">
             <h2 className="text-lg tablet:text-xl laptop:text-2xl font-alex font-bold text-right">
               الاكثر مبيعا
@@ -108,7 +110,9 @@ function Home() {
           </div>
 
           {/* product list (top-selling) items */}
-          <div className="w-full min-h-[526px] flex items-center justify-center gap-4 border border-red"></div>
+          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4">
+            <ProductsCarousel productsType="bestSelling" />
+          </div>
 
           {/* view all */}
           <div className="w-full flex items-center justify-center">
@@ -130,8 +134,7 @@ function Home() {
             width={1140}
             height={600}
             alt={"cover image"}
-            objectFit="cover"
-            objectPosition="center"
+            content="center"
             className="w-full border border-none tablet:rounded-lg"
           />
         </section>
