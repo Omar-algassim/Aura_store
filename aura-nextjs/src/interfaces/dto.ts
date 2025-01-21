@@ -56,8 +56,9 @@ export interface Product {
   usage: string;
   description: string;
   specifications: string;
-  categories: string[];
-  brand: string;
+  features?: string;
+  categories: { id: string; documentId: string; title: string }[];
+  brand: { id: string; documentId: string; name: string };
 }
 
 export type OrderStatus =
