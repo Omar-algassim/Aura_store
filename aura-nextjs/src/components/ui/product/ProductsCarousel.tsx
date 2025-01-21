@@ -12,7 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../shadcn/carousel";
-import ProductCard from "./ProductCard";
+import ProductCard, { ProductCardSkeleton } from "./ProductCard";
 import { Product } from "@/interfaces/dto";
 
 function ProductsCarousel({ productsType }: { productsType: string }) {
@@ -77,24 +77,35 @@ function ProductsCarousel({ productsType }: { productsType: string }) {
 
   return (
     <div className="w-full flex flex-col">
-      {loading && <div>Loading...</div>}
       {error && <div>{error}</div>}
       <Carousel
         opts={{
           align: "end",
         }}
-        className="w-full max-w-[360px] tablet:max-w-[760px] laptop:max-w-screen-laptop scroll-m-3 laptop:scroll-m-0"
+        className="w-full max-w-[360px] tablet:max-w-[760px] laptop:max-w-[1400px] scroll-m-3 laptop:scroll-m-0"
         dir="ltr"
       >
-        <CarouselContent className="-ml-1 py-4" dir="ltr">
-          {products.map((product) => (
-            <CarouselItem
-              key={`${product.documentId}-${productsType}`}
-              className="basis-1/2 max-w-[173px] tablet:max-w-none tablet:basis-1/3 pl-1 by-2"
-            >
-              <ProductCard product={product} />
-            </CarouselItem>
-          ))}
+        <CarouselContent
+          className="-mr-2 py-4 items-stretch justify-items-stretch"
+          dir="ltr"
+        >
+          {loading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <CarouselItem
+                  key={index}
+                  className="basis-1/2 max-w-[173px] tablet:max-w-none tablet:basis-1/3 pr-2 by-2 flex items-stretch justify-items-stretch"
+                >
+                  <ProductCardSkeleton />
+                </CarouselItem>
+              ))
+            : products.map((product) => (
+                <CarouselItem
+                  key={`${product.documentId}-${productsType}`}
+                  className="basis-1/2 max-w-[173px] tablet:max-w-none tablet:basis-1/3 pr-2 by-2 flex items-stretch justify-items-stretch"
+                >
+                  <ProductCard product={product} />
+                </CarouselItem>
+              ))}
         </CarouselContent>
         <CarouselPrevious className="bg-black text-white hidden laptop:flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]" />
         <CarouselNext className="bg-black text-white hidden laptop:flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]" />

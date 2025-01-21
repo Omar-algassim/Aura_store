@@ -12,9 +12,9 @@ function Home() {
   return (
     <>
       <Header />
-      <main className="flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white">
+      <main className="flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white w-full max-w-[1480px]">
         {/* main hero /only displayed in big screens/ */}
-        <section className="hidden mt-24 tablet:flex tablet:w-full desktop:max-w-screen-laptop items-center justify-center">
+        <section className="hidden mt-24 tablet:flex tablet:w-full items-center justify-center">
           <Image
             src={"/images/cover-image-4.png"}
             width={1140}
@@ -26,15 +26,18 @@ function Home() {
         </section>
 
         {/* product list (Offers) */}
-        <section className="flex flex-col items-center justify-center w-full desktop:max-w-screen-laptop mt-12 px-[17px] tablet:mt-0">
-          <div className="w-full flex items-center">
-            <h2 className="text-lg tablet:text-xl laptop:text-2xl font-alex font-bold text-center">
+        <section className="flex flex-col gap-4 items-center justify-center w-full  mt-12 px-[17px] tablet:mt-0">
+          <div className="w-full flex flex-col gap-2 tablet:gap-4 items-center">
+            <h2 className="w-full text-xl tablet:text-2xl laptop:text-3xl font-alex font-bold text-right">
               العروض
             </h2>
+            <p className="w-full text-sm tablet:text-xl laptop:text-2xl text-right ">
+              احصلي على افضل العروض و الخصومات من أورا
+            </p>
           </div>
 
           {/* product list (offers) items */}
-          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4">
+          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10">
             <ProductsCarousel productsType="offers" />
           </div>
 
@@ -52,7 +55,7 @@ function Home() {
         </section>
 
         {/* image container */}
-        <section className="w-full desktop:max-w-screen-laptop flex items-center justify-center">
+        <section className="w-full  flex items-center justify-center">
           <Image
             src={"/images/cover-image-1.png"}
             width={1140}
@@ -64,15 +67,18 @@ function Home() {
         </section>
 
         {/* products list (latest) */}
-        <section className="flex flex-col items-center justify-center w-full desktop:max-w-screen-laptop mt-12 px-[17px] tablet:mt-0">
-          <div className="w-full flex items-center">
-            <h2 className="text-lg tablet:text-xl laptop:text-2xl font-alex font-bold text-center">
+        <section className="flex flex-col gap-4 items-center justify-center w-full  mt-12 px-[17px] tablet:mt-0">
+          <div className="w-full flex flex-col gap-2 tablet:gap-4 items-center">
+            <h2 className="w-full text-xl tablet:text-2xl laptop:text-3xl font-alex font-bold text-right">
               وصل حديثا
             </h2>
+            <p className="w-full text-sm tablet:text-xl laptop:text-2xl text-right ">
+              اخر المنتجات التي تم اضافتها الى متجرنا
+            </p>
           </div>
 
           {/* product list (latest) items */}
-          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4">
+          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10">
             <ProductsCarousel productsType="recent" />
           </div>
 
@@ -90,7 +96,7 @@ function Home() {
         </section>
 
         {/* image container */}
-        <section className="w-full desktop:max-w-screen-laptop flex items-center justify-center">
+        <section className="w-full  flex items-center justify-center">
           <Image
             src={"/images/cover-image-2.png"}
             width={1140}
@@ -102,15 +108,18 @@ function Home() {
         </section>
 
         {/* product list (top selling) */}
-        <section className="flex flex-col items-center justify-center w-full desktop:max-w-screen-laptop mt-12 px-[17px] tablet:mt-0">
-          <div className="w-full flex">
-            <h2 className="text-lg tablet:text-xl laptop:text-2xl font-alex font-bold text-right">
+        <section className="flex flex-col gap-4 items-center justify-center w-full  mt-12 px-[17px] tablet:mt-0">
+          <div className="w-full flex flex-col gap-2 tablet:gap-4 items-center">
+            <h2 className="w-full text-xl tablet:text-2xl laptop:text-3xl font-alex font-bold text-right">
               الاكثر مبيعا
             </h2>
+            <p className="w-full text-sm tablet:text-xl laptop:text-2xl text-right ">
+              تعـرفي على افضل المنتجات و الأكثر مبيعا من أورا
+            </p>
           </div>
 
           {/* product list (top-selling) items */}
-          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4">
+          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10">
             <ProductsCarousel productsType="bestSelling" />
           </div>
 
@@ -128,7 +137,7 @@ function Home() {
         </section>
 
         {/* image container */}
-        <section className="w-full desktop:max-w-screen-laptop flex items-center justify-center">
+        <section className="w-full  flex items-center justify-center">
           <Image
             src={"/images/cover-image-3.png"}
             width={1140}
