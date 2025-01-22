@@ -72,6 +72,12 @@
       "type": "component",
       "repeatable": true,
       "component": "images.images"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "product"
     }
   }
 }

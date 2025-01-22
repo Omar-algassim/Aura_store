@@ -8,9 +8,9 @@ export interface ProductQueryFilters {
     };
   };
   sort?:
-    | "createdAt:dsc"
-    | "ordered:dsc"
-    | "price:dsc"
+    | "createdAt:desc"
+    | "ordered:desc"
+    | "price:desc"
     | "price:asc"
-    | "discount:dsc";
+    | "discount:desc";
 }

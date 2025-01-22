@@ -762,6 +762,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
+    reviews: Schema.Attribute.Relation<"oneToMany", "api::review.review">;
     specification: Schema.Attribute.Text;
     stock: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<"0">;
     thumbnail: Schema.Attribute.String & Schema.Attribute.Required;
@@ -797,7 +798,7 @@ export interface ApiReviewReview extends Struct.CollectionTypeSchema {
       "api::review.review"
     > &
       Schema.Attribute.Private;
-    product_id: Schema.Attribute.Relation<"oneToOne", "api::product.product">;
+    product: Schema.Attribute.Relation<"manyToOne", "api::product.product">;
     publishedAt: Schema.Attribute.DateTime;
     rate: Schema.Attribute.Integer &
       Schema.Attribute.Required &
@@ -812,8 +813,8 @@ export interface ApiReviewReview extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    users_id: Schema.Attribute.Relation<
-      "oneToOne",
+    user: Schema.Attribute.Relation<
+      "manyToOne",
       "plugin::users-permissions.user"
     >;
   };
@@ -1336,6 +1337,7 @@ export interface PluginUsersPermissionsUser
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
+    reviews: Schema.Attribute.Relation<"oneToMany", "api::review.review">;
     role: Schema.Attribute.Relation<
       "manyToOne",
       "plugin::users-permissions.role"

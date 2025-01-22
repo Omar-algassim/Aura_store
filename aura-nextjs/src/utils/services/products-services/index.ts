@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ProductQueryFilters } from "@/interfaces";
+import { Review } from "@/interfaces/dto";
 import { apiClient } from "@/utils/api/api-client";
 import qs from "qs";
 
@@ -32,6 +33,13 @@ export const getOffers = async () => {
       },
       brand: {
         fields: ["name"],
+      },
+      reviews: {
+        populate: {
+          user: {
+            fields: ["username", "documentId", "email"],
+          },
+        },
       },
     },
     pagination: {
@@ -72,6 +80,13 @@ export const getRecentProducts = async () => {
       brand: {
         fields: ["name"],
       },
+      reviews: {
+        populate: {
+          user: {
+            fields: ["username", "documentId", "email"],
+          },
+        },
+      },
     },
     pagination: {
       start: 0,
@@ -95,6 +110,13 @@ export const getTopSellingProducts = async () => {
       },
       brand: {
         fields: ["name"],
+      },
+      reviews: {
+        populate: {
+          user: {
+            fields: ["username", "documentId", "email"],
+          },
+        },
       },
     },
     pagination: {
@@ -136,6 +158,13 @@ export const getProducts = async (
       },
       brand: {
         fields: ["name"],
+      },
+      reviews: {
+        populate: {
+          user: {
+            fields: ["username", "documentId", "email"],
+          },
+        },
       },
     },
     pagination: {
@@ -188,6 +217,65 @@ export const getProducts = async (
   return await fetchProducts(query);
 };
 
+export const getSimilarProducts = async (
+  documentId: string,
+  brand?: string,
+  categories?: string[]
+) => {
+  if (!categories && !brand) {
+    return { error: "لا يوجد منتجات" };
+  }
+
+  const query = qs.stringify({
+    populate: {
+      images: "*",
+      categories: {
+        fields: ["title"],
+      },
+      brand: {
+        fields: ["name"],
+      },
+      reviews: {
+        populate: {
+          user: {
+            fields: ["username", "documentId", "email"],
+          },
+        },
+      },
+    },
+    pagination: {
+      start: 0,
+      limit: 6,
+    },
+    filters: {
+      $or: [
+        {
+          brand: {
+            $eqi: brand || "",
+          },
+        },
+        {
+          categories: {
+            title: {
+              $in: categories || [],
+            },
+          },
+        },
+      ],
+      $and: [
+        {
+          documentId: {
+            $nei: documentId,
+          },
+        },
+      ],
+    },
+  });
+
+  console.log("filters", query);
+  return await fetchProducts(query);
+};
+
 /**
  * Fetch a single product from the api using the provided id
  * @param id the products id to fetch, typically provided by the product page
@@ -202,6 +290,14 @@ export const getProduct = async (id: string) => {
       },
       brand: {
         fields: ["name"],
+      },
+      reviews: {
+        populate: {
+          user: {
+            fields: ["username", "documentId", "email"],
+          },
+          sort: ["updatedAt:desc"],
+        },
       },
     },
   });
@@ -231,4 +327,40 @@ export const getBrands = async () => {
     return { error };
   }
   return { brands };
+};
+
+export const createProductReview = async (
+  productId: string,
+  userId: string,
+  review: Partial<Review>,
+  jwt: string
+) => {
+  const data = {
+    data: {
+      rate: review.rate,
+      text: review.text,
+      product: {
+        connect: [{ documentId: productId }],
+      },
+      user: userId,
+    },
+  };
+  const query = qs.stringify({
+    populate: {
+      user: {
+        fields: ["username", "documentId"],
+      },
+    },
+  });
+  console.log("data", JSON.stringify(data, null, 2));
+  return await apiClient.createProductReview(data, jwt, query);
+};
+
+export const getTotalRate = (reviews: Review[]) => {
+  const totalReviews = reviews.length;
+  const totalRate = reviews.reduce((acc, review) => acc + review.rate, 0);
+  if (totalReviews === 0) {
+    return 0;
+  }
+  return Math.round(totalRate / totalReviews);
 };

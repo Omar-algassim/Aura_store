@@ -21,15 +21,17 @@
       "min": 1,
       "required": true
     },
-    "product_id": {
+    "user": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::product.product"
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "reviews"
     },
-    "users_id": {
+    "product": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "inversedBy": "reviews"
     }
   }
 }

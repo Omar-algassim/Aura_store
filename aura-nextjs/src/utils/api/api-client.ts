@@ -223,6 +223,48 @@ class APIClient {
   }
 
   /**
+   * Create a new review for a product
+   * @param data the review data to be created
+   * @returns a Promise which resolved to the created review data or an error
+   */
+  async createProductReview(data: any, jwt: string, query?: string) {
+    try {
+      const result = await this.api.post(`/reviews?${query}`, data, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 201) {
+        console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error, null, 2);
+      return { error: error.message };
+    }
+  }
+
+  async updateProductReview(id: string, data: any, jwt: string) {
+    try {
+      const result = await this.api.put(`/reviews/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+
+      if (result.status === 200 || result.status === 201) {
+        console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error, null, 2);
+      return { error: error.message };
+    }
+  }
+
+  /**
    * Fetch categories from the api
    * @returns a Promise which resolved to the fetched categories data or an error
    */
