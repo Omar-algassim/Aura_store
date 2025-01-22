@@ -12,7 +12,7 @@ interface ResultProps {
 }
 
 const Result: React.FC<ResultProps> = ({ Result, word }) => {
-  if (!Result) {
+  if (Result.length === 0) {
     console.log('there is no data');
     return (
       <div className='flex flex-col justify-start bg-blue_shade w-[495px] m-[2px]'>
@@ -56,9 +56,6 @@ export function Search() {
       const fetchData = async () => {
         const data: any = await search(key);
         setResults(data);
-        // data.forEach((item: any) => {
-        //   console.log(item);
-        // });
       };
       fetchData();
     }, 1000);
@@ -67,7 +64,7 @@ export function Search() {
   
   return (
     <div className='flex flex-col justify-center items-center'>
-      <div className='flex items-center border-black border-2 rounded-lg justify-between p-[24px] w-[495px] h-[78px] bg-blue_shade'>
+      <div className='flex items-center rounded-lg justify-between p-[24px] w-[495px] h-[78px] bg-blue_shade'>
         <Image
               src="/icons/search.svg"
               alt="search"
@@ -77,14 +74,14 @@ export function Search() {
             <InputComponent
               name='search'
               type="text"
-              customStyles='max-w-[423px] max-h-[30px]'
+              customStyles='max-w-[423px] max-h-[30px] focus:outline-none ring-2'
               placeholder="إبحثي عن منتج, علامة تجارية ..."
               onChange={(e) => e.target.value ? setKey(e.target.value) : setKey('')}
               />
             </div>
-              { results.map((product: any) => (
+              { results ? results.map((product: any) => (
               <Result Result={product} word={key} key={product.documentId} /> 
-            ))}
+            )) : <Result Result={[]} word={''} />}
       </div>
   )
 }
