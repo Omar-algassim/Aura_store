@@ -27,11 +27,15 @@ export const search = async (key: string) => {
     }, {
       encodeValuesOnly: true, // prettify URL
     });
-    const data = await apiClient.search(query);
-    miniSearch.addAll(data.data);
-    const allData = [...data.data];
-    const prefixMatch = miniSearch.search(key, {prefix: true});
-    console.log('prefix dATA IS', prefixMatch);
-    miniSearch.removeAll();
-    return [...allData];
+    try{
+      const data = await apiClient.search(query);
+      miniSearch.addAll(data.data);
+      const allData = [...data.data];
+      const prefixMatch = miniSearch.search(key, {prefix: true});
+      console.log('prefix dATA IS', prefixMatch);
+      miniSearch.removeAll();
+      return [...allData];
+    } catch (error: any) {
+       new Error('Error fetching data', error.message);
+    }
 };
