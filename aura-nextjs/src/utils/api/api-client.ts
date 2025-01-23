@@ -177,8 +177,8 @@ class APIClient {
       } else {
         return {error: "حدث خطأ ما, الرجاء المحاوله مره اخرى", code: response.status};
       }
-    } catch (error) {
-      console.error('Error fetching data', error);
+    } catch (error : any) {
+      return new Error('Error fetching data', error.message);
     }
   }
 }
