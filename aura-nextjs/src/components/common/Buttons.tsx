@@ -83,7 +83,7 @@ export function ButtonSecondary(props: ButtonProps) {
       disabled={props.disabled}
       customStyles={props.className}
       type={props.type || "submit"}
-      variant={props.variant || "default"}
+      variant={props.variant || "outline"}
       preloaderColor="#8b0e50"
     />
   );

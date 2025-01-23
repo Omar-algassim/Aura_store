@@ -1331,7 +1331,7 @@ export interface PluginUsersPermissionsUser
       }>;
     phone_number: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
-        maxLength: 12;
+        maxLength: 14;
         minLength: 10;
       }>;
     provider: Schema.Attribute.String;
@@ -1347,7 +1347,6 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.Private;
     username: Schema.Attribute.String &
       Schema.Attribute.Required &
-      Schema.Attribute.Unique &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 3;
       }>;
