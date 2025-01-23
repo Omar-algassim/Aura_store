@@ -37,7 +37,7 @@ function NavElement(props: NavElementProps) {
       {props.name}
     </Link>
   );
-};
+}
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,7 +49,7 @@ export function Navbar() {
 
   function toggleMenu() {
     setIsOpen(!isOpen);
-  };
+  }
 
   function logout() {
     if (user.documentId) {
@@ -65,7 +65,13 @@ export function Navbar() {
     <div className="flex z-10 flex-col items-start">
       <div>
         <div className="relative z-10 tablet:max-w-[56px] tablet:max-h-[56px] max-w-[32px] max-h-[32px]">
-          <Image width={32} height={32} src="icons/menu.svg" alt='navbar menu' onClick={toggleMenu} />
+          <Image
+            width={32}
+            height={32}
+            src="/icons/menu.svg"
+            alt="navbar menu"
+            onClick={toggleMenu}
+          />
         </div>
         <div
           className={`items-center max-w-[393px] max-h-[506px] text-xs rounded-xl absolute ${
@@ -73,11 +79,13 @@ export function Navbar() {
           } ease-in-out duration-300 bg-white z-10`}
         >
           <div className="flex flex-col w-[345px] justify-between py-[64px] px-[24px] items-center text-center relative rounded-xl">
-            <img
-              src="icons/close.svg"
+            <Image
+              src="/icons/close.svg"
               alt="exit"
               onClick={toggleMenu}
               className="w-[32px] h-[32px] cursor-pointer absolute left-[24px] top-[15px]"
+              width={32}
+              height={32}
             />
             <div
               className={`flex flex-col items-center justify-between w-[158px] text-xs space-y-5`}
