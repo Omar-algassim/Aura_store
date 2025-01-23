@@ -1,14 +1,17 @@
 import { ButtonPrimary } from "@/components/common/Buttons";
 import { ToolTip } from "@/components/common/ToolTip";
 import { BaseUrl } from "@/constants/api-constants";
-import { starIcon } from "@/constants/app-constants";
+import { starIcon, starIconEmpty } from "@/constants/app-constants";
 import { Product } from "@/interfaces/dto";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Skeleton } from "../shadcn/skeleton";
+import { getTotalRate } from "@/utils/services/products-services";
 
 function ProductCard({ product }: { product: Product }) {
+  const totalRate = getTotalRate(product.reviews || []);
+
   const addToCart = async () => {
     console.log(`adding ${product.title} to cart`);
   };
@@ -36,16 +39,23 @@ function ProductCard({ product }: { product: Product }) {
       <div className="w-full flex flex-col gap-y-2 tablet:gap-y-3 px-2 tablet:px-3">
         {/* product rating */}
         <div className="w-full tablet:px-2 tablet:py-3 flex justify-end">
-          <div className="flex items-center justify-center gap-1 w-[50px] h-[24px] tablet:w-[54px] tablet:h-[30px] bg-surface rounded-xl">
+          <div
+            className={`flex items-center justify-center gap-1 w-[64px] h-[24px] tablet:w-[68px] tablet:h-[30px] bg-surface rounded-xl`}
+            dir="rtl"
+          >
             <Image
-              src={starIcon}
+              src={totalRate ? starIcon : starIconEmpty}
               width={16}
               height={16}
               alt="rating"
               className="w-[10px] h-[10px] tablet:w-[16px] tablet:h-[16px]"
             />
-            <div className="flex flex-col item-center justify-center text-[13px] font-[400] p-0 m-0">
-              23
+            <div
+              className={`"flex flex-col item-center justify-center font-[400] p-0 m-0 ${
+                totalRate === 0 ? "text-gray-5000 text-[10px]" : "text-[13px] "
+              }`}
+            >
+              {totalRate || "لا يوجد"}
             </div>
           </div>
         </div>

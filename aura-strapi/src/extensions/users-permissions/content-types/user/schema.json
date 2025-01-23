@@ -76,6 +76,12 @@
       "required": false,
       "maxLength": 12,
       "minLength": 10
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "user"
     }
   }
 }

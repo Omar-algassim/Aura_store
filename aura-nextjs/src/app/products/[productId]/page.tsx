@@ -1,3 +1,5 @@
+import ProductPageComponent from "@/components/ui/product/ProductPage";
+import { getProduct } from "@/utils/services/products-services";
 import React from "react";
 
 async function ProductPage({
@@ -6,11 +8,12 @@ async function ProductPage({
   params: Promise<{ productId: string }>;
 }) {
   const { productId } = await params;
-  return (
-    <div>
-      <h1>ProductPage</h1>
-      <p className="text-xl">{productId}</p>
-    </div>
+  const { error, data } = await getProduct(productId);
+  // console.log(data.data);
+  return error ? (
+    <div>{error}</div>
+  ) : (
+    <ProductPageComponent product={data.data} />
   );
 }
 

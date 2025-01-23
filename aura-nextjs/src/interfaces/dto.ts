@@ -56,8 +56,21 @@ export interface Product {
   usage: string;
   description: string;
   specifications: string;
-  categories: string[];
-  brand: string;
+  features?: string;
+  reviews?: Review[];
+  categories: { id: string; documentId: string; title: string }[];
+  brand: { id: string; documentId: string; name: string };
+}
+
+export interface Review {
+  id: string;
+  documentId: string;
+  text: string;
+  rate: number;
+  user: { documentId: string; username: string; email: string };
+  product: Product;
+  likes?: string[];
+  updatedAt: string;
 }
 
 export type OrderStatus =

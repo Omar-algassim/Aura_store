@@ -1,10 +1,13 @@
-import { BaseUrl as BackendHost } from "@/constants/api-constants";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ["res.cloudinary.com", "localhost", BackendHost],
+    domains: [
+      "res.cloudinary.com",
+      "localhost",
+      process.env.SERVER_HOST_NAME || "192.168.8.7",
+    ],
   },
 };
 

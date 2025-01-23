@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   getOffers,
   getRecentProducts,
+  getSimilarProducts,
   getTopSellingProducts,
 } from "@/utils/services/products-services";
 import React, { useEffect } from "react";
@@ -15,7 +16,17 @@ import {
 import ProductCard, { ProductCardSkeleton } from "./ProductCard";
 import { Product } from "@/interfaces/dto";
 
-function ProductsCarousel({ productsType }: { productsType: string }) {
+function ProductsCarousel({
+  productsType,
+  productId,
+  categories,
+  brand,
+}: {
+  productsType: string;
+  productId?: string;
+  categories?: string[];
+  brand?: string;
+}) {
   const [products, setProducts] = React.useState<Product[]>([]);
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(true);
@@ -66,6 +77,28 @@ function ProductsCarousel({ productsType }: { productsType: string }) {
           break;
         }
 
+        case "similar": {
+          if (!productId) {
+            setError("لا يوجد منتجات");
+            setLoading(false);
+            return;
+          }
+          const { error, products: fetchedProducts } = await getSimilarProducts(
+            productId,
+            brand,
+            categories
+          );
+
+          if (error) {
+            setError(error);
+            setLoading(false);
+            return;
+          }
+          setProducts(fetchedProducts);
+          setLoading(false);
+          break;
+        }
+
         default:
           setError("لا يوجد منتجات");
           break;
@@ -101,7 +134,7 @@ function ProductsCarousel({ productsType }: { productsType: string }) {
             : products.map((product) => (
                 <CarouselItem
                   key={`${product.documentId}-${productsType}`}
-                  className="basis-1/2 max-w-[173px] tablet:max-w-none tablet:basis-1/3 pr-2 by-2 flex items-stretch justify-items-stretch"
+                  className="basis-1/2 max-w-[173px] tablet:max-w-none laptop:basis-1/3 pr-2 by-2 flex items-stretch justify-items-stretch"
                 >
                   <ProductCard product={product} />
                 </CarouselItem>
