@@ -26,7 +26,10 @@ function ProductPageComponent(params: { product: Product }) {
   const [error, setError] = useState("");
   const [product] = useState(params.product);
   const [hero, setHero] = useState(product.thumbnail);
-  const [images, setImages] = useState(product.images.map((img) => img.url));
+  const [images, setImages] = useState([
+    hero,
+    ...product.images.map((img) => img.url),
+  ]);
   // const [loadingImage, setLoadingImage] = useState(true);
   const [productReviews, setProductReviews] = useState(product.reviews || []);
   const [quantity, setQuantity] = useState(1);
@@ -35,13 +38,9 @@ function ProductPageComponent(params: { product: Product }) {
 
   const totalRate = getTotalRate(productReviews);
 
-  const swapHero = (newHero: string, index: number) => {
-    // setLoadingImage(true);
-    const temp = hero;
+  const swapHero = (newHero: string) => {
+    if (newHero === hero) return;
     setHero(newHero);
-    images[index] = temp;
-    setImages(images);
-    // setLoadingImage(false);
   };
 
   const increaseQuantity = () => {
@@ -119,7 +118,7 @@ function ProductPageComponent(params: { product: Product }) {
           {/* product rating */}
           <div className="w-full max-w-[1044px] tablet:px-2 tablet:py-3 flex justify-start mx-[16px]">
             <div
-              className={`"flex items-center justify-center gap-1 w-[50px] h-[24px] tablet:w-[54px] tablet:h-[30px] bg-surface rounded-xl ${
+              className={`flex items-center justify-center gap-1 w-[50px] h-[24px] tablet:w-[54px] tablet:h-[30px] bg-surface rounded-xl ${
                 !totalRate && "hidden"
               }`}
             >
@@ -142,12 +141,12 @@ function ProductPageComponent(params: { product: Product }) {
               <div
                 key={index}
                 className="w-[71px] h-[71px] tablet:w-[100px] tablet:h-[100px]  bg-surface rounded-lg"
-                onClick={() => swapHero(img, index)}
-                onMouseEnter={() => swapHero(img, index)}
+                onClick={() => swapHero(img)}
+                onMouseEnter={() => swapHero(img)}
                 // onMouseLeave={() => swapHero(img, index)}
               >
                 <Image
-                  className="w-[71px] h-[71px] tablet:w-[100px] tablet:h-[100px] object-cover object-center rounded-lg animate-in cursor-pointer hover:scale-105 transition-all"
+                  className="w-[71px] h-[71px] tablet:w-[100px] tablet:h-[100px] object-cover object-center rounded-lg animate-in cursor-pointer hover:scale-105 hover:ring-1 hover:ring-primary transition-transform duration-50"
                   src={`${BaseUrl}/${img}`}
                   width={100}
                   height={100}
@@ -339,6 +338,7 @@ function ProductPageComponent(params: { product: Product }) {
               className="w-full h-[138px] px-6 py-4 text-[13px] font-[400] border-1 border-white rounded-[12px] bg-surface"
               placeholder="شاركينا تجربتك مع المنتج"
               onChange={(e) => setReview(e.target.value)}
+              value={review}
               dir="rtl"
             />
           </div>
