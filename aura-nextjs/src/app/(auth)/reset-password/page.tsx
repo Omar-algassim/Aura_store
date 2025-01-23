@@ -14,7 +14,7 @@ function ResetPasswordPage() {
   const code = urlParams.get("code");
 
   useEffect(() => {
-    console.log("code", code);
+    // /console.log("code", code);
     if (!code) {
       router.back();
     }

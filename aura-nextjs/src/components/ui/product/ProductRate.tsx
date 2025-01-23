@@ -29,7 +29,7 @@ export function SetProductRates({
 }) {
   const [currentStart, setCurrentStar] = React.useState(currentRate);
   const handleRateChange = (rate: number) => {
-    console.log(rate);
+    // /console.log(rate);
     setRate(rate);
   };
 

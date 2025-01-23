@@ -49,7 +49,7 @@ export function LoginForm() {
     // I think we need to convert it to async function
     if (formState.data) {
       // dispatch user data to global context
-      console.log("user data", JSON.stringify(formState.data, null, 2));
+      // /console.log("user data", JSON.stringify(formState.data, null, 2));
       userDispatcher({ type: "LOGIN", payload: { userData: formState.data } });
       // sync the cart with the user
       cart.sync(formState.data.user.documentId).then(() => {

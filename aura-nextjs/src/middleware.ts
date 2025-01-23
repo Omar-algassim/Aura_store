@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
         );
       }
     }
-    console.log("redirecting to login, next page", currentPath);
+    // /console.log("redirecting to login, next page", currentPath);
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

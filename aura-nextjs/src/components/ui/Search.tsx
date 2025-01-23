@@ -30,7 +30,7 @@ function Loading() {
   );
 }
 const Result: React.FC<ResultProps> = ({ Result, word }) => {
-  console.log("Result", Result);
+  // /console.log("Result", Result);
   if (!Result) {
     return (
       <div className="flex flex-col justify-start bg-blue_shade w-[495px] m-[2px]">
@@ -88,7 +88,7 @@ export function Search() {
     } else setTyping(true);
 
     const waitTime = setTimeout(() => {
-      console.log("Search component mounted");
+      // /console.log("Search component mounted");
       const fetchData = async () => {
         try {
           const { error, data } = await search(key);
@@ -98,7 +98,7 @@ export function Search() {
           setTyping(false);
           setResults(data);
         } catch (error) {
-          console.log(error);
+          // /console.log(error);
         }
       };
       fetchData();

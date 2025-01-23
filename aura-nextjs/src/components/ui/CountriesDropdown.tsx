@@ -34,8 +34,8 @@ export function CountriesDropdown(props: {
     code: string;
   }>({ country: "", icon: "", value: "", code: "" });
 
-  // console.log("currentCountry", JSON.stringify(currentCountry, null, 2));
-  // console.log("value", value);
+  // // /console.log("currentCountry", JSON.stringify(currentCountry, null, 2));
+  // // /console.log("value", value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

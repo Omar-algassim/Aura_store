@@ -9,7 +9,7 @@ async function ProductPage({
 }) {
   const { productId } = await params;
   const { error, data } = await getProduct(productId);
-  // console.log(data.data);
+  // // /console.log(data.data);
   return error ? (
     <div>{error}</div>
   ) : (

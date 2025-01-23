@@ -56,7 +56,7 @@ function ConfirmEmailPage(params: ConfirmEmailPageProps) {
       error = data.error;
     }
     if (error) {
-      console.log(error);
+      // /console.log(error);
     }
     setCanResend(false);
     setRemainingTime(20);

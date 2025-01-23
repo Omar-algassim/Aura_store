@@ -81,7 +81,7 @@ const generateProducts = (
       const secondSeed = (seed + 1) % categories.length;
       productCategories.push(categories[secondSeed]);
     }
-    console.log(productCategories);
+    // /console.log(productCategories);
     return {
       documentId: uuidv4(),
       name: `Product ${i + 1}`,
@@ -113,7 +113,7 @@ const generateProducts = (
 };
 
 export const seedData = async (strapi: Core.Strapi) => {
-  console.log("Seeding data...");
+  // /console.log("Seeding data...");
 
   const images = [
     {
@@ -211,10 +211,10 @@ export const seedData = async (strapi: Core.Strapi) => {
   //     data: category,
   //     status: "published",
   //   });
-  //   console.log(cate.documentId === category.documentId);
+  //   // /console.log(cate.documentId === category.documentId);
   // }
 
-  console.log("Categories seeded.");
+  // /console.log("Categories seeded.");
 
   // Insert brands
   // for (const brand of brands) {
@@ -222,15 +222,15 @@ export const seedData = async (strapi: Core.Strapi) => {
   //     data: brand,
   //     status: "published",
   //   });
-  //   console.log(br.documentId === brand.documentId);
+  //   // /console.log(br.documentId === brand.documentId);
   // }
 
-  console.log("Brands seeded.");
+  // /console.log("Brands seeded.");
 
   // retrieve products
   const products = await strapi.query("api::product.product").findMany();
   for (const product of products) {
-    console.log(JSON.stringify(product, null, 2));
+    // /console.log(JSON.stringify(product, null, 2));
     strapi.documents("api::product.product").update({
       documentId: product.documentId,
       data: {
@@ -245,5 +245,5 @@ export const seedData = async (strapi: Core.Strapi) => {
     });
   }
 
-  console.log("Products seeded.");
+  // /console.log("Products seeded.");
 };

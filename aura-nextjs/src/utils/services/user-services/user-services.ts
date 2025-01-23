@@ -8,7 +8,7 @@ import { AxiosError } from "axios";
 
 export const getUserMe = async (jwt: string | undefined) => {
   if (!jwt) {
-    console.log("no jwt found");
+    // /console.log("no jwt found");
     return { ok: false };
   }
   return await apiClient.getMe(jwt);
@@ -29,19 +29,19 @@ export const resetPassword = async (
   password: string,
   confirmPassword: string
 ) => {
-  console.log(`reset password with code: ${code}`);
+  // /console.log(`reset password with code: ${code}`);
   return await apiClient.resetPassword(code, password, confirmPassword);
 };
 
 export const requestEmailConfirmationCode = async (email: string) => {
-  console.log(`request email confirm code with email: ${email}`);
+  // /console.log(`request email confirm code with email: ${email}`);
   return await apiClient.requestEmailConfirmationCode(email);
 };
 
 export const requestPhoneConfirmCode = async (phone: string) => {
-  console.log(`request  phone confirm code with phone: ${phone}`);
+  // /console.log(`request  phone confirm code with phone: ${phone}`);
   const { error, data } = await apiClient.requestPhoneConfirmCode(phone);
-  console.log(`Error ===> ${error}`);
+  // /console.log(`Error ===> ${error}`);
   if (error === AxiosError.ERR_NETWORK) {
     return { error: "خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا" };
   } else if (error === AxiosError.ERR_BAD_REQUEST) {
@@ -53,7 +53,7 @@ export const requestPhoneConfirmCode = async (phone: string) => {
 };
 
 export const sendPhoneConfirmationCode = async (code: string) => {
-  console.log(`send phone confirm code with code: ${code}`);
+  // /console.log(`send phone confirm code with code: ${code}`);
   const { error, data } = await apiClient.sendPhoneConfirmationCode(code);
   if (error === AxiosError.ERR_NETWORK) {
     return { error: "خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا" };

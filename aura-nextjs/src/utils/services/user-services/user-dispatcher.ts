@@ -16,12 +16,12 @@ export const UserReducer = (_prevState: any, action: UserReducerAction) => {
       // restore the user data from the cookie store
       const userCookie = cookieStore.get("user");
       if (!userCookie) {
-        console.log("no user cookie found");
+        // /console.log("no user cookie found");
         cookieStore.set("user", JSON.stringify(initialUser));
         return initialUser;
       }
       const userObject = JSON.parse(userCookie);
-      console.log("restoring user", userObject);
+      // /console.log("restoring user", userObject);
       const newUser = new User(
         userObject.documentId,
         userObject.username,
@@ -49,7 +49,7 @@ export const UserReducer = (_prevState: any, action: UserReducerAction) => {
     case "LOGIN": {
       // create a new User instance from the new user data
       const { jwt, user } = payload.userData;
-      console.log("logging in user ===>", user);
+      // /console.log("logging in user ===>", user);
       const newUser = new User(
         user.documentId,
         user.username,

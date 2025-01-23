@@ -25,10 +25,10 @@ export const signupAction = async (
       confirmPassword: formData.get("confirmPassword")?.toString(),
     };
 
-    // console.log(JSON.stringify(rowData));
+    // // /console.log(JSON.stringify(rowData));
     // validate the data using zod
     const validation = signUpSchema.safeParse(rowData);
-    // console.log(JSON.stringify(validation));
+    // // /console.log(JSON.stringify(validation));
     if (!validation.success) {
       return {
         type: "validation",
@@ -52,7 +52,7 @@ export const signupAction = async (
     if (rowData.email) {
       // if it's an email, call the email signup API
       data.email = rowData.email;
-      // console.log("email signup", JSON.stringify(data, null, 2));
+      // // /console.log("email signup", JSON.stringify(data, null, 2));
       const response = await apiClient.signup(data);
       userData = response.data;
       error = response.error;
@@ -60,20 +60,20 @@ export const signupAction = async (
       // so we don't need to do anything here
       // otherwise, strapi will return the user data and the jwt token
       // and we can save the token in the local storage and redirect the user to the dashboard
-      // console.log("user data", JSON.stringify(userData, null, 2));
+      // // /console.log("user data", JSON.stringify(userData, null, 2));
     } else {
       // if it's a phone number, call the phone signup API
       const phone = validation.data.phone?.startsWith("0")
         ? validation.data.phone?.slice(1)
         : validation.data.phone;
       data.phone_number = `${validation.data.countryCode}${phone}`;
-      console.log("phone signup", JSON.stringify(data, null, 2));
+      // /console.log("phone signup", JSON.stringify(data, null, 2));
       // return { message: "تم التسجيل بنجاح", error: data };
 
       const response = await apiClient.signup(data);
       userData = response.data;
       error = response.error;
-      // console.log("userData: ", JSON.stringify(userData, null, 2));
+      // // /console.log("userData: ", JSON.stringify(userData, null, 2));
     }
 
     if (error) {
@@ -118,7 +118,7 @@ export const signinAction = async (_prevState: any, formData: FormData) => {
       validation.data.password
     );
     if (error) {
-      console.log("API ==> error", error);
+      // /console.log("API ==> error", error);
       return { message: error, type: "server", error, data: null };
     }
 
@@ -160,7 +160,7 @@ export const signinProvider = async (
 
 const handleError = (error: any) => {
   const errorType = error?.response?.data?.error?.name;
-  console.log("Error Message: ", errorType);
+  // /console.log("Error Message: ", errorType);
   if (error.code === AxiosError.ERR_NETWORK) {
     return {
       message: error.code,

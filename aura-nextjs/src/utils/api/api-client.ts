@@ -33,7 +33,7 @@ class APIClient {
   async signup(data: SignupDTO): Promise<{ data?: any; error?: string }> {
     try {
       const result = await this.api.post("/auth/local/register", data);
-      // console.log(JSON.stringify(result.data));
+      // // /console.log(JSON.stringify(result.data));
       if (result.status === 200 || result.status === 201) {
         return { data: result.data };
       }
@@ -70,7 +70,7 @@ class APIClient {
       const result = await this.api.get(
         `/auth/${provider}/callback?access_token=${access_token}`
       );
-      // console.log(JSON.stringify(result.data));
+      // // /console.log(JSON.stringify(result.data));
       if (result.status === 200) {
         return { data: result.data };
       }
@@ -104,14 +104,14 @@ class APIClient {
   }
 
   async resetPassword(code: string, password: string, confirmPassword: string) {
-    console.log(`API => reset password with code: ${code}`);
+    // /console.log(`API => reset password with code: ${code}`);
     try {
       const result = await this.api.post("/auth/reset-password", {
         code,
         password,
         passwordConfirmation: confirmPassword,
       });
-      console.log(JSON.stringify(result.data, null, 2));
+      // /console.log(JSON.stringify(result.data, null, 2));
       if (result.status === 200 || result.status === 201) {
         return { data: result.data };
       }
@@ -131,7 +131,7 @@ class APIClient {
       }
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
-      console.log(error);
+      // /console.log(error);
       return { error: error.code || "UNKNOWN" };
     }
   }
@@ -150,7 +150,7 @@ class APIClient {
       }
       return { error: "UNKNOWN" };
     } catch (error: any) {
-      console.log(error);
+      // /console.log(error);
       return { error: error.code || "UNKNOWN" };
     }
   }
@@ -165,7 +165,7 @@ class APIClient {
       }
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
-      console.log(error);
+      // /console.log(error);
       return { error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     }
   }
@@ -173,7 +173,7 @@ class APIClient {
   async fetchPage(slug: string) {
     try {
       const result = await this.api.get(`/${slug}`);
-      console.log(JSON.stringify(result.data, null, 2));
+      // /console.log(JSON.stringify(result.data, null, 2));
       if (result.status === 200) {
         return { data: result.data };
       }
@@ -188,15 +188,15 @@ class APIClient {
   }
 
   async fetchProducts(query: string) {
-    console.log(query);
+    // /console.log(query);
     try {
       const fetchedProducts = await this.api.get(`/products?${query}`);
 
       if (fetchedProducts.status !== 200) {
-        console.log(JSON.stringify(fetchedProducts.data, null, 2));
+        // /console.log(JSON.stringify(fetchedProducts.data, null, 2));
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
       }
-      console.log(JSON.stringify(fetchedProducts.data, null, 2));
+      // /console.log(JSON.stringify(fetchedProducts.data, null, 2));
       return { data: fetchedProducts.data.data };
     } catch (error: any) {
       console.error(JSON.stringify(error, null, 2));
@@ -235,12 +235,12 @@ class APIClient {
         },
       });
       if (result.status === 200 || result.status === 201) {
-        console.log(JSON.stringify(result.data, null, 2));
+        // /console.log(JSON.stringify(result.data, null, 2));
         return { data: result.data.data };
       }
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
-      console.log(error, null, 2);
+      // /console.log(error, null, 2);
       return { error: error.message };
     }
   }
@@ -254,12 +254,12 @@ class APIClient {
       });
 
       if (result.status === 200 || result.status === 201) {
-        console.log(JSON.stringify(result.data, null, 2));
+        // /console.log(JSON.stringify(result.data, null, 2));
         return { data: result.data.data };
       }
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
-      console.log(error, null, 2);
+      // /console.log(error, null, 2);
       return { error: error.message };
     }
   }
@@ -272,10 +272,10 @@ class APIClient {
     try {
       const fetchedCategories = await this.api.get("/categories");
       if (fetchedCategories.status !== 200) {
-        console.log(JSON.stringify(fetchedCategories.data, null, 2));
+        // /console.log(JSON.stringify(fetchedCategories.data, null, 2));
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
       }
-      // console.log(JSON.stringify(fetchedCategories, null, 2));
+      // // /console.log(JSON.stringify(fetchedCategories, null, 2));
       return { data: fetchedCategories.data };
     } catch (error: any) {
       console.error(JSON.stringify(error, null, 2));
@@ -291,7 +291,7 @@ class APIClient {
     try {
       const fetchedBrands = await this.api.get("/brands");
       if (fetchedBrands.status !== 200) {
-        console.log(JSON.stringify(fetchedBrands.data, null, 2));
+        // /console.log(JSON.stringify(fetchedBrands.data, null, 2));
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
       }
       return { data: fetchedBrands.data };

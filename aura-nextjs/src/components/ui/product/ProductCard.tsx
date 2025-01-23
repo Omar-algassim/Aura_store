@@ -8,13 +8,28 @@ import Link from "next/link";
 import React from "react";
 import { Skeleton } from "../shadcn/skeleton";
 import { getTotalRate } from "@/utils/services/products-services";
+import { useCart, useCartDispatcher } from "@/components/context";
+import { CartEntity } from "@/entities/cart-entity";
 
 function ProductCard({ product }: { product: Product }) {
+  const cart = useCart() as CartEntity;
+  const cartDispatcher = useCartDispatcher();
   const totalRate = getTotalRate(product.reviews || []);
 
-  const addToCart = async () => {
-    console.log(`adding ${product.title} to cart`);
+  const handleAddToCart = async (product: Product, amount?: number) => {
+    await cart.addProduct(product, amount);
+    cartDispatcher({ type: "UPDATE", payload: { cart: cart } });
+    // /console.log(JSON.stringify(cart.products, null, 2));
+    // /console.log("Cart total pay", JSON.stringify(cart.total_pay, null, 2));
+    // /console.log("Cart total items", cart.total_items);
+    const iconTip = document.getElementById("cart-icon-tip");
+    if (iconTip) {
+      iconTip.innerHTML = cart.total_items.toString();
+      iconTip.classList.remove("bg-transparent");
+      iconTip.classList.add("bg-primary");
+    }
   };
+
   return (
     <div className="relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full bg-white p-0 m-0 rounded-xl tablet:hover:drop-shadow-xl transition-all duration-150">
       {/* Sale tag */}
@@ -97,7 +112,7 @@ function ProductCard({ product }: { product: Product }) {
         <ButtonPrimary
           className="w-[140px] h-[56px] text-[13px] tablet:text-[18px] tablet:w-[156px] font-[600]"
           preloader
-          handleClick={addToCart}
+          handleClick={() => handleAddToCart(product)}
         >
           أضف للسلة
         </ButtonPrimary>

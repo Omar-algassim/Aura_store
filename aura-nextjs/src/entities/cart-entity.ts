@@ -1,4 +1,5 @@
 import {
+  CartEntityDto,
   CartProductsDTO,
   DeliveryAddress,
   Product,
@@ -12,13 +13,13 @@ export class CartEntity {
   total_items: number;
   products: CartProductsDTO;
 
-  constructor(
-    documentId: string = "",
-    user_id: string = "",
-    total_pay: number = 0,
-    total_items: number = 0,
-    products: CartProductsDTO = {}
-  ) {
+  constructor({
+    documentId,
+    user_id,
+    total_pay,
+    total_items,
+    products,
+  }: CartEntityDto) {
     this.documentId = documentId;
     this.user_id = user_id;
     this.total_pay = total_pay;
@@ -33,16 +34,22 @@ export class CartEntity {
    * @description if the product is already in the cart, it will increase the amount of the product by the given amount, otherwise it will add the product to the cart, and adjust the total pay accordingly
    */
   async addProduct(product: Product, amount: number = 1) {
-    console.log("Adding product to cart", JSON.stringify(product, null, 2));
-    if (Object.hasOwn(this.products, product.documentId)) {
-      console.log("Product already in cart, increasing amount");
+    // /console.log("Adding product to cart", JSON.stringify(product, null, 2));
+    if (this.productInCart(product.documentId)) {
+      // /console.log("Product already in cart, increasing amount");
       this.products[product.documentId].amount += amount;
     } else {
-      console.log("Product not in cart, adding it");
+      // /console.log("Product not in cart, adding it");
       this.products[product.documentId] = { product, amount };
     }
-    this.total_pay += product.price * amount;
+    console.log("Total pay Before", this.total_pay);
+    // handle discount here
+    this.total_pay = this.total_pay + product.price * amount;
+    // console.log("Total pay", this.total_pay);
+    // console.log("Total pay After", this.total_pay);
+    // console.log("Total items Before", this.total_items);
     this.total_items += amount;
+    // console.log("Total items After", this.total_items);
   }
 
   /**
@@ -64,7 +71,7 @@ export class CartEntity {
         delete this.products[product.documentId];
       }
     }
-    console.log("Removing product from cart", product);
+    // /console.log("Removing product from cart", product);
   }
 
   /**
@@ -84,10 +91,10 @@ export class CartEntity {
   async clear() {
     this.products = {};
     this.total_pay = 0;
-    console.log("Clearing cart");
+    // /console.log("Clearing cart");
     // if the cart is in database, delete it
     if (this.documentId) {
-      console.log("Deleting cart from database");
+      // /console.log("Deleting cart from database");
     }
   }
 
@@ -145,6 +152,22 @@ export class CartEntity {
     );
     // create order's order items
     // for (const product of Object.values(this.products)) {
+  }
+
+  // public section
+  toJson() {
+    return {
+      documentId: this.documentId,
+      user_id: this.user_id,
+      total_pay: this.total_pay,
+      total_items: this.total_items,
+      products: this.products,
+    };
+  }
+
+  // private section
+  private productInCart(productId: string) {
+    return productId in this.products;
   }
 
   // the clear method need to be called from the same component that calls checkout

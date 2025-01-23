@@ -33,6 +33,14 @@ export interface OrderItem {
   quantity: number;
 }
 
+export interface CartEntityDto {
+  documentId: string;
+  user_id: string;
+  total_pay: number;
+  total_items: number;
+  products: CartProductsDTO;
+}
+
 export interface CartProductsDTO {
   // product id
   [id: string]: {

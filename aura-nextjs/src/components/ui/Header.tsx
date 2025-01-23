@@ -13,7 +13,7 @@ export function Header() {
   const user = useUser();
   const cart_count = cart?.total_items || 0;
   return (
-    <div className="flex items-center justify-between w-[95vw] pt-[20px] tablet:pt-[60px] tablet:justify-between flex-wrap">
+    <div className="flex items-center justify-between w-[95vw] max-w-[1480px] rounded-2xl py-[20px] tablet:py-[60px] tablet:justify-between flex-wrap bg-white z-30 sticky top-0">
       <div className="flex justify-between items-center gap-[56px] gap-y-9">
         <Navbar />
         {user.documentId.length > 0 ? (
@@ -43,11 +43,14 @@ export function Header() {
             height={32}
             className="cursor-pointer"
           />
-          {cart_count > 0 && (
-            <div className="relative bottom-3 left-11 w-[18px] h-[18px] bg-primary rounded-full text-white text-center text-[8px] pt-[3px]">
-              {cart_count}
-            </div>
-          )}
+          <div
+            className={`relative bottom-3 left-11 w-[20px] h-[20px] tablet:w-[24px] tablet:h-[24px] rounded-full text-white text-center text-[12px] tablet-text-[14px] pt-[3px] ${
+              cart_count === 0 ? "bg-transparent" : "bg-primary"
+            }`}
+            id="cart-icon-tip"
+          >
+            {cart_count}
+          </div>
         </div>
         <Image
           src="/images/logo.png"

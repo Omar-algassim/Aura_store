@@ -6,7 +6,7 @@ async function StaticPage({ params }: { params: Promise<{ page: string }> }) {
   const { page } = await params;
   const { error, data: fetchedPage } = await apiClient.fetchPage(page);
   if (error) {
-    // console.log(error);
+    // // /console.log(error);
     return redirect("/404");
   }
   const pageContent = fetchedPage.data.body;

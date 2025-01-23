@@ -133,7 +133,7 @@ const brands = [
 //   for (const product of products) {
 //     try {
 //       await strapi.entityService.create("api::product.product", product);
-//       console.log(`Created product: ${product.data.name}`);
+//       // /console.log(`Created product: ${product.data.name}`);
 //     } catch (error) {
 //       console.error(`Error creating product ${product.data.name}:`, error);
 //     }

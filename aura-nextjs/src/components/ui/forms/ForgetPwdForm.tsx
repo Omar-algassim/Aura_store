@@ -17,7 +17,7 @@ function ForgetPwdForm({
   const [error, setError] = React.useState("");
 
   const requestResetPwd = async () => {
-    console.log(indicator);
+    // /console.log(indicator);
     let indicatorType: "email" | "phone_number";
     if (!indicator.includes("@") && !/^\+?[\d\s-]{10,}$/.test(indicator)) {
       setError("البريد الإلكتروني أو رقم الهاتف غير صحيح");
@@ -25,15 +25,15 @@ function ForgetPwdForm({
       return;
     }
     if (indicator.includes("@")) {
-      console.log("Email");
+      // /console.log("Email");
       indicatorType = "email";
     } else {
-      console.log("Phone");
+      // /console.log("Phone");
       indicatorType = "phone_number";
     }
     const { error } = await requestResetPwdCode(indicatorType, indicator);
     if (error) {
-      console.log(error);
+      // /console.log(error);
       setError(error);
       return;
     }

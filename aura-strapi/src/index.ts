@@ -19,7 +19,7 @@ export default {
    */
   bootstrap({ strapi }: { strapi: Core.Strapi }) {
     if (process.env.NODE_ENV !== "production") {
-      console.log("Running a development environment");
+      // /console.log("Running a development environment");
       // seedData(strapi)
       //   .then(() => {})
       //   .catch((error) => {

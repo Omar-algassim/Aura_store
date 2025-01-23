@@ -38,7 +38,7 @@ function ProductsCarousel({
         case "offers": {
           const { error, products: fetchedProducts } = await getOffers();
           if (error) {
-            console.log(error);
+            // /console.log(error);
             setError(error);
             setLoading(false);
             return;
@@ -52,7 +52,7 @@ function ProductsCarousel({
           const { error, products: fetchedProducts } =
             await getRecentProducts();
           if (error) {
-            console.log(error);
+            // /console.log(error);
             setError(error);
             setLoading(false);
             return;
@@ -67,7 +67,7 @@ function ProductsCarousel({
             await getTopSellingProducts();
 
           if (error) {
-            console.log(error);
+            // /console.log(error);
             setError(error);
             setLoading(false);
             return;
@@ -103,7 +103,7 @@ function ProductsCarousel({
           setError("لا يوجد منتجات");
           break;
       }
-      console.log(JSON.stringify(products, null, 2));
+      // /console.log(JSON.stringify(products, null, 2));
     };
     fetchProducts();
   }, []);

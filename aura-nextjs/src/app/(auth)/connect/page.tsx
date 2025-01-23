@@ -16,7 +16,7 @@ function Connect() {
 
   useEffect(() => {
     // I think we need to convert it to async function
-    //console.log('data ===> ', data)
+    //// /console.log('data ===> ', data)
     if (!data) {
       router.replace("/login");
       return;

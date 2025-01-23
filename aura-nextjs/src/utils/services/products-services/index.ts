@@ -207,12 +207,12 @@ export const getProducts = async (
     });
   }
 
-  console.log("queryFilters", queryFilters);
+  // /console.log("queryFilters", queryFilters);
   // @ts-expect-error as filters are optional
   queryObject.filters = queryFilters;
 
   const query = qs.stringify(queryObject);
-  console.log("query", query);
+  // /console.log("query", query);
 
   return await fetchProducts(query);
 };
@@ -272,7 +272,7 @@ export const getSimilarProducts = async (
     },
   });
 
-  console.log("filters", query);
+  // /console.log("filters", query);
   return await fetchProducts(query);
 };
 
@@ -352,7 +352,7 @@ export const createProductReview = async (
       },
     },
   });
-  console.log("data", JSON.stringify(data, null, 2));
+  // /console.log("data", JSON.stringify(data, null, 2));
   return await apiClient.createProductReview(data, jwt, query);
 };
 

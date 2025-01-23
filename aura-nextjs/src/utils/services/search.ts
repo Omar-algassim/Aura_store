@@ -40,7 +40,7 @@ export const search = async (key: string) => {
     miniSearch.addAll(data.data);
     const allData: Product[] = [...data.data];
     const prefixMatch = miniSearch.search(key, { prefix: true });
-    console.log("prefix dATA IS", prefixMatch);
+    // /console.log("prefix dATA IS", prefixMatch);
     miniSearch.removeAll();
     return { data: [...allData] };
   } catch (error: any) {

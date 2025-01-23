@@ -75,7 +75,7 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
     }
     if (error) {
       setError(error);
-      console.log(error);
+      // /console.log(error);
     }
     setCanResend(false);
     setRemainingTime(20);
