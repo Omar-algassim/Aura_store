@@ -10,7 +10,7 @@ function Home() {
   const router = useRouter();
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white w-full">
       <Header />
       <main className="flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white w-full max-w-[1480px]">
         {/* main hero /only displayed in big screens/ */}
@@ -149,7 +149,7 @@ function Home() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
 

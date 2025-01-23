@@ -11,8 +11,8 @@ body {
 @layer base {
   ::-webkit-scrollbar {
       width: 0px;
-      height: 10px;
-      /* display: none; */
+      height: 0px;
+      display: none;
       background-color: var(--foreground);
       color: var(--primary);
       border-radius: 16px;

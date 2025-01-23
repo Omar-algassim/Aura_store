@@ -1,15 +1,18 @@
-import qs from 'qs';
-import { apiClient } from '../api/api-client';
-import miniserach from 'minisearch';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import qs from "qs";
+import { apiClient } from "../api/api-client";
+import miniserach from "minisearch";
+import { Product } from "@/interfaces/dto";
 
-let miniSearch = new miniserach({
-  fields: ['title', 'name'],
-  storeFields: ['title', 'name', 'price', 'documentId'],
+const miniSearch = new miniserach({
+  fields: ["title", "name"],
+  storeFields: ["title", "name", "price", "documentId"],
 });
 
 export const search = async (key: string) => {
   // const keyList = key.trim().split(' ');
-  const query = qs.stringify({
+  const query = qs.stringify(
+    {
       filters: {
         $or: [
           {
@@ -24,14 +27,24 @@ export const search = async (key: string) => {
           },
         ],
       },
-    }, {
+    },
+    {
       encodeValuesOnly: true, // prettify URL
-    });
-    const data = await apiClient.search(query);
+    }
+  );
+  try {
+    const { error, data } = await apiClient.search(query);
+    if (error) {
+      throw new Error("Error fetching data");
+    }
     miniSearch.addAll(data.data);
-    const allData = [...data.data];
-    const prefixMatch = miniSearch.search(key, {prefix: true});
-    console.log('prefix dATA IS', prefixMatch);
+    const allData: Product[] = [...data.data];
+    const prefixMatch = miniSearch.search(key, { prefix: true });
+    console.log("prefix dATA IS", prefixMatch);
     miniSearch.removeAll();
-    return [...allData];
+    return { data: [...allData] };
+  } catch (error: any) {
+    // new Error("Error fetching data", error.message);
+    return { error: error.message };
+  }
 };

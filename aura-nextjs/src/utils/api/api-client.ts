@@ -4,7 +4,6 @@
 // export a class instance of the api client, which contains all the api calls
 import { SignupDTO } from "@/interfaces/dto";
 import axios from "axios";
-import { error } from "console";
 class APIClient {
   private baseUrl =
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
@@ -304,13 +303,16 @@ class APIClient {
   async search(query: string) {
     try {
       const response = await this.api.get(`/products?${query}`);
-      if (response.status === 200 || response.status === 201 ) {
-        return response.data;
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
       } else {
-        return {error: "حدث خطأ ما, الرجاء المحاوله مره اخرى", code: response.status};
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
       }
-    } catch (error) {
-      console.error('Error fetching data', error);
+    } catch (error: any) {
+      return { error: error.message };
     }
   }
 }

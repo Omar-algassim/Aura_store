@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Input } from "../ui/shadcn/input";
 import { Eye, EyeClosed } from "lucide-react";
+import Image from "next/image";
 
 interface InputProps {
   name: string;
-  type?: "text" | "password" | "number" | "email" | "tel";
+  type?: "text" | "password" | "number" | "email" | "tel" | "search";
   hidden?: boolean;
   defaultValue?: string;
   placeholder?: string;
@@ -21,9 +22,9 @@ function InputComponent(props: InputProps) {
   const [inputType, setInputType] = useState(type);
   return (
     <div
-      className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right font-[400] font-alex ${customStyles} ${
-        props.hidden && "hidden"
-      } `}
+      className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none  text-foreground text-[16px] text-right font-[400] font-alex ${
+        customStyles || "bg-surface"
+      } ${props.hidden && "hidden"} `}
     >
       <Input
         readOnly={props.readonly}
@@ -35,8 +36,26 @@ function InputComponent(props: InputProps) {
         type={inputType || "text"}
         name={name}
         onChange={props.onChange}
-        className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right font-[400] font-alex ${customStyles} `}
+        className={`peer w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right font-[400] font-alex ${customStyles} `}
       />
+      {type === "search" && (
+        <Image
+          className="cursor-pointer  peer-focus:animate-scaleOut peer-placeholder-shown:animate-scaleIn order-first ml-[8px]"
+          src="/icons/search.svg"
+          alt="search"
+          width={20}
+          height={20}
+          onAnimationEnd={(e) => {
+            if (
+              e.currentTarget.classList.contains("peer-focus-within:hidden")
+            ) {
+              e.currentTarget.classList.remove("peer-focus-within:hidden");
+            } else {
+              e.currentTarget.classList.add("peer-focus-within:hidden");
+            }
+          }}
+        />
+      )}
       {type === "password" &&
         (showPassword ? (
           <Eye

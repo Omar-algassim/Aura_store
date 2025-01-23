@@ -62,9 +62,9 @@ export function Navbar() {
   }
 
   return (
-    <div className="flex z-10 flex-col items-start">
+    <div className="flex z-50 flex-col items-start">
       <div>
-        <div className="relative z-10 tablet:max-w-[56px] tablet:max-h-[56px] max-w-[32px] max-h-[32px]">
+        <div className="relative z-10 tablet:max-w-[56px] tablet:max-h-[56px] max-w-[32px] max-h-[32px] cursor-pointer hover:rotate-12 focus:outline-none transition-all duration-200 ease-in-out">
           <Image
             width={32}
             height={32}
@@ -102,15 +102,14 @@ export function Navbar() {
               ) : (
                 <>
                   <ButtonPrimary
-                    children="إنشاء حساب"
                     handleClick={() => router.push("/register")}
                     className={`text-xs p-2 tablet:hidden`}
-                  />
-                  <ButtonSecondary
-                    children={"تسجيل دخول"}
-                    handleClick={logout}
-                    className="text-xs p-2"
-                  />
+                  >
+                    إنشاء حساب
+                  </ButtonPrimary>
+                  <ButtonSecondary handleClick={logout} className="text-xs p-2">
+                    تسجيل دخول
+                  </ButtonSecondary>
                 </>
               )}
             </div>
