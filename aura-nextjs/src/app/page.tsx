@@ -10,11 +10,11 @@ function Home() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white w-full">
+    <div className="flex flex-col items-center justify-center min-h-screen gap-4 laptop:gap-24 bg-white w-full">
       <Header />
       <main className="flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white w-full max-w-[1480px]">
         {/* main hero /only displayed in big screens/ */}
-        <section className="hidden mt-24 tablet:flex tablet:w-full items-center justify-center">
+        <section className="hidden tablet:flex tablet:w-full items-center justify-center">
           <Image
             src={"/images/cover-image-4.png"}
             width={1140}
@@ -26,7 +26,7 @@ function Home() {
         </section>
 
         {/* product list (Offers) */}
-        <section className="flex flex-col gap-4 items-center justify-center w-full  mt-12 px-[17px] tablet:mt-0">
+        <section className="flex flex-col gap-4 items-center justify-center w-full px-[17px] tablet:mt-0">
           <div className="w-full flex flex-col gap-2 tablet:gap-4 items-center">
             <h2 className="w-full text-xl tablet:text-2xl laptop:text-3xl font-alex font-bold text-right">
               العروض

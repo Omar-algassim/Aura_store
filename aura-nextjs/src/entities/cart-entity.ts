@@ -44,7 +44,7 @@ export class CartEntity {
     }
     console.log("Total pay Before", this.total_pay);
     // handle discount here
-    this.total_pay = this.total_pay + product.price * amount;
+    this.total_pay += this.getProductTotalPrice(product, amount);
     // console.log("Total pay", this.total_pay);
     // console.log("Total pay After", this.total_pay);
     // console.log("Total items Before", this.total_items);
@@ -62,11 +62,13 @@ export class CartEntity {
     if (this.productInCart(product.documentId)) {
       if (this.products[product.documentId].amount > amount) {
         this.products[product.documentId].amount -= amount;
-        this.total_pay -= product.price * amount;
+        this.total_pay -= this.getProductTotalPrice(product, amount);
         this.total_items -= amount;
       } else {
-        this.total_pay -=
-          product.price * this.products[product.documentId].amount;
+        this.total_pay -= this.getProductTotalPrice(
+          product,
+          this.products[product.documentId].amount
+        );
         this.total_items -= this.products[product.documentId].amount;
         delete this.products[product.documentId];
       }
@@ -168,6 +170,16 @@ export class CartEntity {
   // private section
   private productInCart(productId: string) {
     return productId in this.products;
+  }
+
+  private getProductTotalPrice(product: Product, amount: number) {
+    if (product.discount) {
+      const discountPrice = Math.round(
+        product.price - (product.price * product.discount) / 100
+      );
+      return amount * discountPrice;
+    }
+    return product.price * amount;
   }
 
   // the clear method need to be called from the same component that calls checkout

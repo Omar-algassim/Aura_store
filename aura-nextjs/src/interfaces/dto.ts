@@ -90,3 +90,14 @@ export type OrderStatus =
   | "delivered";
 
 export type Regions = "Sudan" | "Egypt" | "KSA";
+
+// Auth DTOs
+export interface signUpFormData {
+  email: string;
+  countryCode: string;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  confirmPassword: string;
+}

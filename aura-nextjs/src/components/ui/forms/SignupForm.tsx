@@ -48,6 +48,16 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
     initialState
   );
 
+  const [formData, setFormData] = React.useState({
+    email: "",
+    countryCode: "",
+    phone: "",
+    firstName: "",
+    lastName: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const emailError = getFieldError(formState.error, "email");
   const phoneError = getFieldError(formState.error, "phone");
   const firstNameError = getFieldError(formState.error, "firstName");
@@ -96,7 +106,15 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
       )}
       {type === "email" ? (
         <div className="w-full">
-          <Input type="email" name="email" placeholder="name@example.com" />
+          <Input
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            type="email"
+            name="email"
+            placeholder="name@example.com"
+          />
           {emailError.map((error, index) => (
             <span
               key={index}
@@ -112,16 +130,21 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
           <div className="w-full flex items-center justify-center gap-2">
             <Input
               type="text"
+              // value
               name="countryCode"
               value={countryKey}
               hidden={true}
               readonly={true}
             />
             <Input
-              customStyles="flex-1"
               type="tel"
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
               name="phone"
               placeholder="9xxxxxxxxxx"
+              customStyles="flex-1"
             />
             <CountriesDropdown setCountryKey={setCountryKey} />
           </div>
@@ -138,7 +161,14 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
         </div>
       )}
       <div className="w-full tablet:max-w-[290px]">
-        <Input name="firstName" placeholder="الاسم الاول*" />
+        <Input
+          name="firstName"
+          value={formData.firstName}
+          onChange={(e) =>
+            setFormData({ ...formData, firstName: e.target.value })
+          }
+          placeholder="الاسم الاول*"
+        />
         {firstNameError.length > 0 ? (
           firstNameError.map((error, index) => (
             <span
@@ -153,7 +183,14 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
         )}
       </div>
       <div className="w-full tablet:max-w-[290px]">
-        <Input name="lastName" placeholder="الاسم الاخير*" />
+        <Input
+          name="lastName"
+          value={formData.lastName}
+          onChange={(e) =>
+            setFormData({ ...formData, lastName: e.target.value })
+          }
+          placeholder="الاسم الاخير*"
+        />
         {lastNameError.length > 0 ? (
           lastNameError.map((error, index) => (
             <span
@@ -168,7 +205,15 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
         )}
       </div>
       <div className="w-full tablet:max-w-[290px] flex flex-col items-start justify-start">
-        <Input name="password" placeholder="كلمة المرور*" type="password" />
+        <Input
+          name="password"
+          value={formData.password}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
+          placeholder="كلمة المرور*"
+          type="password"
+        />
         {passwordError.length > 0 ? (
           passwordError.map((error, index) => (
             <span
@@ -185,6 +230,10 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
       <div className="w-full tablet:max-w-[290px] flex flex-col items-start justify-start">
         <Input
           name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={(e) =>
+            setFormData({ ...formData, confirmPassword: e.target.value })
+          }
           placeholder="تأكيد كلمة المرور*"
           type="password"
         />

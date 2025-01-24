@@ -31,6 +31,7 @@ class APIClient {
   }
 
   async signup(data: SignupDTO): Promise<{ data?: any; error?: string }> {
+    console.log("API => signup", JSON.stringify(data, null, 2));
     try {
       const result = await this.api.post("/auth/local/register", data);
       // // /console.log(JSON.stringify(result.data));
@@ -48,6 +49,7 @@ class APIClient {
   }
 
   async signin(identifier: string, password: string) {
+    console.log("Login with", identifier, " ", password);
     try {
       const result = await this.api.post("/auth/local", {
         identifier,

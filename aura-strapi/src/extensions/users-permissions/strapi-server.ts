@@ -5,15 +5,15 @@ import { errors } from "@strapi/utils";
 import sendWhatsappMessage from "./service";
 import crypto from "crypto";
 import _ from "lodash";
-import {   
+import {
   validateCallbackBody,
   validateSendEmailConfirmationBody,
   validateForgotPasswordBody,
   validateEmailConfirmationBody,
-  validateRegistrationData } from "./validation";
+  validateRegistrationData,
+} from "./validation";
 
 const { ApplicationError, ForbiddenError, ValidationError } = errors;
-
 
 const getService = (name: string) => {
   return strapi.plugin("users-permissions").service(name);
@@ -73,7 +73,7 @@ export default async (plugin: any) => {
 
     if (userExists) {
       throw new ApplicationError(
-        "Username, email, or phone number already taken"
+        "Username, email, or phone number already taken",
       );
     }
 
@@ -123,7 +123,7 @@ export default async (plugin: any) => {
   const emailConfirmation = async (
     ctx: Context,
     next: Request,
-    returnUser: boolean
+    returnUser: boolean,
   ) => {
     const { confirmation: confirmationToken } =
       await validateEmailConfirmationBody(ctx.query);
@@ -176,7 +176,7 @@ export default async (plugin: any) => {
         .findOne({ where: { email: email.toLowerCase() } });
     } else {
       const { phone_number } = await validateForgotPasswordBody(
-        ctx.request.body
+        ctx.request.body,
       );
       var user = await strapi.db
         .query("plugin::users-permissions.user")
@@ -194,7 +194,7 @@ export default async (plugin: any) => {
     const resetPasswordSettings: any = _.get(
       emailSettings,
       "reset_password.options",
-      {}
+      {},
     );
     const emailBody = await getService("users-permissions").template(
       resetPasswordSettings.message,
@@ -204,14 +204,14 @@ export default async (plugin: any) => {
         ADMIN_URL: strapi.config.get("admin.absoluteUrl"),
         USER: userInfo,
         TOKEN: resetPasswordToken,
-      }
+      },
     );
 
     const emailObject = await getService("users-permissions").template(
       resetPasswordSettings.object,
       {
         USER: userInfo,
-      }
+      },
     );
 
     const emailToSend = {
@@ -246,7 +246,7 @@ export default async (plugin: any) => {
 
   const sendEmailConfirmation = async (ctx: Context) => {
     const { email, phone_number } = await validateSendEmailConfirmationBody(
-      ctx.request.body
+      ctx.request.body,
     );
     if (!email) {
       var user = await strapi.db
@@ -337,7 +337,7 @@ export default async (plugin: any) => {
 
       const validPassword = await getService("user").validatePassword(
         params.password,
-        user.password
+        user.password,
       );
 
       if (!validPassword) {
@@ -347,7 +347,7 @@ export default async (plugin: any) => {
       const advancedSettings = await store.get({ key: "advanced" });
       const requiresConfirmation = _.get(
         advancedSettings,
-        "email_confirmation"
+        "email_confirmation",
       );
 
       if (requiresConfirmation && user.confirmed !== true) {
@@ -356,7 +356,7 @@ export default async (plugin: any) => {
 
       if (user.blocked === true) {
         throw new ApplicationError(
-          "Your account has been blocked by an administrator"
+          "Your account has been blocked by an administrator",
         );
       }
 
@@ -372,7 +372,7 @@ export default async (plugin: any) => {
 
       if (user.blocked) {
         throw new ForbiddenError(
-          "Your account has been blocked by an administrator"
+          "Your account has been blocked by an administrator",
         );
       }
 

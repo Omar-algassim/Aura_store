@@ -62,7 +62,7 @@ export function Navbar() {
   }
 
   return (
-    <div className="flex z-50 flex-col items-start">
+    <div className="flex z-40 flex-col items-start">
       <div>
         <div className="relative z-10 tablet:max-w-[56px] tablet:max-h-[56px] max-w-[32px] max-h-[32px] cursor-pointer hover:rotate-12 focus:outline-none transition-all duration-200 ease-in-out">
           <Image
@@ -92,6 +92,7 @@ export function Navbar() {
             >
               {user.documentId ? (
                 <AlertDialogElement
+                  onClick={toggleMenu}
                   trigger={"تسجيل خروج"}
                   action={logout}
                   header={alertProps.header}

@@ -25,11 +25,12 @@ export const signupAction = async (
       confirmPassword: formData.get("confirmPassword")?.toString(),
     };
 
-    // // /console.log(JSON.stringify(rowData));
+    console.log("Attempt to sign up", JSON.stringify(rowData));
     // validate the data using zod
     const validation = signUpSchema.safeParse(rowData);
     // // /console.log(JSON.stringify(validation));
     if (!validation.success) {
+      console.log("Validation error", validation.error.issues);
       return {
         type: "validation",
         message: "الرجاء التأكد من البيانات المدخله",
@@ -49,10 +50,11 @@ export const signupAction = async (
     let userData: any;
     // check if the provider is email or phone
     // and call the appropriate API endpoint
+    console.log("rowData", JSON.stringify(rowData, null, 2));
     if (rowData.email) {
       // if it's an email, call the email signup API
       data.email = rowData.email;
-      // // /console.log("email signup", JSON.stringify(data, null, 2));
+      console.log("email signup", JSON.stringify(data, null, 2));
       const response = await apiClient.signup(data);
       userData = response.data;
       error = response.error;
