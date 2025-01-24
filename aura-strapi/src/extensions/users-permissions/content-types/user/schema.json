@@ -15,7 +15,7 @@
     "username": {
       "type": "string",
       "minLength": 3,
-      "unique": true,
+      "unique": false,
       "configurable": false,
       "required": true
     },
@@ -74,8 +74,14 @@
     "phone_number": {
       "type": "string",
       "required": false,
-      "maxLength": 12,
+      "maxLength": 14,
       "minLength": 10
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "user"
     }
   }
 }

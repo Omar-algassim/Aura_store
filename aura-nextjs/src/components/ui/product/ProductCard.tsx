@@ -1,0 +1,187 @@
+import { ButtonPrimary } from "@/components/common/Buttons";
+import { ToolTip } from "@/components/common/ToolTip";
+import { BaseUrl } from "@/constants/api-constants";
+import { starIcon, starIconEmpty } from "@/constants/app-constants";
+import { Product } from "@/interfaces/dto";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { Skeleton } from "../shadcn/skeleton";
+import { getTotalRate } from "@/utils/services/products-services";
+import { useCart, useCartDispatcher } from "@/components/context";
+import { CartEntity } from "@/entities/cart-entity";
+import { CheckCircle } from "lucide-react";
+
+function ProductCard({ product }: { product: Product }) {
+  const cart = useCart() as CartEntity;
+  const cartDispatcher = useCartDispatcher();
+  const [addedToCart, setAddedToCart] = useState(false);
+  const totalRate = getTotalRate(product.reviews || []);
+
+  useEffect(() => {
+    setAddedToCart(product.documentId in cart.products);
+  }, [cart.products, product.documentId]);
+
+  const handleAddToCart = async (product: Product, amount?: number) => {
+    await cart.addProduct(product, amount);
+    cartDispatcher({ type: "UPDATE", payload: { cart: cart } });
+    // /console.log(JSON.stringify(cart.products, null, 2));
+    // /console.log("Cart total pay", JSON.stringify(cart.total_pay, null, 2));
+    // /console.log("Cart total items", cart.total_items);
+    const iconTip = document.getElementById("cart-icon-tip");
+    if (iconTip) {
+      iconTip.innerHTML = cart.total_items.toString();
+      iconTip.classList.remove("bg-transparent");
+      iconTip.classList.add("bg-primary");
+    }
+    setAddedToCart(true);
+  };
+
+  const handleRemoveFromCart = async (product: Product) => {
+    await cart.removeProduct(product);
+    cartDispatcher({ type: "UPDATE", payload: { cart: cart } });
+
+    const iconTip = document.getElementById("cart-icon-tip");
+    if (iconTip) {
+      iconTip.innerHTML = cart.total_items.toString();
+      if (cart.total_items === 0) {
+        iconTip.classList.add("bg-transparent");
+        iconTip.classList.remove("bg-primary");
+      }
+    }
+    setAddedToCart(false);
+  };
+
+  return (
+    <div className="relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full bg-white p-0 m-0 rounded-xl tablet:hover:drop-shadow-xl transition-all duration-150">
+      {/* Sale tag */}
+      {product.discount && (
+        <div className="absolute top-0 right-0 bg-primary text-white text-[13px] font-[500] p-1 rounded-bl-xl rounded-tr-xl">
+          {product.discount}% خصم
+        </div>
+      )}
+      {/* card image */}
+      <div className="w-full h-[200px] flex items-center justify-center rounded-lg bg-surface overflow-hidden">
+        <Image
+          src={`${BaseUrl}${product.thumbnail}`}
+          width={300}
+          height={250}
+          alt={product.title}
+          // content="center"
+          // objectFit="contain"
+          className="w-[173px] tablet:w-[200px] h-auto object-cover object-center"
+        />
+      </div>
+      {/* card body */}
+      <div className="w-full flex flex-col gap-y-2 tablet:gap-y-3 px-2 tablet:px-3">
+        {/* product rating */}
+        <div className="w-full tablet:px-2 tablet:py-3 flex justify-end">
+          <div
+            className={`flex items-center justify-center gap-1 w-[64px] h-[24px] tablet:w-[68px] tablet:h-[30px] bg-surface rounded-xl`}
+            dir="rtl"
+          >
+            <Image
+              src={totalRate ? starIcon : starIconEmpty}
+              width={16}
+              height={16}
+              alt="rating"
+              className="w-[10px] h-[10px] tablet:w-[16px] tablet:h-[16px]"
+            />
+            <div
+              className={`"flex flex-col item-center justify-center font-[400] p-0 m-0 ${
+                totalRate === 0 ? "text-gray-5000 text-[10px]" : "text-[13px] "
+              }`}
+            >
+              {totalRate || "لا يوجد"}
+            </div>
+          </div>
+        </div>
+        {/* product title */}
+        <div className="w-full tablet:px-1 tablet:py-2 flex justify-end">
+          <ToolTip content={<p>{product.title}</p>}>
+            <Link
+              href={`/products/${product.documentId}`}
+              className={`text-[13px] tablet:text-[22px] font-[500] tablet:max-h-[27px] overflow-hidden cursor-pointer rounded-lg hover:underline hover:opacity-80 transition-all duration-150`}
+            >
+              {product.title.length <= 25
+                ? product.title
+                : `${product.title.slice(0, 25)}...`}
+            </Link>
+          </ToolTip>
+        </div>
+        {/* product price */}
+        <div className="w-full tablet:px-1 tablet:py-2 flex flex-col items-end">
+          <p
+            className={`text-[13px] tablet:text-[18px] font-[700] ${
+              product.discount && "line-through opacity-80"
+            }`}
+          >
+            {product.price} SDG
+          </p>
+          {product.discount && (
+            <p className="text-[13px] tablet:text-[18px] font-[700] text-primary">
+              {Math.round(
+                product.price - (product.price * product.discount) / 100
+              )}{" "}
+              SDG
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* add to cart */}
+      <div className="flex flex-1 justify-end items-end gap-4 px-2 tablet:px-3 pb-3">
+        {addedToCart ? (
+          <>
+            <div className="w-full bg-white rounded-lg p-2 flex items-center justify-center gap-2 absolute top-1/3 left-0 tablet:relative tablet:top-auto tablet:left-auto animate-enterFromRightAndExitToLeft">
+              <CheckCircle size={24} color="#02C3F9" />
+              <span className="text-center text-[12px] tablet:text-[16px] text-primary font-[500] tablet:font-[600]">
+                تم الإضافة للسلة
+              </span>
+            </div>
+            <ButtonPrimary
+              variant="outline"
+              className="w-[140px] h-[56px] text-[13px] tablet:text-[18px] tablet:w-[156px] font-[600] border-[3px] text-primary-dark"
+              preloader
+              handleClick={() => handleRemoveFromCart(product)}
+            >
+              إزالة من السلة
+            </ButtonPrimary>
+          </>
+        ) : (
+          <ButtonPrimary
+            className="w-[140px] h-[56px] text-[13px] tablet:text-[18px] tablet:w-[156px] font-[600]"
+            preloader
+            handleClick={() => handleAddToCart(product)}
+          >
+            أضف للسلة
+          </ButtonPrimary>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export const ProductCardSkeleton = () => {
+  return (
+    <div
+      className="flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full bg-white p-0 m-0 rounded-xl "
+      dir="rtl"
+    >
+      <Skeleton className="w-full h-[200px] flex items-center justify-center rounded-lg bg-surface" />
+      <div className="w-full flex flex-col gap-y-2 tablet:gap-y-3 px-2 tablet:px-3">
+        <Skeleton className="h-5 w-[50px] bg-surface" />
+        <Skeleton className="h-6 w-[100px] tablet:w-[200px] bg-surface" />
+        <Skeleton className="h-5 w-[60px] tablet:w-[120px] bg-surface" />
+      </div>
+      <div
+        className="flex flex-1 flex-col justify-end items-end px-2 tablet:px-3 pb-3"
+        dir="ltr"
+      >
+        <Skeleton className="h-12 w-[140px] tablet:w-[156px] font-[600] bg-surface" />
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;
