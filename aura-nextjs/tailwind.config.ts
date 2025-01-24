@@ -90,7 +90,7 @@ export default {
         },
         exitToLeft: {
           from: { opacity: "1", transform: "translateX(0)" },
-          to: { opacity: "0", transform: "translateX(-200px)" },
+          to: { opacity: "0", transform: "translateX(-200px) hidden" },
         },
         scaleIn: {
           from: { opacity: "0", transform: "rotateX(-10deg) scale(0.9)" },
@@ -121,6 +121,8 @@ export default {
       enterFromRight: "enterFromRight 250ms ease",
       exitToLeft: "exitToLeft 250ms ease",
       exitToRight: "exitToRight 250ms ease",
+      enterFromRightAndExitToLeft:
+        "enterFromRight 500ms ease, exitToLeft 500ms ease 2s forwards",
     },
     screens: {
       tablet: "640px",

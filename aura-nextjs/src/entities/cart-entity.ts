@@ -59,7 +59,7 @@ export class CartEntity {
    * @description if the product is in the cart, it will decrease the amount of the product by the given amount, if the amount is less than the product's amount, otherwise it will remove the product from the cart, and adjust the total pay accordingly
    */
   async removeProduct(product: Product, amount: number = 1) {
-    if (Object.hasOwn(this.products, product.documentId)) {
+    if (this.productInCart(product.documentId)) {
       if (this.products[product.documentId].amount > amount) {
         this.products[product.documentId].amount -= amount;
         this.total_pay -= product.price * amount;

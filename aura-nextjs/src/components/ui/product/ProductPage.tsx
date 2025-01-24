@@ -5,9 +5,9 @@ import { ToolTip } from "@/components/common/ToolTip";
 import { BaseUrl } from "@/constants/api-constants";
 import { starIcon } from "@/constants/app-constants";
 import { Product } from "@/interfaces/dto";
-import { Minus, Plus } from "lucide-react";
+import { CheckCircle, Minus, Plus } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RenderMarkdown from "../RenderMarkdown";
 import { useCart, useCartDispatcher, useUser } from "@/components/context";
 import ProductRate, { SetProductRates } from "./ProductRate";
@@ -29,6 +29,7 @@ function ProductPageComponent(params: { product: Product }) {
   const cartDispatcher = useCartDispatcher();
   const [error, setError] = useState("");
   const [product] = useState(params.product);
+  const [addedToCart, setAddedToCart] = useState(false);
   const [hero, setHero] = useState(product.thumbnail);
   const [images] = useState([hero, ...product.images.map((img) => img.url)]);
   // const [loadingImage, setLoadingImage] = useState(true);
@@ -38,6 +39,15 @@ function ProductPageComponent(params: { product: Product }) {
   const [rate, setRate] = useState(0);
 
   const totalRate = getTotalRate(productReviews);
+
+  useEffect(() => {
+    if (addedToCart) {
+      const timer = setTimeout(() => {
+        setAddedToCart(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [addedToCart]);
 
   const swapHero = (newHero: string) => {
     if (newHero === hero) return;
@@ -62,8 +72,10 @@ function ProductPageComponent(params: { product: Product }) {
   };
 
   const addToCart = async () => {
-    // /console.log(`adding ${product.title} to cart`);
+    console.log(`adding ${quantity} items from ${product.title} to cart`);
     await cart.addProduct(product, quantity);
+    console.log(`added ${quantity} items from ${product.title} to cart`);
+    console.log("Cart total items ", cart.total_items);
     cartDispatcher({ type: "UPDATE", payload: { cart: cart } });
     const iconTip = document.getElementById("cart-icon-tip");
     if (iconTip) {
@@ -71,6 +83,7 @@ function ProductPageComponent(params: { product: Product }) {
       iconTip.classList.remove("bg-transparent");
       iconTip.classList.add("bg-primary");
     }
+    setAddedToCart(true);
   };
 
   const sendReview = async () => {
@@ -237,7 +250,7 @@ function ProductPageComponent(params: { product: Product }) {
             </div>
 
             {/* add to cart */}
-            <div className="w-full flex flex-col items-center justify-center tablet:items-start">
+            <div className="relative w-full flex flex-col tablet:flex-row justify-start items-center">
               <ButtonPrimary
                 className=" h-[56px] text-[13px] tablet:text-[18px] tablet:w-[168px] font-[600]"
                 preloader
@@ -245,6 +258,18 @@ function ProductPageComponent(params: { product: Product }) {
               >
                 أضف للسلة
               </ButtonPrimary>
+              {addedToCart ? (
+                <div className="w-[200px] bg-transparent rounded-lg p-2 flex items-center justify-center gap-2 animate-enterFromRightAndExitToLeft">
+                  <CheckCircle size={24} color="#02C3F9" />
+                  <span className="text-center text-[12px] tablet:text-[16px] text-primary font-[500]">
+                    تم الإضافة للسلة
+                  </span>
+                </div>
+              ) : (
+                <div className="w-[200px] min-h-[42px] bg-transparent rounded-lg p-2 flex items-center justify-center gap-2">
+                  <span className=""></span>
+                </div>
+              )}
             </div>
           </div>
         </section>

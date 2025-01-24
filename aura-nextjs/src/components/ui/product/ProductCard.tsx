@@ -5,16 +5,22 @@ import { starIcon, starIconEmpty } from "@/constants/app-constants";
 import { Product } from "@/interfaces/dto";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Skeleton } from "../shadcn/skeleton";
 import { getTotalRate } from "@/utils/services/products-services";
 import { useCart, useCartDispatcher } from "@/components/context";
 import { CartEntity } from "@/entities/cart-entity";
+import { CheckCircle } from "lucide-react";
 
 function ProductCard({ product }: { product: Product }) {
   const cart = useCart() as CartEntity;
   const cartDispatcher = useCartDispatcher();
+  const [addedToCart, setAddedToCart] = useState(false);
   const totalRate = getTotalRate(product.reviews || []);
+
+  useEffect(() => {
+    setAddedToCart(product.documentId in cart.products);
+  }, [cart.products, product.documentId]);
 
   const handleAddToCart = async (product: Product, amount?: number) => {
     await cart.addProduct(product, amount);
@@ -28,6 +34,22 @@ function ProductCard({ product }: { product: Product }) {
       iconTip.classList.remove("bg-transparent");
       iconTip.classList.add("bg-primary");
     }
+    setAddedToCart(true);
+  };
+
+  const handleRemoveFromCart = async (product: Product) => {
+    await cart.removeProduct(product);
+    cartDispatcher({ type: "UPDATE", payload: { cart: cart } });
+
+    const iconTip = document.getElementById("cart-icon-tip");
+    if (iconTip) {
+      iconTip.innerHTML = cart.total_items.toString();
+      if (cart.total_items === 0) {
+        iconTip.classList.add("bg-transparent");
+        iconTip.classList.remove("bg-primary");
+      }
+    }
+    setAddedToCart(false);
   };
 
   return (
@@ -79,7 +101,7 @@ function ProductCard({ product }: { product: Product }) {
           <ToolTip content={<p>{product.title}</p>}>
             <Link
               href={`/products/${product.documentId}`}
-              className={`text-[13px] tablet:text-[22px] font-[500] tablet:max-h-[27px] overflow-hidden cursor-pointer hover:underline hover:opacity-80 transition-all duration-150`}
+              className={`text-[13px] tablet:text-[22px] font-[500] tablet:max-h-[27px] overflow-hidden cursor-pointer rounded-lg hover:underline hover:opacity-80 transition-all duration-150`}
             >
               {product.title.length <= 25
                 ? product.title
@@ -108,14 +130,33 @@ function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* add to cart */}
-      <div className="flex flex-1 justify-end items-end px-2 tablet:px-3 pb-3">
-        <ButtonPrimary
-          className="w-[140px] h-[56px] text-[13px] tablet:text-[18px] tablet:w-[156px] font-[600]"
-          preloader
-          handleClick={() => handleAddToCart(product)}
-        >
-          أضف للسلة
-        </ButtonPrimary>
+      <div className="flex flex-1 justify-end items-end gap-4 px-2 tablet:px-3 pb-3">
+        {addedToCart ? (
+          <>
+            <div className="w-full bg-white rounded-lg p-2 flex items-center justify-center gap-2 absolute top-1/3 left-0 tablet:relative tablet:top-auto tablet:left-auto animate-enterFromRightAndExitToLeft">
+              <CheckCircle size={24} color="#02C3F9" />
+              <span className="text-center text-[12px] tablet:text-[16px] text-primary font-[500] tablet:font-[600]">
+                تم الإضافة للسلة
+              </span>
+            </div>
+            <ButtonPrimary
+              variant="outline"
+              className="w-[140px] h-[56px] text-[13px] tablet:text-[18px] tablet:w-[156px] font-[600] border-[3px] text-primary-dark"
+              preloader
+              handleClick={() => handleRemoveFromCart(product)}
+            >
+              إزالة من السلة
+            </ButtonPrimary>
+          </>
+        ) : (
+          <ButtonPrimary
+            className="w-[140px] h-[56px] text-[13px] tablet:text-[18px] tablet:w-[156px] font-[600]"
+            preloader
+            handleClick={() => handleAddToCart(product)}
+          >
+            أضف للسلة
+          </ButtonPrimary>
+        )}
       </div>
     </div>
   );
