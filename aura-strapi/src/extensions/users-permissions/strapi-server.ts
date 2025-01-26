@@ -41,7 +41,13 @@ export default async (plugin: any) => {
       throw new ApplicationError("Register action is currently disabled");
     }
 
-    const alwaysAllowedKeys = ["username", "password", "email", "phone_number"];
+    const alwaysAllowedKeys = [
+      "username",
+      "password",
+      "email",
+      "phone_number",
+      "country_code",
+    ];
     // Validate request body
     try {
       validateRegistrationData(body);
@@ -83,6 +89,7 @@ export default async (plugin: any) => {
       email: body.email ? body.email.toLowerCase() : undefined,
       username,
       phone_number: body.phone_number,
+      country_code: body.country_code,
       confirmed: !settings.email_confirmation,
     };
 

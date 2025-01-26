@@ -5,6 +5,7 @@ import { ButtonPrimary, ButtonSecondary } from "./Buttons";
 interface alertDialogElementProps {
   onClick?: VoidFunction;
   trigger: string;
+  triggerStyle?: string;
   header?: string;
   body?: string;
   action?: VoidFunction | undefined;
@@ -41,7 +42,9 @@ function AlertDialogElement(props: alertDialogElementProps) {
   return (
     <AlertDialog.Root open={open}>
       <AlertDialog.Trigger asChild>
-        <ButtonPrimary handleClick={Open}>{props.trigger}</ButtonPrimary>
+        <ButtonPrimary className={props.triggerStyle} handleClick={Open}>
+          {props.trigger}
+        </ButtonPrimary>
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay

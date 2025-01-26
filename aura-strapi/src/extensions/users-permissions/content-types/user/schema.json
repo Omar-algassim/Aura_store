@@ -82,6 +82,9 @@
       "relation": "oneToMany",
       "target": "api::review.review",
       "mappedBy": "user"
+    },
+    "country_code": {
+      "type": "string"
     }
   }
 }

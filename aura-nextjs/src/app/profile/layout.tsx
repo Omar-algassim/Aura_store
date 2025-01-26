@@ -1,33 +1,27 @@
 "use client";
-import { useRouter } from "next/navigation";
 import React from "react";
-import {
-  useCart,
-  useCartDispatcher,
-  useUser,
-  useUserDispatch,
-} from "@/components/context";
-import { ButtonPrimary } from "@/components/common/Buttons";
-import { CartEntity } from "@/entities/cart-entity";
+import { Footer, Header } from "@/components/ui";
 
 function ProfileLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const user = useUser();
-  const userDispatcher = useUserDispatch();
-  const cart = useCart() as CartEntity;
-  const cartDispatcher = useCartDispatcher();
+  // const router = useRouter();
+  // const user = useUser();
+  // const userDispatcher = useUserDispatch();
+  // const cart = useCart() as CartEntity;
+  // const cartDispatcher = useCartDispatcher();
 
-  const logout = () => {
-    userDispatcher({ type: "LOGOUT", payload: {} });
-    cartDispatcher({ type: "DELETE", payload: { cart } });
-    router.push("/");
-  };
+  // const logout = () => {
+  //   userDispatcher({ type: "LOGOUT", payload: {} });
+  //   cartDispatcher({ type: "DELETE", payload: { cart } });
+  //   router.push("/");
+  // };
   return (
-    <div>
-      <h2>{`Welcome ${user?.username}`}</h2>
-      <ButtonPrimary handleClick={logout}>Logout</ButtonPrimary>
-      {children}
-    </div>
+    <>
+      <Header />
+      <div className="w-full max-w-[1480px] min-h-svh flex flex-col items-center px-[17px] laptop:px-0 bg-white gap-[60px]">
+        {children}
+      </div>
+      <Footer />
+    </>
   );
 }
 

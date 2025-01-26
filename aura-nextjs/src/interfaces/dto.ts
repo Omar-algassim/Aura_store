@@ -1,6 +1,7 @@
 export interface SignupDTO {
   email?: string;
   phone_number?: string;
+  country_code?: string;
   password: string;
   username?: string;
 }

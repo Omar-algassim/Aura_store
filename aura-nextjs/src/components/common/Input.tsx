@@ -22,7 +22,7 @@ function InputComponent(props: InputProps) {
   const [inputType, setInputType] = useState(type);
   return (
     <div
-      className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none  text-foreground text-[16px] text-right font-[400] font-alex ${
+      className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] text-foreground text-[16px] text-right font-[400] font-alex ${
         customStyles || "bg-surface"
       } ${props.hidden && "hidden"} `}
     >
