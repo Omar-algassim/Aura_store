@@ -76,7 +76,7 @@ function ProfilePage() {
 
       {/* main profile nav bar */}
       <section className="w-full flex flex-col items-center justify-center gap-4">
-        <ul className="w-full max-[320px] flex flex-col gap-12 list-none">
+        <ul className="w-full max-w-[1024px] flex flex-col items-center justify-center gap-12 list-none">
           <li className="w-full flex gap-3">
             {/* icon */}
             <Image

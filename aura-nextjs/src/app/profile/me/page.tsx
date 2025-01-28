@@ -3,7 +3,7 @@ import { useUser, useUserDispatch } from "@/components/context";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { User } from "@/entities/user-entity";
-import { CheckSquare, Edit } from "lucide-react";
+import { CheckSquare, Edit, InfoIcon } from "lucide-react";
 import InputComponent from "@/components/common/Input";
 import { ButtonPrimary } from "@/components/common/Buttons";
 import { CountriesDropdown } from "@/components/ui/CountriesDropdown";
@@ -21,7 +21,11 @@ function ProfileInfo() {
     setUsername(user.username);
     setEmail(user.email);
     setCountryCode(user.country_code || "+249");
-    const phoneWithOutCountryCode = user.phone_number?.replace(countryCode, "");
+    const countryCodePattern = new RegExp(`^${"\\" + user.country_code}`, "g");
+    const phoneWithOutCountryCode = user.phone_number?.replace(
+      countryCodePattern,
+      ""
+    );
     setPhone(phoneWithOutCountryCode);
   }, [user]);
 
@@ -29,6 +33,24 @@ function ProfileInfo() {
     console.log(
       `username: ${username}, email: ${email}, phone: ${phone}, country_code: ${countryCode}`
     );
+    if (phone && countryCode.concat(phone) !== user.phone_number) {
+      // set the user confirmation to false
+      // send otp to the new phone number
+      // prompt the user to enter the otp
+      // if otp is correct, update the phone number and set the confirmation to true
+      console.log("phone number changed");
+    }
+    if (email && email !== user.email) {
+      // set the user confirmation to false
+      // send email confirmation
+      // prompt the user with message to check the email
+      console.log("email changing");
+    }
+    if (username && username !== user.username) {
+      // update the username
+      console.log("username changing");
+    }
+    setEditing("");
   };
 
   return (
@@ -47,7 +69,7 @@ function ProfileInfo() {
       </section>
 
       {/* User Info */}
-      <section className="w-full max-w-[1480px] laptop:px-[30px] flex flex-col justify-center  gap-4 mt-4">
+      <section className="w-full max-w-[1480px] px-0 laptop:px-[30px] flex flex-col justify-center tablet:items-center gap-4 mt-4">
         {/* user name */}
         <div className="w-full max-w-[640px] flex flex-col items-start justify-start gap-4">
           <div className="w-full flex justify-between items-center gap-4">
@@ -59,6 +81,7 @@ function ProfileInfo() {
                 size={32}
                 color="#8b0e50"
                 onClick={() => setEditing("")}
+                className="cursor-pointer"
               />
               <InputComponent
                 name="username"
@@ -75,7 +98,7 @@ function ProfileInfo() {
               <Edit
                 size={32}
                 color="#0f0f0f"
-                className="opacity-65 hover:scale-105"
+                className="opacity-65 hover:scale-105 cursor-pointer"
                 onClick={() => setEditing("username")}
               />
               <div
@@ -104,6 +127,7 @@ function ProfileInfo() {
                 color="#8b0e50"
                 size={32}
                 onClick={() => setEditing("")}
+                className="cursor-pointer"
               />
               <InputComponent
                 name="email"
@@ -120,7 +144,7 @@ function ProfileInfo() {
               <Edit
                 size={32}
                 color="#0f0f0f"
-                className="opacity-65 hover:scale-105"
+                className="opacity-65 hover:scale-105 cursor-pointer"
                 onClick={() => setEditing("email")}
               />
               <div
@@ -136,6 +160,10 @@ function ProfileInfo() {
               </div>
             </div>
           )}
+          <p className="flex gap-2 items-center text-xs font-[500] text-right text-slate-500">
+            <InfoIcon size={16} color="#8b0e50" />
+            تغير البريد الإلكتروني يتتطلب تأكيد البريد عن طريق ايميل
+          </p>
         </div>
 
         {/* phone number */}
@@ -149,6 +177,7 @@ function ProfileInfo() {
                 color="#8b0e50"
                 size={32}
                 onClick={() => setEditing("")}
+                className="cursor-pointer"
               />
               <CountriesDropdown
                 setCountryKey={setCountryCode}
@@ -172,7 +201,7 @@ function ProfileInfo() {
               <Edit
                 size={32}
                 color="#0f0f0f"
-                className="opacity-65 hover:scale-105"
+                className="opacity-65 hover:scale-105 cursor-pointer"
                 onClick={() => setEditing("phone")}
               />
               <div
@@ -188,17 +217,22 @@ function ProfileInfo() {
               </div>
             </div>
           )}
+          <p className="flex gap-2 items-center text-xs font-[500] text-right text-slate-500">
+            <InfoIcon size={16} color="#8b0e50" />
+            تغير رقم الهاتف يتتطلب تأكيد الرقم عن طريق الواتساب
+          </p>
         </div>
 
         {/* submit */}
-        <div className="w-full flex flex-col items-start justify-start mt-10">
+        <div className="w-full tablet:max-w-[640px] flex flex-col items-center tablet:items-start justify-start mt-10">
           <ButtonPrimary
             handleClick={saveChanges}
             disabled={
               username === user.username &&
               email === user.email &&
-              phone === user.phone_number
+              countryCode.concat(phone || "") === user.phone_number
             }
+            preloader
           >
             حفظ
           </ButtonPrimary>
