@@ -27,13 +27,20 @@ export interface LocationDeliveryAddress extends Struct.ComponentSchema {
 export interface LocationLocation extends Struct.ComponentSchema {
   collectionName: "components_location_locations";
   info: {
+    description: "";
     displayName: "Location";
     icon: "earth";
   };
   attributes: {
-    address: Schema.Attribute.String;
-    city: Schema.Attribute.String;
-    region: Schema.Attribute.String;
+    address: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"''">;
+    city: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"''">;
+    region: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"''">;
   };
 }
 

@@ -54,6 +54,11 @@ export const UserReducer = (_prevState: any, action: UserReducerAction) => {
       return initialUser;
     }
 
+    case "UPDATE": {
+      const { userData: user } = payload;
+      return user;
+    }
+
     default:
       return initialUser;
   }

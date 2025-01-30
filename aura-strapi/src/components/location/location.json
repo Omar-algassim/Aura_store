@@ -2,18 +2,25 @@
   "collectionName": "components_location_locations",
   "info": {
     "displayName": "Location",
-    "icon": "earth"
+    "icon": "earth",
+    "description": ""
   },
   "options": {},
   "attributes": {
     "region": {
-      "type": "string"
+      "type": "string",
+      "default": "''",
+      "required": true
     },
     "city": {
-      "type": "string"
+      "type": "string",
+      "default": "''",
+      "required": true
     },
     "address": {
-      "type": "string"
+      "type": "string",
+      "default": "''",
+      "required": true
     }
   }
 }

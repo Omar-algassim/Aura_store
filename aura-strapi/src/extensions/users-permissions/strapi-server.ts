@@ -402,5 +402,40 @@ export default async (plugin: any) => {
       forgotPassword,
     };
   };
+
+  // custom route to update user
+  plugin.controllers.user.updateMe = async (ctx: Context) => {
+    const userId = ctx.state.user.documentId;
+    // console.
+    const user = await strapi.query("plugin::users-permissions.user").findOne({
+      where: {
+        documentId: userId,
+      },
+    });
+    console.log("Updating user", userId, user);
+    console.log("With data", ctx.request.body);
+    if (!user) {
+      return ctx.notFound("User not found");
+    }
+    try {
+      const { body } = ctx.request;
+      const result = await strapi
+        .query("plugin::users-permissions.user")
+        .update({
+          where: { documentId: userId },
+          data: body,
+        });
+      console.log("User updated", result);
+      return (ctx.response.status = 201);
+    } catch (error) {
+      return ctx.badRequest(error.message);
+    }
+  };
+
+  plugin.routes["content-api"].routes.push({
+    method: "PUT",
+    path: "/users/me",
+    handler: "user.updateMe",
+  });
   return plugin;
 };

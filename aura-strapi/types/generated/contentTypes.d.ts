@@ -1324,7 +1324,7 @@ export interface PluginUsersPermissionsUser
       "plugin::users-permissions.user"
     > &
       Schema.Attribute.Private;
-    location: Schema.Attribute.Component<"location.location", false>;
+    location: Schema.Attribute.JSON;
     password: Schema.Attribute.Password &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{

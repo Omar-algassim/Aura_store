@@ -4,7 +4,11 @@ export class User {
   email?: string;
   phone_number?: string;
   country_code?: string;
-  location?: string;
+  location?: {
+    region: string;
+    city: string;
+    address: string;
+  };
 
   blocked?: boolean;
   confirmed?: boolean;

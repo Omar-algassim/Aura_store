@@ -36,7 +36,7 @@ function InputComponent(props: InputProps) {
         type={inputType || "text"}
         name={name}
         onChange={props.onChange}
-        className={`peer w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right font-[400] font-alex ${customStyles} `}
+        className={`peer w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right leading-10 font-[400] font-alex ${customStyles} `}
       />
       {type === "search" && (
         <Image
