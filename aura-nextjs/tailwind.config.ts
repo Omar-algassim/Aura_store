@@ -9,6 +9,11 @@ export default {
   ],
   theme: {
     extend: {
+      cursor: {
+        "omar": "zoom-in",
+        "zoom-out": "zoom-out",
+        "whatsapp": "url('/icons/conversion.svg'), pointer",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
