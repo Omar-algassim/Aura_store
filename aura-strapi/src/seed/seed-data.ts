@@ -1,5 +1,6 @@
 import { Core } from "@strapi/strapi";
 import { v4 as uuidv4 } from "uuid";
+import { generateProducts } from "./seedProducts";
 
 const generateCategories = (count: number) => {
   const categoryNames = [
@@ -35,129 +36,129 @@ const generateBrands = (count: number) => {
   ];
 
   return Array.from({ length: count }, (_, i) => ({
-    documentId: uuidv4(),
+    documentId: "api::brand.brand",
     name: brandNames[i % brandNames.length],
   }));
 };
 
-const generateProducts = (
-  count: number,
-  categories: string[],
-  brands: string[],
-  images: Record<string, string>[],
-) => {
-  const colorGrades = ["Light", "Medium", "Dark", "Neutral", "Warm", "Cool"];
-  const productsNames = [
-    "Cleanser",
-    "Serum",
-    "Moisturizer",
-    "Sunscreen",
-    "Foundation",
-    "Concealer",
-    "Blush",
-    "Eyeshadow",
-    "Lipstick",
-    "Mascara",
-    "Shampoo",
-    "Conditioner",
-    "Hair Oil",
-    "Hair Mask",
-    "Nail Polish",
-    "Nail File",
-    "Nail Polish Remover",
-    "Nail Strengthener",
-    "Nail Serum",
-    "Beauty Sponge",
-    "Makeup Brush",
-    "Eyelash Curler",
-    "Tweezers",
-  ];
+// const generateProducts = (
+//   count: number,
+//   categories: string[],
+//   brands: string[],
+//   images: Record<string, string>[],
+// ) => {
+//   const colorGrades = ["Light", "Medium", "Dark", "Neutral", "Warm", "Cool"];
+//   const productsNames = [
+//     "Cleanser",
+//     "Serum",
+//     "Moisturizer",
+//     "Sunscreen",
+//     "Foundation",
+//     "Concealer",
+//     "Blush",
+//     "Eyeshadow",
+//     "Lipstick",
+//     "Mascara",
+//     "Shampoo",
+//     "Conditioner",
+//     "Hair Oil",
+//     "Hair Mask",
+//     "Nail Polish",
+//     "Nail File",
+//     "Nail Polish Remover",
+//     "Nail Strengthener",
+//     "Nail Serum",
+//     "Beauty Sponge",
+//     "Makeup Brush",
+//     "Eyelash Curler",
+//     "Tweezers",
+//   ];
 
-  return Array.from({ length: count }, (_, i) => {
-    const brand = brands[Math.floor(Math.random() * brands.length)];
-    const seed = Math.floor(Math.random() * (categories.length - 1));
-    const productCategories = [categories[seed]];
-    if (seed < categories.length - 1) {
-      const secondSeed = (seed + 1) % categories.length;
-      productCategories.push(categories[secondSeed]);
-    }
-    // /console.log(productCategories);
-    return {
-      documentId: uuidv4(),
-      name: `Product ${i + 1}`,
-      title: `Amazing Product ${i + 1} ${productsNames[i % productsNames.length]}`,
-      images: [
-        images[Math.floor(Math.random() * images.length)],
-        images[Math.floor(Math.random() * images.length)],
-        images[Math.floor(Math.random() * images.length)],
-        images[Math.floor(Math.random() * images.length)],
-      ],
-      thumbnail: images[Math.floor(Math.random() * images.length)].url,
-      price: parseFloat((Math.random() * (1362 - 300) + 300).toFixed(2)),
-      discount:
-        Math.random() < 0.15
-          ? parseFloat((Math.random() * 50).toFixed(2))
-          : undefined,
-      ordered: Math.floor(Math.random() * 100),
-      stock: Math.floor(Math.random() * 500),
-      weight: Math.floor(Math.random() * 1000),
-      color_grade: colorGrades[Math.floor(Math.random() * colorGrades.length)],
-      specification: `This is a detailed specification for product ${i + 1}. which is have the ${productCategories.join(", ")} categories, and the brand is ${brand}.`,
-      description: `Detailed description for product ${i + 1}. This premium product offers exceptional quality and value.`,
-      usage: `Recommended usage instructions for product ${i + 1}. Apply as directed for best results.`,
-      createdAt: new Date(
-        Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000,
-      ),
-    };
-  });
-};
+//   return Array.from({ length: count }, (_, i) => {
+//     const brand = brands[Math.floor(Math.random() * brands.length)];
+//     const seed = Math.floor(Math.random() * (categories.length - 1));
+//     const productCategories = [categories[seed]];
+//     if (seed < categories.length - 1) {
+//       const secondSeed = (seed + 1) % categories.length;
+//       productCategories.push(categories[secondSeed]);
+//     }
+//     // /console.log(productCategories);
+//     return {
+//       documentId: uuidv4(),
+//       name: `Product ${i + 1}`,
+//       title: `Amazing Product ${i + 1} ${productsNames[i % productsNames.length]}`,
+//       images: [
+//         images[Math.floor(Math.random() * images.length)],
+//         images[Math.floor(Math.random() * images.length)],
+//         images[Math.floor(Math.random() * images.length)],
+//         images[Math.floor(Math.random() * images.length)],
+//       ],
+//       thumbnail: images[Math.floor(Math.random() * images.length)].url,
+//       price: parseFloat((Math.random() * (1362 - 300) + 300).toFixed(2)),
+//       discount:
+//         Math.random() < 0.15
+//           ? parseFloat((Math.random() * 50).toFixed(2))
+//           : undefined,
+//       ordered: Math.floor(Math.random() * 100),
+//       stock: Math.floor(Math.random() * 500),
+//       weight: Math.floor(Math.random() * 1000),
+//       color_grade: colorGrades[Math.floor(Math.random() * colorGrades.length)],
+//       specification: `This is a detailed specification for product ${i + 1}. which is have the ${productCategories.join(", ")} categories, and the brand is ${brand}.`,
+//       description: `Detailed description for product ${i + 1}. This premium product offers exceptional quality and value.`,
+//       usage: `Recommended usage instructions for product ${i + 1}. Apply as directed for best results.`,
+//       createdAt: new Date(
+//         Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000,
+//       ),
+//     };
+//   });
+// };
 
 export const seedData = async (strapi: Core.Strapi) => {
   // /console.log("Seeding data...");
 
   const images = [
     {
-      url: "/uploads/product_placeholder_image_5_da374e12fb.jpg",
+    "url": "/uploads/curology_X1s_Ir53_Dhz_A_unsplash_99ed957a0f.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_2_3f78f8b5d3.jpg",
+    "url": "/uploads/ashley_piszek_y_Vcxnd_Medak_unsplash_581698f340.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_3_5830479cf5.jpg",
+    "url": "/uploads/valeriia_miller_42_NKYROG_7g_unsplash_41000f02a5.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_3_5830479cf5.jpg",
+    "url": "/uploads/sincerely_media_Gte_R27txma_M_unsplash_1636786edf.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_1_7568010c06.jpg",
+    "url": "/uploads/alexandra_tran_ie_Sbbgr3_I_unsplash_7f2f08c237.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_6_b899e26b24.jpg",
+    "url": "/uploads/jocelyn_morales_R3_Mi_Y1_JQ_4_unsplash_fcbe6b884d.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_4_65891e7883.jpg",
+    "url": "/uploads/taisiia_stupak_KP_97dx0_G_Ov8_unsplash_0305d3f554.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_8_d68b615abf.jpg",
+    "url": "/uploads/curology_Z_Iih_Tgf5u_Gg_unsplash_e6de3f666d.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_9_cc7d3e486d.jpg",
+    "url": "/uploads/lina_verovaya_Bib_Jj_O4s_Yr_I_unsplash_1_d2581da40b.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_7_d187fb9d0e.jpg",
+    "url": "/uploads/lina_verovaya_Bib_Jj_O4s_Yr_I_unsplash_e6950f12d2.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_12_90c6e78887.jpg",
+    "url": "/uploads/sincerely_media_55u9s_VVJ_4p8_unsplash_bb0c4c4ce5.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_11_258fea6183.jpg",
+    "url": "/uploads/reuben_mansell_Zii_Mj_Tnwoh_E_unsplash_d1da6219dd.jpg"
     },
     {
-      url: "/uploads/product_placeholder_image_10_0719c807a0.jpg",
+    "url": "/uploads/lina_verovaya_F39_Yk_FM_fg_unsplash_6d5ddb5e97.jpg"
     },
   ];
   // Generate data
-  // const categories = generateCategories(8);
+  const categories = generateCategories(8);
   // const categories = [
   //   "1227c72c-2a6d-490c-be28-c153a32ceb5a",
   //   "48d53401-5eff-4621-a52d-4b4ad913b9f0",
@@ -168,7 +169,7 @@ export const seedData = async (strapi: Core.Strapi) => {
   //   "11b5d0de-eec5-4b22-a9d2-089946a50565",
   //   "63f1bc36-fea6-4a24-9fd9-110ee5436d46",
   // ];
-  // const brands = generateBrands(10);
+  const brands = generateBrands(10);
   // const brands = [
   //   "34c04db9-3d42-4b08-a8d7-e52916a235ce",
   //   "8f586a59-cd3c-4c59-91b3-c974a0d53d47",
@@ -204,46 +205,54 @@ export const seedData = async (strapi: Core.Strapi) => {
     "SilkenHaven",
   ];
   // const products = generateProducts(20, categoryNames, brandNames, images);
-
+  const categoryIDs = [];
   // Insert categories
-  // for (const category of categories) {
-  //   const cate = await strapi.documents("api::category.category").create({
-  //     data: category,
-  //     status: "published",
-  //   });
-  //   // /console.log(cate.documentId === category.documentId);
-  // }
-
-  // /console.log("Categories seeded.");
-
-  // Insert brands
-  // for (const brand of brands) {
-  //   const br = await strapi.documents("api::brand.brand").create({
-  //     data: brand,
-  //     status: "published",
-  //   });
-  //   // /console.log(br.documentId === brand.documentId);
-  // }
-
-  // /console.log("Brands seeded.");
-
-  // retrieve products
-  const products = await strapi.query("api::product.product").findMany();
-  for (const product of products) {
-    // /console.log(JSON.stringify(product, null, 2));
-    strapi.documents("api::product.product").update({
-      documentId: product.documentId,
-      data: {
-        images: [
-          images[Math.floor(Math.random() * images.length)],
-          images[Math.floor(Math.random() * images.length)],
-          images[Math.floor(Math.random() * images.length)],
-          images[Math.floor(Math.random() * images.length)],
-        ],
-        thumbnail: images[Math.floor(Math.random() * images.length)].url,
-      },
+  for (const category of categories) {
+    const cate = await strapi.documents("api::category.category").create({
+      data: {title: category.title, priority: category.priority},
+      status: "published",
     });
+    categoryIDs.push(cate.documentId); 
+    // /console.log(cate.documentId === category.documentId);
   }
 
-  // /console.log("Products seeded.");
+  // /console.log("Categories seeded.");
+const brandsIDs = [];
+  // Insert brands
+  for (const brand of brands) {
+    const br = await strapi.documents("api::brand.brand").create({
+      data: {name: brand.name},
+      status: "published",
+    });
+    brandsIDs.push(br.documentId);
+    // /console.log(br.documentId === brand.documentId);
+  }
+
+  // /console.log("Brands seeded.");
+  const products = generateProducts(20, categoryIDs, brandsIDs, images);
+  // retrieve products
+  products.forEach(async (product) => {
+    const productData = {
+      name: product.data.name,
+      title: product.data.title,
+      images: product.data.images,
+      thumbnail: product.data.thumbnail,
+      price: product.data.price,
+      discount: product.data.discount,
+      ordered: product.data.ordered,
+      stock: product.data.stock,
+      weight: product.data.weight,
+      color_grade: product.data.color_grade,
+      specification: product.data.specification,
+      description: product.data.description,
+      usage: product.data.usage,
+      categories: product.data.categories,
+      brand: product.data.brand,
+      createdAt: product.data.createdAt,
+    };
+    await strapi.documents("api::product.product").create({ data: productData });
+    console.log(`Product ${product.data.name} created`);
+  });
+  
 };
+

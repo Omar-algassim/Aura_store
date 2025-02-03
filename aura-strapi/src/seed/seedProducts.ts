@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-const generateProducts = (
+export const generateProducts = (
   count: number,
   categories: string[],
   brands: string[],
@@ -54,7 +54,7 @@ const generateProducts = (
 
     return {
       data: {
-        documentId: uuidv4(),
+        documentId: uuidv4().toString(),
         name: `Product ${i + 1}`,
         title: `Amazing Product ${i + 1} ${productsNames[Math.floor(Math.random() * productsNames.length)]}`,
         images: productImages,
@@ -67,11 +67,9 @@ const generateProducts = (
         ordered: Math.floor(Math.random() * 100).toString(), // Convert to string for biginteger
         stock: Math.floor(Math.random() * 500).toString(), // Convert to string for biginteger
         categories: {
-          connect: productCategories.map((id) => ({ id })),
+          connect: productCategories.map((id) => ({ documentId: id })),
         },
-        brand: {
-          connect: { id: brandId },
-        },
+        brand: brandId,
         weight: Math.floor(Math.random() * 1000),
         color_grade:
           colorGrades[Math.floor(Math.random() * colorGrades.length)],
