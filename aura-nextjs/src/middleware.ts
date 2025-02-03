@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "./entities/user-entity";
 
-const protectedRoutes = ["/checkout", "/profile"];
+const protectedRoutes = ["/cart/checkout", "/profile"];
 const isProtectedRoute = (path: string) => {
   return protectedRoutes.some((route) => path.includes(route));
 };
