@@ -25,15 +25,6 @@ function ProductCard({ product }: { product: Product }) {
   const handleAddToCart = async (product: Product, amount?: number) => {
     await cart.addProduct(product, amount);
     cartDispatcher({ type: "UPDATE", payload: { cart: cart } });
-    // /console.log(JSON.stringify(cart.products, null, 2));
-    // /console.log("Cart total pay", JSON.stringify(cart.total_pay, null, 2));
-    // /console.log("Cart total items", cart.total_items);
-    const iconTip = document.getElementById("cart-icon-tip");
-    if (iconTip) {
-      iconTip.innerHTML = cart.total_items.toString();
-      iconTip.classList.remove("bg-transparent");
-      iconTip.classList.add("bg-primary");
-    }
     setAddedToCart(true);
   };
 
