@@ -43,9 +43,16 @@ export const CartReducer = (_prevState: any, action: CartReducerAction) => {
 
     case "UPDATE": {
       const cart = payload.cart;
-      // console.log("Updating cart", cart.total_items, cart.total_pay);
+      console.log("Updating cart", cart.total_items, cart.total_pay);
+      cookie.remove("cart");
       cookie.set("cart", JSON.stringify(cart.toJson()));
-      return cart;
+      return new CartEntity({
+        documentId: cart.documentId,
+        user_id: cart.user_id,
+        total_items: cart.total_items,
+        total_pay: cart.total_pay,
+        products: cart.products,
+      });
     }
 
     default: {
