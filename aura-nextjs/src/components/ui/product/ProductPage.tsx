@@ -409,7 +409,7 @@ function ProductPageComponent(params: { product: Product }) {
           </div>
         </section>
       </div>
-      {error && <AlertDialogElement trigger="" header="خطأ" body={error} />}
+      {error && <AlertDialogElement header="خطأ" body={error}><div></div></AlertDialogElement>}
     </>
   );
 }
