@@ -4,17 +4,14 @@
   "info": {
     "singularName": "available-citie",
     "pluralName": "available-cities",
-    "displayName": "Available Cities"
+    "displayName": "Available Cities",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
-      "type": "string",
-      "unique": true
-    },
     "region": {
       "type": "string",
       "required": true

@@ -133,7 +133,7 @@ export function Search() {
           />
         </div>
         <div
-          className="w-full max-w-[495px] max-h-[420px] p-0 m-0 mt-2 overflow-x-hidden overflow-y-auto rounded-xl flex flex-col justify-center peer-focus:animate-scaleIn peer-placeholder-shown:animate-scaleOut"
+          className="w-full max-w-[495px] p-0 m-0 mt-2 overflow-x-hidden rounded-xl flex flex-col justify-center peer-focus:animate-scaleIn peer-placeholder-shown:animate-scaleOut"
           id="result-container"
           onClick={() => {
             setKey("");

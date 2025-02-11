@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "available_countries",
+  "info": {
+    "singularName": "available-country",
+    "pluralName": "available-countries",
+    "displayName": "available country "
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "country": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "available_cities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::available-citie.available-citie"
+    },
+    "available": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "boolean"
+    }
+  }
+}

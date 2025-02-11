@@ -317,6 +317,26 @@ class APIClient {
       return { error: error.message };
     }
   }
+
+  async availableRegions(query: string, jwt: string | undefined) {
+    try {
+      const response = await this.api.get(`/available-countries?${query}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
 }
 
 export const apiClient = new APIClient();

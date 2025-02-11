@@ -38,6 +38,7 @@ function ProductPageComponent(params: { product: Product }) {
   const [review, setReview] = useState("");
   const [rate, setRate] = useState(0);
 
+  console.log(JSON.stringify(product, null, 2));
   const totalRate = getTotalRate(productReviews);
 
   useEffect(() => {
@@ -295,7 +296,7 @@ function ProductPageComponent(params: { product: Product }) {
               </p>
               <p className="text-[13px] tablet:text-lg font-[400] opacity-85">
                 {" "}
-                {product.brand.name}
+                {product.brand?.name}
               </p>
             </div>
             <div className="w-full flex gap-1">
@@ -403,12 +404,12 @@ function ProductPageComponent(params: { product: Product }) {
               productsType="similar"
               productId={product.documentId}
               categories={product.categories.map((cate) => cate.title)}
-              brand={product.brand.name}
+              brand={product.brand?.name}
             />
           </div>
         </section>
       </div>
-      {error && <AlertDialogElement trigger="" header="خطأ" body={error} />}
+      {error && <AlertDialogElement header="خطأ" body={error}><div></div></AlertDialogElement>}
     </>
   );
 }

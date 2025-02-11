@@ -1,9 +1,10 @@
 import React from 'react'
+import {Header } from '@/components/ui/Header'
 
 function CartLayout({children}: {children: React.ReactNode}) {
   return (
-    <div>
-      <h1>Cart</h1>
+    <div className="flex flex-col items-center">
+      <Header />
       {children}
     </div>
   )

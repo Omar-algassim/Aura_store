@@ -45,7 +45,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("Root Layout RENDERED");
+  // console.log("Root Layout RENDERED");
   return (
     <html lang="ar" dir="rtl">
       <body
