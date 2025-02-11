@@ -3,6 +3,7 @@
 // handle the user authentication process
 // it make use of the api-client.ts to run those processes in the server side
 
+import { User } from "@/entities/user-entity";
 import { apiClient } from "@/utils/api/api-client";
 import { AxiosError } from "axios";
 
@@ -65,4 +66,12 @@ export const sendPhoneConfirmationCode = async (code: string) => {
     return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
   }
   return { error, data };
+};
+
+export const updateUser = async (
+  jwt: string,
+  id: string,
+  user: Partial<User>
+) => {
+  return await apiClient.updateUser(jwt, id, user);
 };

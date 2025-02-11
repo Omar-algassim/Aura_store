@@ -2,6 +2,7 @@
 // hold all the api calls, and base logic
 // uses axios for http requests
 // export a class instance of the api client, which contains all the api calls
+import { User } from "@/entities/user-entity";
 import { SignupDTO } from "@/interfaces/dto";
 import axios from "axios";
 class APIClient {
@@ -27,6 +28,28 @@ class APIClient {
       return { ok: false, error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
       return { ok: false, error: error.message };
+    }
+  }
+
+  async updateUser(jwt: string, id: string, data: Partial<User>) {
+    try {
+      delete data.id;
+      delete data.createdAt;
+      delete data.updatedAt;
+      delete data.publishedAt;
+
+      const result = await this.api.put(`/users-permissions/users/me`, data, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.error(error);
+      return { error: error.message };
     }
   }
 

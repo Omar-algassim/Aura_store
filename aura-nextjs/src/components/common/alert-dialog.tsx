@@ -34,7 +34,7 @@ function AlertDialogElement(props: alertDialogElementProps) {
   return (
     <AlertDialog.Root open={open}>
       <AlertDialog.Trigger asChild onClick={Open}>
-        { props.children }
+        {props.children}
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay
@@ -50,11 +50,13 @@ function AlertDialogElement(props: alertDialogElementProps) {
             {props.body}
           </AlertDialog.Description>
           <div className="flex flex-col justify-between w-[95px] gap-6 items-center text-center">
-            { props.action && <AlertDialog.Action asChild>
-              <ButtonPrimary handleClick={action}>
-                {props.action_text}
-              </ButtonPrimary>
-            </AlertDialog.Action> }
+            {props.action && (
+              <AlertDialog.Action asChild>
+                <ButtonPrimary handleClick={action}>
+                  {props.action_text}
+                </ButtonPrimary>
+              </AlertDialog.Action>
+            )}
             <AlertDialog.Cancel asChild>
               <ButtonSecondary variant="outline" handleClick={Open}>
                 {props.cancel}

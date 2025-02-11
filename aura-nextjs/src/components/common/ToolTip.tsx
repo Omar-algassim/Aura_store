@@ -16,7 +16,9 @@ export const ToolTip = ({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipTrigger asChild onCl>
+          {children}
+        </TooltipTrigger>
         <TooltipContent className="bg-surface text-secondary-dark">
           {content}
         </TooltipContent>

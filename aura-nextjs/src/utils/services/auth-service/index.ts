@@ -42,6 +42,7 @@ export const signupAction = async (
     const data: SignupDTO = {
       email: undefined,
       phone_number: undefined,
+      country_code: undefined,
       password: validation.data.password,
       username: `${validation.data.firstName} ${validation.data.lastName}`,
     };

@@ -23,6 +23,9 @@ import { countriesCode } from "@/constants/app-constants";
 export function CountriesDropdown(props: {
   className?: string;
   setCountryKey: (code: string) => void;
+  defaultValue?: string;
+  triggerStyle?: string;
+  small?: boolean;
 }) {
   const { setCountryKey } = props;
   const [open, setOpen] = React.useState(false);
@@ -37,6 +40,18 @@ export function CountriesDropdown(props: {
   // // /console.log("currentCountry", JSON.stringify(currentCountry, null, 2));
   // // /console.log("value", value);
 
+  React.useEffect(() => {
+    if (props.defaultValue) {
+      const country = countriesCode.find(
+        (country) => country.value === props.defaultValue
+      );
+      if (country) {
+        setValue(country.country);
+        setCurrentCountry(country);
+      }
+    }
+  }, [props.defaultValue]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -44,16 +59,24 @@ export function CountriesDropdown(props: {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[120px] tablet:w-[180px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[12px] tablet:text-[14px] text-right px-2 font-[400] font-alex shadow-slate-500 hover:shadow-sm hover:shadow-slate-500 hover:bg-surface active:shadow-slate-500 active:bg-surface focus:outline-none focus:shadow-slate-500 focus:bg-surface transition-all duration-200 gap-1"
+          className={`${
+            props.triggerStyle ||
+            "w-[120px] tablet:w-[180px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[12px] tablet:text-[14px] text-right px-2 font-[400] font-alex shadow-slate-500 hover:shadow-sm hover:shadow-slate-500 hover:bg-surface active:shadow-slate-500 active:bg-surface focus:outline-none focus:shadow-slate-500 focus:bg-surface transition-all duration-200 gap-1"
+          }`}
         >
           <ChevronsUpDown className="h-6 w-6 shrink-0 opacity-50" />
           {value ? (
-            <div dir="ltr" className="flex gap-2 flex-1">
-              <span className="block text-[18px]">{currentCountry.icon}</span>
-              <span className="block text-[18px] font-[500]">
+            <div
+              dir="ltr"
+              className={`"flex gap-2 ${!props.small && "flex-1"}`}
+            >
+              <span className="block text-[18px] font-[600]">
+                {currentCountry.icon}
+              </span>
+              <span className={`block text-[18px] ${props.small && "hidden"}`}>
                 {currentCountry.code}
               </span>
-              <span className="block text-[18px] font-[600]">
+              <span className={`block text-[18px] ${props.small && "hidden"}`}>
                 {currentCountry.value}
               </span>
             </div>
