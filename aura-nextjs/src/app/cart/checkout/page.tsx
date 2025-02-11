@@ -9,6 +9,7 @@ function CheckoutPage() {
   return (
     <div>
       <strong>عنوان التوصيل</strong>
+      {/* cart form */}
       <CartForm></CartForm>
       <div className="flex flex-col items-start justify-between p-5 gap-5">
           <strong>تفاصيل الفاتورة</strong>
@@ -24,7 +25,7 @@ function CheckoutPage() {
           <div className="flex flex-col justify-center gap-5">
             <strong>{`${Math.floor(cart?.total_pay)}`} SDG</strong>
             <strong>SDG 3000</strong>
-            <strong>{total} SDG</strong>
+            <strong>{Math.round(total)} SDG</strong>
           </div>
         </div>
     </div>
