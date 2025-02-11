@@ -631,7 +631,7 @@ export interface ApiOrderItemOrderItem extends Struct.CollectionTypeSchema {
       "api::order-item.order-item"
     > &
       Schema.Attribute.Private;
-    order_id: Schema.Attribute.Relation<"oneToOne", "api::order.order">;
+    order: Schema.Attribute.Relation<"manyToOne", "api::order.order">;
     product_id: Schema.Attribute.Relation<"oneToOne", "api::product.product">;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
@@ -657,21 +657,22 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    delivery_address: Schema.Attribute.Component<
-      "location.delivery-address",
-      false
-    >;
+    delivery_Address: Schema.Attribute.JSON & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::order.order"> &
       Schema.Attribute.Private;
+    order_items: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::order-item.order-item"
+    >;
     order_status: Schema.Attribute.Enumeration<
       [
-        "draft",
         "pending",
         "confirmed",
         "preparing",
-        "out to deliver",
+        "onDelivery",
         "delivered",
+        "cancelled",
       ]
     >;
     publishedAt: Schema.Attribute.DateTime;
@@ -680,8 +681,8 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    users_id: Schema.Attribute.Relation<
-      "oneToOne",
+    user: Schema.Attribute.Relation<
+      "manyToOne",
       "plugin::users-permissions.user"
     >;
   };
@@ -1325,6 +1326,7 @@ export interface PluginUsersPermissionsUser
     > &
       Schema.Attribute.Private;
     location: Schema.Attribute.JSON;
+    orders: Schema.Attribute.Relation<"oneToMany", "api::order.order">;
     password: Schema.Attribute.Password &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{

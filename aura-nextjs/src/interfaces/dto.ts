@@ -30,7 +30,12 @@ export interface OrderDTO {
 export interface OrderItem {
   documentId?: string;
   order_id?: string;
-  product_id: string;
+  product: {
+    documentId: string;
+    title: string;
+    thumbnail: string;
+    price: number;
+  };
   quantity: number;
 }
 
@@ -83,12 +88,12 @@ export interface Review {
 }
 
 export type OrderStatus =
-  | "draft"
   | "pending"
   | "confirmed"
   | "preparing"
-  | "out to deliver"
-  | "delivered";
+  | "onDelivery"
+  | "delivered"
+  | "cancelled";
 
 export type Regions = "Sudan" | "Egypt" | "KSA";
 
