@@ -3,7 +3,7 @@
 // uses axios for http requests
 // export a class instance of the api client, which contains all the api calls
 import { User } from "@/entities/user-entity";
-import { SignupDTO } from "@/interfaces/dto";
+import { OrderDTO, OrderItem, SignupDTO } from "@/interfaces/dto";
 import axios from "axios";
 class APIClient {
   private baseUrl =
@@ -48,13 +48,13 @@ class APIClient {
       }
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
-      console.error(error);
+      //console.error(error);
       return { error: error.message };
     }
   }
 
   async signup(data: SignupDTO): Promise<{ data?: any; error?: string }> {
-    console.log("API => signup", JSON.stringify(data, null, 2));
+    //console.log("API => signup", JSON.stringify(data, null, 2));
     try {
       const result = await this.api.post("/auth/local/register", data);
       // // /console.log(JSON.stringify(result.data));
@@ -64,7 +64,7 @@ class APIClient {
       // return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
       throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
     } catch (error: any) {
-      console.error(error);
+      //console.error(error);
       return {
         error,
       };
@@ -72,7 +72,7 @@ class APIClient {
   }
 
   async signin(identifier: string, password: string) {
-    console.log("Login with", identifier, " ", password);
+    //console.log("Login with", identifier, " ", password);
     try {
       const result = await this.api.post("/auth/local", {
         identifier,
@@ -82,8 +82,8 @@ class APIClient {
         return { data: result.data };
       }
       return { error: "كلمة المرور او البريد الالكتروني غير صحيح" };
-    } catch (error: any) {
-      console.error(error);
+    } catch {
+      //console.error(error);
       return {
         error: "كلمة المرور او البريد الالكتروني غير صحيح",
       };
@@ -101,7 +101,7 @@ class APIClient {
       }
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
-      console.error(error);
+      //console.error(error);
       return {
         error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى",
       };
@@ -112,9 +112,9 @@ class APIClient {
     indicatorType: "email" | "phone_number",
     indicator: string
   ) {
-    console.log(
-      `API => request reset password code with ${indicatorType}: ${indicator}`
-    );
+    // console.log(
+    //   `API => request reset password code with ${indicatorType}: ${indicator}`
+    // );
     try {
       const result = await this.api.post("/auth/forgot-password", {
         [indicatorType]: indicator,
@@ -224,7 +224,7 @@ class APIClient {
       // /console.log(JSON.stringify(fetchedProducts.data, null, 2));
       return { data: fetchedProducts.data.data };
     } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
+      //console.error(JSON.stringify(error, null, 2));
       return { error: error.message };
     }
   }
@@ -303,7 +303,7 @@ class APIClient {
       // // /console.log(JSON.stringify(fetchedCategories, null, 2));
       return { data: fetchedCategories.data };
     } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
+      //console.error(JSON.stringify(error, null, 2));
       return { error: error.message };
     }
   }
@@ -321,7 +321,7 @@ class APIClient {
       }
       return { data: fetchedBrands.data };
     } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
+      //console.error(JSON.stringify(error, null, 2));
       return { error: error.message };
     }
   }
@@ -358,6 +358,119 @@ class APIClient {
       }
     } catch (error: any) {
       return { error: error.message };
+    }
+  }
+
+  async uploadFile(data: FormData, jwt: string) {
+    try {
+      const response = await this.api.post("/upload", data, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error };
+    }
+  }
+
+  async createOrder(jwt: string, orderData: OrderDTO) {
+    const { order_items, ...data } = orderData;
+    //console.log("Order data: ", JSON.stringify(data, null, 2));
+    //console.log("Order items: ", JSON.stringify(order_items, null, 2));
+    try {
+      const response = await this.api.post(
+        "/orders",
+        {
+          data: {
+            region: data.region,
+            total_pay: data.total_pay,
+            order_status: data.order_status,
+            delivery_address: data.delivery_address,
+            user: {
+              connect: data.user_id,
+            },
+            checkout_image: data.checkout_image,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        const order_id = response.data.data.documentId;
+        const { error, data } = await this.createOrderItems(
+          jwt,
+          order_id,
+          order_items
+        );
+        if (error || !data) {
+          return { error };
+        }
+        return { data: order_id };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error };
+    }
+  }
+
+  async createOrderItems(
+    jwt: string,
+    order_id: string,
+    orderItems: OrderItem[]
+  ) {
+    const ordersData = orderItems.map((item) => {
+      return {
+        count: item.quantity,
+        product: {
+          connect: item.product.documentId,
+        },
+        order: {
+          connect: order_id,
+        },
+      };
+    });
+
+    try {
+      for (const data of ordersData) {
+        console.log("Creating order item...", JSON.stringify(data, null, 2));
+        try {
+          await this.api.post(
+            "/order-items",
+            { data },
+            {
+              headers: {
+                Authorization: `Bearer ${jwt}`,
+              },
+            }
+          );
+          console.log(`Order item created: ${data.product.connect}`);
+        } catch (error: any) {
+          console.error(
+            `Failed to create order item: ${data.product.connect}`,
+            error.response?.data || error.message
+          );
+          return { error: error.response?.data || error.message };
+        }
+      }
+      return { data: "Order items created" };
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
     }
   }
 }

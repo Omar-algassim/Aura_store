@@ -19,9 +19,8 @@ export function Header() {
 
   return (
     <>
-      <div className="w-full bg-white z-30 sticky top-0 flex flex-col items-center justify-center">
+      <div className="w-full max-w-[1440px] bg-white z-30 sticky top-0 flex flex-col items-center justify-center">
         <div className="flex items-center justify-between gap-4 w-[95vw] max-w-[1480px] rounded-2xl py-[20px] tablet:py-[60px] tablet:justify-between flex-wrap bg-white z-30 sticky top-0">
-          
           {/* nav bar and create account button */}
           <div className="flex justify-between items-center gap-[56px] gap-y-9 order-1">
             <Navbar />
@@ -39,7 +38,7 @@ export function Header() {
               </div>
             )}
           </div>
-          
+
           {/* Search */}
           <div className="w-full hidden tablet:grid order-last tablet:order-2 flex-1 min-w-[320px] h-[78px] laptop:mt-0 ">
             <Search />

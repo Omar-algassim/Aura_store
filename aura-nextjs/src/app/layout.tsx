@@ -51,7 +51,7 @@ export default function RootLayout({
       <body
         dir="rtl"
         className={`${alexandria.variable} 
-        antialiased flex flex-col items-center justify-start border
+        antialiased flex flex-col items-center justify-start
         `}
       >
         <UserContextProvider>

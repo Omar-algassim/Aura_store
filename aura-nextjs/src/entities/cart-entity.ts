@@ -2,9 +2,11 @@ import {
   CartEntityDto,
   CartProductsDTO,
   DeliveryAddress,
+  OrderStatus,
   Product,
   Regions,
 } from "@/interfaces/dto";
+import { apiClient } from "@/utils/api/api-client";
 
 export class CartEntity {
   documentId: string;
@@ -123,37 +125,60 @@ export class CartEntity {
    * @param {string} order_status the status of the order, default is "pending"
    */
   async checkout(
+    jwt: string,
     userId: string,
     region: Regions,
     delivery_address: DeliveryAddress,
-    checkout_image: string,
-    order_status: string = "pending"
-  ) {
-    console.log("Checking out cart");
-    console.log(
-      "Order: ",
-      JSON.stringify(
-        {
-          userId,
-          region,
-          delivery_address,
-          checkout_image,
-          total_pay: this.total_pay,
-          order_status,
-        },
-        null,
-        2
-      )
+    checkout_image: File,
+    order_status: OrderStatus = "pending"
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<{ error?: any; data?: any }> {
+    // upload the checkout image to the server
+    const receiptFormData = new FormData();
+    receiptFormData.append(
+      "files",
+      checkout_image,
+      userId + "-checkout-" + checkout_image.name.slice(-5)
     );
-    // create order from cart
-    // const {error, order} = api.createOrder(userId, region, delete_address, checkout_image, this.total_pay);
+    const { error: uploadError, data: uploadData } = await apiClient.uploadFile(
+      receiptFormData,
+      jwt
+    );
 
-    console.log(
-      "Order's order items: ",
-      JSON.stringify(this.products, null, 2)
+    if (uploadError || !uploadData) {
+      console.log("Error uploading checkout image: ", uploadError);
+      return { error: uploadError };
+    }
+
+    console.log("Checkout image uploaded: ", uploadData);
+    const checkout_image_url = uploadData[0].url;
+
+    // create order from cart
+    const order_items = Object.values(this.products).map((product) => {
+      return {
+        product: product.product,
+        quantity: product.amount,
+      };
+    });
+    // console.log("Order items: ", JSON.stringify(order_items, null, 2));
+    const { error: OrderError, data: OrderData } = await apiClient.createOrder(
+      jwt,
+      {
+        user_id: userId,
+        region,
+        delivery_address,
+        checkout_image: checkout_image_url,
+        total_pay: this.total_pay,
+        order_status,
+        order_items,
+      }
     );
-    // create order's order items
-    // for (const product of Object.values(this.products)) {
+    if (OrderError || !OrderData) {
+      console.log("Error creating order: ", OrderError);
+      return { error: OrderError };
+    }
+    console.log("Order created: ", OrderData);
+    return { data: OrderData };
   }
 
   // public section

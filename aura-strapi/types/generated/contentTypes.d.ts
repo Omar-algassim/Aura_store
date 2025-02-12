@@ -419,19 +419,18 @@ export interface ApiAvailableCitieAvailableCitie
     draftAndPublish: true;
   };
   attributes: {
+    available: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    currently_available: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
       "api::available-citie.available-citie"
     > &
       Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    region: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -442,6 +441,7 @@ export interface ApiAvailableCountryAvailableCountry
   extends Struct.CollectionTypeSchema {
   collectionName: "available_countries";
   info: {
+    description: "";
     displayName: "available country ";
     pluralName: "available-countries";
     singularName: "available-country";
@@ -465,14 +465,6 @@ export interface ApiAvailableCountryAvailableCountry
       "oneToMany",
       "api::available-citie.available-citie"
     >;
-    country: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -481,6 +473,14 @@ export interface ApiAvailableCountryAvailableCountry
       "oneToMany",
       "api::available-country.available-country"
     >;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
@@ -682,7 +682,7 @@ export interface ApiOrderItemOrderItem extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     order: Schema.Attribute.Relation<"manyToOne", "api::order.order">;
-    product_id: Schema.Attribute.Relation<"oneToOne", "api::product.product">;
+    product: Schema.Attribute.Relation<"manyToOne", "api::product.product">;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
@@ -702,12 +702,13 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    checkout_image: Schema.Attribute.Media<"images", true> &
-      Schema.Attribute.Required;
+    checkout_image: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    delivery_Address: Schema.Attribute.JSON & Schema.Attribute.Required;
+    delivery_address: Schema.Attribute.JSON & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::order.order"> &
       Schema.Attribute.Private;
@@ -726,7 +727,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
       ]
     >;
     publishedAt: Schema.Attribute.DateTime;
-    region: Schema.Attribute.Enumeration<["sudan", "egypt", "saudi arabia"]>;
+    region: Schema.Attribute.String & Schema.Attribute.Required;
     total_pay: Schema.Attribute.Decimal & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
@@ -806,6 +807,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    order_items: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::order-item.order-item"
+    >;
     ordered: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<"0">;
     price: Schema.Attribute.Decimal &
       Schema.Attribute.Required &

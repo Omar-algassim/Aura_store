@@ -12,29 +12,13 @@ import {
 import { redirect } from "next/navigation";
 import { CartEntity } from "@/entities/cart-entity";
 import { CountriesDropdown } from "../CountriesDropdown";
+import { getFieldError, getFormError } from "./handleError";
 
 const initialState = {
   message: "",
   type: "",
   data: null,
   error: [],
-};
-
-const getFieldError = (
-  error: { message: string; path: string[] }[],
-  key: string
-) => {
-  if (Array.isArray(error)) {
-    return error?.filter((err) => err.path.includes(key)) || [];
-  }
-  return [];
-};
-
-const getFormError = (
-  error: { message: string; path: string[] }[] | string
-) => {
-  if (typeof error === "string") return error;
-  return null;
 };
 
 export function SignupForm({ type }: { type: "phone" | "email" }) {

@@ -19,6 +19,7 @@ import {
   cube as cubeIcon,
   exit as exitIcon,
 } from "@/constants/app-constants/icons";
+import { ButtonPrimary } from "@/components/common/Buttons";
 
 const alertProps = {
   header: "تسجيل خروج",
@@ -144,14 +145,16 @@ function ProfilePage() {
             {/* link */}
             <AlertDialogElement
               // onClick={toggleMenu}
-              trigger={"تسجيل خروج"}
-              triggerStyle="bg-transparent text-right text-lg justify-start text-primary font-[600] shadow-none p-0 m-0 hover:bg-transparent hover:text-primary-dark"
               action={logout}
               header={alertProps.header}
               body={alertProps.body}
               cancel="إلغاء"
               action_text={alertProps.action_text}
-            />
+            >
+              <ButtonPrimary className="bg-transparent text-right text-lg justify-start text-primary font-[600] shadow-none p-0 m-0 hover:bg-transparent hover:text-primary-dark">
+                تسجيل الخروج
+              </ButtonPrimary>
+            </AlertDialogElement>
           </li>
         </ul>
       </section>

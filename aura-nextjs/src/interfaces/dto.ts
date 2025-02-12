@@ -15,6 +15,9 @@ export interface DeliveryAddress {
   region: Regions;
   city: string;
   address: string;
+  recipient_name: string;
+  recipient_phone: string;
+  recipient_email: string;
 }
 export interface OrderDTO {
   documentId?: string;
@@ -23,7 +26,7 @@ export interface OrderDTO {
   order_items: OrderItem[];
   order_status: OrderStatus;
   checkout_image: string;
-  users_id: string;
+  user_id: string;
   delivery_address: DeliveryAddress;
 }
 
@@ -95,7 +98,17 @@ export type OrderStatus =
   | "delivered"
   | "cancelled";
 
-export type Regions = "Sudan" | "Egypt" | "KSA";
+export type Regions = "sudan" | "egypt" | "KSA";
+export interface Region {
+  name: string;
+  available_cities: City[];
+  available: boolean;
+}
+
+export interface City {
+  name: string;
+  available: boolean;
+}
 
 // Auth DTOs
 export interface signUpFormData {

@@ -1,4 +1,3 @@
-import { count } from "console";
 import { z } from "zod";
 
 export const signUpSchema = z
@@ -44,15 +43,18 @@ export const signInSchema = z.object({
 
 export const checkoutSchema = z.object({
   firstName: z.string().min(2, "الاسم يجب ان يحتوي على حرفين على الاقل"),
-  secondName: z.string().min(2, "الاسم يجب ان يحتوي على حرفين على الاقل"),
+  lastName: z.string().min(2, "الاسم يجب ان يحتوي على حرفين على الاقل"),
   email: z.string().email("البريد الالكتروني غير صحيح"),
   phone: z
     .string()
-    .regex(/^[0-9][\d]{8,11}$/, "رقم الهاتف غير صحيح"),
-    country: z.string({ message: "الرجاء اختيار الدولة" }),
+    .regex(/^\+[0-9]{2,3}[1-9][\d]{8,12}$/, "رقم الهاتف غير صحيح"),
+  country: z.string({ message: "الرجاء اختيار الدولة" }),
   city: z.string().min(2, "الرجاء اختيار المدينة"),
   address: z.string().min(2, "الرجاء ادخال العنوان"),
-  payment: z.string().nonempty("الرجاء إرفاق اشعار الدفع"),
+  checkoutReceipt: z.custom((value) => value instanceof File, {
+    message: "الرجاء إرفاق اشعار الدفع",
+  }),
+  // .nonempty("الرجاء إرفاق اشعار الدفع"),
 });
 
 export type signUpSchemaType = z.infer<typeof signUpSchema>;

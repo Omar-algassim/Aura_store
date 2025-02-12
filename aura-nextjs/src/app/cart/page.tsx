@@ -1,5 +1,5 @@
 "use client";
-import Cookie from "js-cookie";
+
 import React, { JSX } from "react";
 import { useCart, useCartDispatcher, useUser } from "@/components/context";
 import { BaseUrl } from "@/constants/api-constants";
@@ -10,8 +10,6 @@ import { Minus, Plus } from "lucide-react";
 import { CartProductsDTO, Product } from "@/interfaces/dto";
 import AlertDialogElement from "@/components/common/alert-dialog";
 import { CartEntity } from "@/entities/cart-entity";
-
-
 
 interface CartProductProps {
   name: string;
@@ -26,7 +24,6 @@ function ProductControls(data: CartProductsDTO): JSX.Element {
   const cartDispatcher = useCartDispatcher();
   const [quantity, setQuantity] = React.useState(amount);
 
-
   async function decreaseQuantity() {
     setQuantity(quantity - 1);
     await cart.removeProduct(product);
@@ -40,7 +37,7 @@ function ProductControls(data: CartProductsDTO): JSX.Element {
   }
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2 px-4 tablet:px-0">
       <div className="w-full flex">
         {/* decrease */}
         <div
@@ -78,11 +75,11 @@ function ProductControls(data: CartProductsDTO): JSX.Element {
 
 function CartProduct(props: CartProductProps) {
   return (
-    <div className="flex items-center justify-center w-[320px] h-[120px] bg-white rounded-[12px] shadow-lg mb-[16px]">
-      <div className="flex items-center justify-center w-[100px] h-[100px]">
+    <div className="flex flex-col tablet:flex-row items-center justify-center w-full tablets:w-[320px] min-h-fit py-4 tablet:py-0 tablet:h-[120px] bg-white rounded-[12px] shadow-lg mb-[16px]">
+      <div className="flex items-center justify-center w-full tablet:w-[100px] h-[100px]">
         <Image src={props.image} alt={props.name} width={100} height={100} />
       </div>
-      <div className="flex flex-col mr-[60px] justify-center w-[245px] h-[100px]">
+      <div className="flex flex-col px-2 tablet:px-0 tablet:mr-[60px] justify-center w-full tablet:w-[245px] h-[100px]">
         <p>{props.name}</p>
         <p>{props.price} SDG</p>
       </div>
@@ -101,7 +98,7 @@ export default function CartPage() {
   React.useEffect(() => {
     console.log("cart is changed", cart);
     setCartProducts(cart.products);
-  }, [cart.total_items]);
+  }, [cart, cart.total_items]);
 
   async function clear(product: Product) {
     await cart.clearProduct(product);
@@ -110,13 +107,12 @@ export default function CartPage() {
   }
 
   function checkout() {
-    if(!user.documentId) {
-      console.log('you have to login first')
-      setLoggedIn(true)
+    if (!user.documentId) {
+      console.log("you have to login first");
+      setLoggedIn(true);
     }
     // Cookie.set('nextPage', '/cart/checkout')
-    router.push('/cart/checkout')
-    
+    router.push("/cart/checkout");
   }
 
   if (cart?.total_items === 0) {
@@ -137,7 +133,7 @@ export default function CartPage() {
           </div>
         </div>
         <ButtonPrimary
-          className="w-[345px] mt-[50px]"
+          className="w-full max-w-[354px] mt-[50px]"
           handleClick={() => router.push("/products")}
         >
           إبدئي التسوق
@@ -152,19 +148,19 @@ export default function CartPage() {
         {cartProducts &&
           Object.values(cartProducts).map((product) => (
             <div
-              className="flex flex-col items-center gap-2 justify-between bg-white p-[24px] w-[362px] h-[248px]"
+              className="flex flex-col items-center gap-2 tablet:justify-between bg-white w-full tablet:w-[362px]"
               key={product.product.documentId}
             >
-              <div className="flex flex-col items-center justify-center">
-                <CartProduct
-                  key={product.product.documentId}
-                  name={product.product.title}
-                  price={product.product.price}
-                  quantity={product.amount}
-                  image={`${BaseUrl}${product.product.thumbnail}`}
-                />
-              </div>
-              <div className="flex items-center justify-between w-[320px] h-[800px]">
+              {/* <div className="flex flex-col items-center justify-center"> */}
+              <CartProduct
+                key={product.product.documentId}
+                name={product.product.title}
+                price={product.product.price}
+                quantity={product.amount}
+                image={`${BaseUrl}${product.product.thumbnail}`}
+              />
+              {/* </div> */}
+              <div className="flex items-center justify-between w-full tablet:w-[320px] pb-4 pl-2">
                 <ProductControls product={product} />
                 <AlertDialogElement
                   header="حذف المنتج"
@@ -186,37 +182,42 @@ export default function CartPage() {
           ))}
       </div>
       {/* checkout section */}
-      <div className="flex flex-col items-start justify-between p-5 gap-5">
-          <strong>تفاصيل الفاتورة</strong>
+      <div className="w-full max-w-[768px] flex flex-col items-start justify-between p-4 gap-5">
+        <strong>تفاصيل الفاتورة</strong>
         {/* container of prices and titles */}
-        <div className="flex justify-between w-[500px]">
-          {/* title of price */}
-          <div className="flex flex-col justify-center gap-5">
-            <p>{`المجموع الفرعي ( ${cart.total_items} منتجات)`  }</p>
-            <p>رسوم التوصيل</p>
+        <div className="flex flex-col gap-3 max-w-[500px]">
+          {/* order price */}
+          <div className="flex gap-3 tablet:gap-5">
+            <p className="flex-1 text-sm tablet:text-lg">{`المجموع الفرعي ( ${cart.total_items} منتجات)`}</p>
+            <strong className="text-sm tablet:text-lg">
+              {`${Math.floor(cart.total_pay)}`} SDG
+            </strong>
           </div>
           {/* prices */}
-          <div className="flex flex-col justify-center gap-5">
-            <strong>{`${Math.floor(cart.total_pay)}`} SDG</strong>
-            <strong>SDG 3000</strong>
+          <div className="flex gap-3 tablet:gap-5">
+            <p className="flex-1 text-sm tablet:text-lg">رسوم التوصيل</p>
+            <strong className="text-sm tablet:text-lg">SDG 3000</strong>
           </div>
         </div>
-        <div className="flex justify-center gap-10">
-        </div>
+        <div className="flex justify-center gap-10"></div>
         <div className="flex flex-col items-center gap-14">
-        <p>نطاق التوصيل يشمل مدينة بورتسودان فقط في الوقت الراهن.
-           نعمل على توسيع خدماتنا قريبا</p>
-           <ButtonPrimary
-           handleClick={checkout}
-           >متابعة الشراء</ButtonPrimary>
-           {loggedIn && <AlertDialogElement
-           open={true}
-           action_text="تسجيل الدخول"
-           action={() => router.push('/login')}
-           cancel="الغاء"
-           body="لمتابعة عملية الشراء عليك تسجيل الدخول اولا"
-           ><></></AlertDialogElement>}
-          </div>
+          <p className="text-xs tablet:text-lg font-light">
+            نطاق التوصيل يشمل مدينة بورتسودان فقط في الوقت الراهن. نعمل على
+            توسيع خدماتنا قريبا
+          </p>
+          <ButtonPrimary handleClick={checkout}>متابعة الشراء</ButtonPrimary>
+          {loggedIn && (
+            <AlertDialogElement
+              open={true}
+              action_text="تسجيل الدخول"
+              action={() => router.push("/login")}
+              cancel="الغاء"
+              body="لمتابعة عملية الشراء عليك تسجيل الدخول اولا"
+            >
+              <></>
+            </AlertDialogElement>
+          )}
+        </div>
       </div>
     </>
   );

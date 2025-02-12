@@ -12,10 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "region": {
-      "type": "enumeration",
-      "enum": ["sudan", "egypt", "saudi arabia"]
-    },
     "total_pay": {
       "type": "decimal",
       "required": true
@@ -31,19 +27,13 @@
         "cancelled"
       ]
     },
-    "checkout_image": {
-      "type": "media",
-      "multiple": true,
-      "required": true,
-      "allowedTypes": ["images"]
-    },
     "order_items": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::order-item.order-item",
       "mappedBy": "order"
     },
-    "delivery_Address": {
+    "delivery_address": {
       "type": "json",
       "required": true
     },
@@ -52,6 +42,15 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "orders"
+    },
+    "checkout_image": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "region": {
+      "type": "string",
+      "required": true
     }
   }
 }

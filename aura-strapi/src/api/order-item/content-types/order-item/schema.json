@@ -17,15 +17,16 @@
       "required": true,
       "min": 1
     },
-    "product_id": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::product.product"
-    },
     "order": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::order.order",
+      "inversedBy": "order_items"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
       "inversedBy": "order_items"
     }
   }
