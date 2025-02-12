@@ -1,5 +1,4 @@
 import React, { JSX } from "react";
-import Image from "next/image";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { ButtonPrimary, ButtonSecondary } from "./Buttons";
 

@@ -473,6 +473,27 @@ class APIClient {
       return { error: error.response?.data || error.message };
     }
   }
+
+  async getUserOrders(jwt: string, query: string) {
+    try {
+      const response = await this.api.get(`/orders?${query}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      console.log(error);
+      return { error: error.response?.data || error.message };
+    }
+  }
 }
 
 export const apiClient = new APIClient();

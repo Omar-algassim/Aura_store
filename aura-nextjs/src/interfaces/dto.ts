@@ -20,6 +20,7 @@ export interface DeliveryAddress {
   recipient_email: string;
 }
 export interface OrderDTO {
+  id?: string;
   documentId?: string;
   region: Regions;
   total_pay: number;
