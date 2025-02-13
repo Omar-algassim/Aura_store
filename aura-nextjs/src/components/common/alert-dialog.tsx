@@ -1,9 +1,9 @@
-import React, { JSX } from "react";
+import React from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { ButtonPrimary, ButtonSecondary } from "./Buttons";
 
 interface alertDialogElementProps {
-  children: JSX.Element;
+  children: React.ReactNode;
   onClick?: VoidFunction;
   open?: boolean;
   type?: string;
@@ -15,9 +15,10 @@ interface alertDialogElementProps {
 }
 
 function AlertDialogElement(props: alertDialogElementProps) {
-  const [open, setOpen] = React.useState(props.open);
+  const [open, setOpen] = React.useState(props.open || false);
 
   function Open() {
+    console.log("open");
     if (props.onClick) {
       props.onClick();
     }
@@ -25,6 +26,7 @@ function AlertDialogElement(props: alertDialogElementProps) {
   }
 
   async function action() {
+    console.log("action");
     if (props.action) {
       await props.action();
     }

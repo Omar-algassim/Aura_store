@@ -28,26 +28,32 @@ const alertProps = {
 };
 
 /**
- * 
- * @param props to take a icon beside the element and name of the element 
- * @returns 
+ *
+ * @param props to take a icon beside the element and name of the element
+ * @returns
  */
 function NavElement(props: NavElementProps) {
   const router = useRouter();
   return (
-    <div className="flex items-center justify-center hover:bg-primary-dark hover:text-white active:bg-primary-dark
+    <div
+      className="flex items-center justify-center hover:bg-primary-dark hover:text-white active:bg-primary-dark
           active:text-white focus:outline-none focus:bg-primary-dark w-[345px]
-          focus:text-white rounded-[12px] py-[12px] px-[6px]">
+          focus:text-white rounded-[12px] py-[12px] px-[6px]"
+    >
       {/* the link element navigation to  */}
-      <Link
-        href={props.link}
-        className="w-[345px]"
-      >
+      <Link href={props.link} className="w-[345px]">
         {props.name}
       </Link>
       {/*the icon beside the element if exist */}
       {props.icon && (
-        <Image className="absolute left-[113px] cursor-whatsapp" onClick={() => router.push("https://wa.me/966531676082")} src={props.icon} alt={props.name} width={20} height={20} />
+        <Image
+          className="absolute left-[113px] cursor-whatsapp"
+          onClick={() => router.push("https://wa.me/966531676082")}
+          src={props.icon}
+          alt={props.name}
+          width={20}
+          height={20}
+        />
       )}
     </div>
   );
@@ -67,7 +73,7 @@ export function Navbar() {
 
   function logout() {
     if (user.documentId) {
-      console.log('logout')
+      console.log("logout");
       userDispatcher({ type: "LOGOUT", payload: {} });
       cartDispatcher({ type: "DELETE", payload: { cart } });
       router.push("/");
@@ -115,7 +121,13 @@ export function Navbar() {
                   cancel="إلغاء"
                   action_text={alertProps.action_text}
                 >
-                  <ButtonPrimary>تسجيل خروج</ButtonPrimary>
+                  <button
+                    className="w-full max-w-[320px] h-14 rounded-[12px] flex
+                    items-center bg-primary text-white
+      justify-center gap-2 hover:bg-primary-dark hover:text-white active:bg-primary-dark active:text-white focus:outline-none focus:bg-primary-dark focus:text-white"
+                  >
+                    تسجيل خروج
+                  </button>
                 </AlertDialogElement>
               ) : (
                 <>
@@ -133,7 +145,11 @@ export function Navbar() {
             </div>
             <div className="flex flex-col justify-between pt-[40px]">
               <NavElement link="/products" name="جميع المنتجات" />
-              <NavElement link="/contact-us" name="تواصل معنا" icon="/icons/logos-whatsapp-icon.svg" />
+              <NavElement
+                link="/contact-us"
+                name="تواصل معنا"
+                icon="/icons/logos-whatsapp-icon.svg"
+              />
               <NavElement link="/about-us" name="نبذة عن Aura" />
               <NavElement link="/profile" name="الملف الشخصي" />
             </div>

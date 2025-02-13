@@ -52,14 +52,16 @@ export function LoginForm() {
       // /console.log("user data", JSON.stringify(formState.data, null, 2));
       userDispatcher({ type: "LOGIN", payload: { userData: formState.data } });
       // sync the cart with the user
-      cart.sync(formState.data.user.documentId).then(() => {
-        CartDispatcher({ type: "UPDATE", payload: { cart: cart } });
-      });
+      // cart.sync(formState.data.user.documentId).then(() => {
+      //   CartDispatcher({ type: "UPDATE", payload: { cart: cart } });
+      // });
       //redirect to nextPage
       const nextPage = cookie.get("nextPage") || "/";
-      router.replace(nextPage);
+      console.log("From Login", nextPage);
+      cookie.remove("nextPage");
+      return router.replace(nextPage);
     }
-  });
+  }, [CartDispatcher, cart, formState.data, router, userDispatcher]);
 
   return (
     <form

@@ -1,6 +1,7 @@
 export class User {
   documentId: string;
   username: string;
+  avatar?: string;
   email?: string;
   phone_number?: string;
   country_code?: string;
@@ -21,6 +22,7 @@ export class User {
   constructor(userParams: User | null = null) {
     this.documentId = userParams?.documentId || "";
     this.username = userParams?.username || "anonymous";
+    this.avatar = userParams?.avatar || "/images/default-avatar.png";
     this.email = userParams?.email;
     this.phone_number = userParams?.phone_number;
     this.country_code = userParams?.country_code;

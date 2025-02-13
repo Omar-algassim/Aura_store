@@ -5,7 +5,7 @@ import { User } from "./entities/user-entity";
 
 const protectedRoutes = ["/cart/checkout", "/profile"];
 const isProtectedRoute = (path: string) => {
-  return protectedRoutes.some((route) => path.includes(route));
+  return protectedRoutes.some((route) => path.startsWith(route));
 };
 
 export async function middleware(request: NextRequest) {
