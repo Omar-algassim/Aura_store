@@ -1174,3 +1174,5 @@ export const countriesCode = [
     icon: "🇿🇼",
   },
 ];
+
+export const whatsappMessage = "*اهلا بك في اورى*\n\nكيف بمكننا مساعدتك";

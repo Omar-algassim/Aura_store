@@ -13,6 +13,7 @@ import {
 } from "@/components/context";
 import { CartEntity } from "@/entities/cart-entity";
 import AlertDialogElement from "../common/alert-dialog";
+import { whatsappMessage } from "@/constants/app-constants";
 
 interface NavElementProps {
   name: string;
@@ -146,7 +147,7 @@ export function Navbar() {
             <div className="flex flex-col justify-between pt-[40px]">
               <NavElement link="/products" name="جميع المنتجات" />
               <NavElement
-                link="/contact-us"
+                link={`https://wa.me/201507023464?text=${whatsappMessage}`}
                 name="تواصل معنا"
                 icon="/icons/logos-whatsapp-icon.svg"
               />
@@ -157,7 +158,6 @@ export function Navbar() {
         </div>
       </div>
       {isOpen && (
-        // TODO: take the menu out of overlay
         <div
           onClick={toggleMenu}
           className="fixed inset-0 bg-black/50 z-0 w-full h-full"

@@ -1,10 +1,14 @@
-import { facebook, instagram, whatsapp } from "@/constants/app-constants";
+import {
+  facebook,
+  instagram,
+  whatsapp,
+  whatsappMessage,
+} from "@/constants/app-constants";
 import { Copyright, HeartHandshake } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export function Footer() {
-  const whatsappMessage = "*اهلا بك في اورى*\n\nكيف بمكننا مساعدتك";
   return (
     <footer className="relative bottom-0 mt-12 p-12 tablet:p-14 w-full min-w-full h-[476px] tablet:h-[336px] flex flex-col items-center justify-center bg-foreground text-white gap-10">
       <div className="w-full flex flex-col tablet:flex-row tablet:gap-x-4 items-center justify-center mt-16 tablet:mt-0 space-y-10 tablet:space-y-0">
