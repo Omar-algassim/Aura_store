@@ -11,8 +11,13 @@ export default async function getAvailableRegions() {
         }
     );
     const jwt = cookie.get('jwt');
-    console.log(jwt);
   const response = await apiClient.availableRegions(query, jwt);
   return response.data;
 };
+
+export async function getAvailableCities(region: string) {
+  const response = await apiClient.getCities(region);
+  console.log("response", response.data);
+  return response.data;
+}
 // fetch data from database base and return the object
