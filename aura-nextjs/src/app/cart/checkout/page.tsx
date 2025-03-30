@@ -17,7 +17,7 @@ function CheckoutPage() {
 
   const copyBankNum = async () => {
     try {
-      await navigator.clipboard.writeText("Bank Account Number");
+      await navigator.clipboard.writeText("2006899");
       setCopied(true);
     } catch {
       // setCopied(false);
@@ -85,7 +85,7 @@ function CheckoutPage() {
                 />
               )}
               <span className="text-sm md:text-lg text-[#202020] font-[500] uppercase">
-                234-xxx-xxx
+                2006899
               </span>
             </div>
           </div>
