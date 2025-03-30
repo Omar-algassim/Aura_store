@@ -8,6 +8,9 @@ import { useUser, useUserDispatch } from "@/components/context";
 import Dropdown from "@/components/ui/Dropdown";
 import { updateUser } from "@/utils/services/user-services";
 import { useRouter } from "next/navigation";
+import WorldWideDropdown from "@/components/ui/wideWorldDropdown";
+import { getAvailableCities } from "@/utils/services/available-region";
+import { set } from "zod";
 
 function AddressBook() {
   const router = useRouter();
@@ -15,27 +18,37 @@ function AddressBook() {
   const userDispatcher = useUserDispatch();
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
-  const [availableRegions, setAvailableRegions] = React.useState<string[]>([]);
   const [availableCities, setAvailableCities] = React.useState<string[]>([]);
   const [region, setRegion] = React.useState(user.location?.region || "");
   const [city, setCity] = React.useState(user.location?.city || "");
   const [address, setAddress] = React.useState(user.location?.address || "");
 
   React.useEffect(() => {
+    if (!region) { 
+      setAvailableCities([]) 
+      return;
+    }
+    // fetch available cities
+    const fetchCities = async () => {
+      const cities = await getAvailableCities(region);
+      console.log("cities", cities);
+      setAvailableCities(cities);
+    };
+    fetchCities();
+  }, [region]);
+
+  React.useEffect(() => {
     // fetch available regions
-    setAvailableRegions(["السودان", "مصر", "السعودية"]);
     setRegion(user.location?.region || "");
     // fetch available cities
-    setAvailableCities(["بورتسودان"]);
     setLoading(false);
   }, [user]);
 
-  React.useEffect(() => {
-    console.log("user", user);
-    if (!city) setCity(user.location?.city || availableCities[0]);
-    setRegion(user.location?.region || "");
-    setAddress(user.location?.address || "");
-  }, [city, availableCities, user]);
+  // React.useEffect(() => {
+  //   // if (!city) setCity(user.location?.city || availableCities[0]);
+  //   setRegion(user.location?.region || "");
+  //   setAddress(user.location?.address || "");
+  // }, [city, user]);
 
   const saveUpdates = async () => {
     const jwt = cookie.get("jwt");
@@ -79,7 +92,12 @@ function AddressBook() {
           {/* region */}
           <div className="basis-1/2 flex flex-col items-start justify-center gap-2">
             <h3 className="text-lg font-[500] text-right">الدولة *</h3>
-            <Dropdown
+            <WorldWideDropdown
+              setCountryKey={(region: string) => setRegion(region)}
+              defaultValue={region}
+              triggerStyle="w-[250px] h-[54px] bg-surface border-none rounded-[12px] px-6 py-3"
+            />
+            {/* <Dropdown
               data={availableRegions}
               disabled={availableRegions.length <= 1}
               onSelect={(selected) => setRegion(selected)}
@@ -101,7 +119,7 @@ function AddressBook() {
                   strokeWidth={3}
                 />
               </button>
-            </Dropdown>
+            </Dropdown> */}
           </div>
 
           {/* cities */}
@@ -109,14 +127,14 @@ function AddressBook() {
             <h3 className="text-lg font-[500] text-right">المدينة *</h3>
             <Dropdown
               data={availableCities}
-              disabled={availableCities.length <= 1}
+              disabled={availableCities?.length <= 1}
               onSelect={(selected) => setCity(selected)}
               value={city}
               className="w-full"
             >
               <button
                 className="flex items-center justify-between w-[134px] h-[54px] bg-surface border-none rounded-[12px] px-6 py-3 font-[400] disabled:opacity-50 group"
-                disabled={availableCities.length <= 1}
+                disabled={availableCities?.length <= 1}
               >
                 <div className="flex items-center justify-center text-sm text-right">
                   {city || "إختار..."}
