@@ -13,6 +13,7 @@ export async function middleware(request: NextRequest) {
   const currentPath = request.nextUrl.pathname;
   const jwt = cookieStore.get("jwt")?.value;
   const user = await getUserMe(jwt);
+  const nextPage = cookieStore.get("nextPage")?.value;
   const userFromCookie = JSON.parse(
     cookieStore.get("user")?.value || "{}"
   ) as User;
@@ -44,6 +45,11 @@ export async function middleware(request: NextRequest) {
 
   if (["/login", "/register"].includes(currentPath)) {
     if (user.ok) {
+      if (nextPage) {
+        // redirect to the last visited page
+        return NextResponse.redirect(new URL(nextPage, request.url));
+      }
+      // redirect to profile page
       return NextResponse.redirect(new URL("/profile", request.url));
     } else if (userFromCookie?.documentId?.length) {
       if (userFromCookie.phone_number) {
