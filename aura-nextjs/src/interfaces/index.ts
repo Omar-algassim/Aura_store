@@ -1,7 +1,8 @@
 export interface ProductQueryFilters {
   filters: {
-    category?: string;
-    brand?: string;
+    category?: string[];
+    brand?: string[];
+    search?: string | string[];
     price?: {
       from: number;
       to: number;

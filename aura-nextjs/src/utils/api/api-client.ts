@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // hold all the api calls, and base logic
 // uses axios for http requests
@@ -217,12 +218,12 @@ class APIClient {
     try {
       const fetchedProducts = await this.api.get(`/products?${query}`);
 
+      // console.log("fetched data", JSON.stringify(fetchedProducts.data.meta, null, 2));
       if (fetchedProducts.status !== 200) {
-        // /console.log(JSON.stringify(fetchedProducts.data, null, 2));
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
       }
       // /console.log(JSON.stringify(fetchedProducts.data, null, 2));
-      return { data: fetchedProducts.data.data };
+      return { data: fetchedProducts.data.data, meta: fetchedProducts.data.meta };
     } catch (error: any) {
       //console.error(JSON.stringify(error, null, 2));
       return { error: error.message };
@@ -295,7 +296,7 @@ class APIClient {
    */
   async fetchCategories() {
     try {
-      const fetchedCategories = await this.api.get("/categories");
+      const fetchedCategories = await this.api.get("/categories?sort=priority:desc");
       if (fetchedCategories.status !== 200) {
         // /console.log(JSON.stringify(fetchedCategories.data, null, 2));
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
@@ -448,7 +449,7 @@ class APIClient {
 
     try {
       for (const data of ordersData) {
-        console.log("Creating order item...", JSON.stringify(data, null, 2));
+        // console.log("Creating order item...", JSON.stringify(data, null, 2));
         try {
           await this.api.post(
             "/order-items",
@@ -491,6 +492,30 @@ class APIClient {
       }
     } catch (error: any) {
       console.log(error);
+      return { error: error.response?.data || error.message };
+    }
+  }
+  async getCities(country: string) {
+    const data = {
+      country: country,
+    };
+    try {
+      const response = await axios.post(
+        "https://countriesnow.space/api/v0.1/countries/cities", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+      }
+      );
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
       return { error: error.response?.data || error.message };
     }
   }
