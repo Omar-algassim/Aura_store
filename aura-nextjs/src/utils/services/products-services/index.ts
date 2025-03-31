@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ProductQueryFilters } from "@/interfaces";
 import { Review } from "@/interfaces/dto";
@@ -11,12 +12,12 @@ import qs from "qs";
  */
 const fetchProducts = async (
   query: string
-): Promise<{ error?: any; products?: any }> => {
-  const { error, data } = await apiClient.fetchProducts(query);
+): Promise<{ error?: any; products?: any , pagination?: any}> => {
+  const { error, data, meta } = await apiClient.fetchProducts(query);
   if (error) {
     return { error };
   }
-  return { products: data };
+  return { products: data, pagination: meta.pagination };
 };
 
 /**
@@ -139,7 +140,7 @@ export const getProducts = async (
   page: number = 1,
   pageSize: number = 20
 ) => {
-  const { category, brand, price } = filters?.filters || {};
+  const { category, brand, price, search } = filters?.filters || {};
   const { sort } = filters || {};
   const queryFilters: any = {
     $and: [
@@ -181,9 +182,16 @@ export const getProducts = async (
   // applying category, brand and price filters to the query filters
 
   if (category) {
+    // queryFilters.$and.push({
+    //   categories: {
+    //     $contains: category,
+    //   },
+    // });
     queryFilters.$and.push({
       categories: {
-        $contains: category,
+        documentId: {
+        $eq: category,
+        }
       },
     });
   }
@@ -192,11 +200,20 @@ export const getProducts = async (
   if (brand) {
     queryFilters.$and.push({
       brand: {
-        $eqi: brand,
+        documentId: {
+          $eq: brand,
+          }
       },
     });
   }
-
+ //applying search filter  
+  if (search) {
+    queryFilters.$and.push({
+      title: {
+        $containsi: search,
+      },
+    });
+  }
   // applying price filter
   if (price) {
     queryFilters.$and.push({
@@ -212,7 +229,6 @@ export const getProducts = async (
   queryObject.filters = queryFilters;
 
   const query = qs.stringify(queryObject);
-  // /console.log("query", query);
 
   return await fetchProducts(query);
 };
@@ -352,7 +368,6 @@ export const createProductReview = async (
       },
     },
   });
-  // /console.log("data", JSON.stringify(data, null, 2));
   return await apiClient.createProductReview(data, jwt, query);
 };
 
