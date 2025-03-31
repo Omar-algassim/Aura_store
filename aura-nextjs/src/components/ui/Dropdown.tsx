@@ -10,7 +10,7 @@ import {
 import { Check } from "lucide-react";
 
 interface DropdownProps {
-  data: string[];
+  data: ({ name: string; available?: boolean })[] | string[];
   onSelect: (value: string) => void;
   value?: string;
   disabled?: boolean;
@@ -31,6 +31,7 @@ function Dropdown(props: DropdownProps) {
   } = props;
 
   const [open, setOpen] = React.useState(false);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild disabled={disabled}>
@@ -46,18 +47,19 @@ function Dropdown(props: DropdownProps) {
             <CommandGroup dir="rtl" className="w-full">
               {data.map((item, index) => (
                 <CommandItem
-                  key={item + index}
-                  value={item}
+                  key={typeof item === "string" ? item + index : item.name + index}
+                  value={typeof item === "string" ? item : item.name}
                   onSelect={(selected) => {
                     onSelect(selected);
                     setOpen(false);
                   }}
+                  disabled={typeof item === "object" && !item.available}
                   className={`w-full flex ${itemClassName}`}
                 >
-                  {item}
+                  {typeof item === "string" ? item : item.name + (item.available ? "" : " (قريبا)")}
                   <Check
                     className={`mr-2 h-4 w-4 ${
-                      value === item ? "opacity-100" : "opacity-0"
+                      value === (typeof item === "string" ? item : item.name) ? "opacity-100" : "opacity-0"
                     }`}
                     strokeWidth={3}
                   />
