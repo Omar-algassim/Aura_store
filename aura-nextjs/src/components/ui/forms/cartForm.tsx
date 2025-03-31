@@ -42,7 +42,6 @@ export function CartForm(props: Props) {
   const [receiptImage, setReceiptImage] = useState<File | null>(null);
 
   const [loading, setLoading] = useState(true);
-
   //   const
   const firstNameError = getFieldError(formState?.error, "firstName");
   const lastNameError = getFieldError(formState?.error, "lastName");
@@ -51,7 +50,7 @@ export function CartForm(props: Props) {
   const countryError = getFieldError(formState?.error, "country");
   const cityError = getFieldError(formState?.error, "city");
   const addressError = getFieldError(formState?.error, "address");
-
+  
   useEffect(() => {
     const fetchAvailableRegions = async () => {
       const response = await getAvailableRegions();
@@ -68,7 +67,7 @@ export function CartForm(props: Props) {
       const cities = availableRegions.find(
         (r) => r.name === region
       )?.available_cities;
-      const availableCities = cities?.filter((city) => city.available);
+      const availableCities = cities || [];
       setAvailableCities(availableCities || []);
     }
     setLoading(false);
@@ -190,6 +189,7 @@ export function CartForm(props: Props) {
         <Input
           name="phone"
           hidden
+          readonly
           value={`${countryCode}${phone.replace(/^0/, "")}`}
           placeholder="9xxxxxxxxxx"
         />
@@ -229,9 +229,9 @@ export function CartForm(props: Props) {
         <div className="w-full tablet:w-[120px] gap-4 flex flex-col ">
           <p>الدولة *</p>
           {/* <SelectMenu placeholder="الدولة" items={regions} itemName="country" /> */}
-          <Input name="country" hidden value={region} />
+          <Input name="country" hidden readonly value={region} />
           <Dropdown
-            data={availableRegions.map((region) => region.name)}
+            data={availableRegions.map((region) => ({ name: region.name, available: region.available }))}
             disabled={availableRegions.length <= 1}
             onSelect={(selected) => setRegion(selected)}
             value={region}
@@ -270,9 +270,9 @@ export function CartForm(props: Props) {
         </div>
         <div className="w-full tablet:w-[120px] gap-4 flex flex-col">
           <p>المدينة *</p>
-          <Input name="city" hidden value={city} placeholder="المدينة " />
+          <Input name="city" hidden readonly value={city} placeholder="المدينة " />
           <Dropdown
-            data={availableCities.map((city) => city.name)}
+            data={availableCities.map((city) => ({name: city.name, available: city.available}))}
             disabled={availableCities.length <= 0}
             onSelect={(selected) => setCity(selected)}
             value={city}
@@ -338,7 +338,7 @@ export function CartForm(props: Props) {
         type="button"
         className="mt-6 max-w-[190px] self-center flex items-center gap-3 pointer-events-nones"
       >
-        <span className="block">تحميل الاشعار</span>
+        <span className="block">{receiptImage ? "" : "تحميل الاشعار"}</span>
         {receiptImage !== null ? (
           <CheckCircle width={48} height={48} strokeWidth={3} />
         ) : (
