@@ -22,12 +22,13 @@ interface filterProps {
   children: React.ReactNode;
   onBrandChange: (brand: string[]) => void;
   onPriceChange: (maxPrice: number, minPrice: number) => void;
+  initialBrand: string[] | undefined;
   openFilter: boolean;
 }
 
 export default function FilterProducts(props: filterProps) {
   const [selectedBrand, setSelectedBrand] = React.useState<string[]>([]);
-  const [brands, setBrands] = React.useState<any[]>([]);
+  const [brands, setBrands] = React.useState<any[] | undefined>([]);
   const [price, setPrice] = React.useState<number[]>([0, 250000]);
   const [open, setOpen] = React.useState(false);
 
@@ -49,6 +50,7 @@ export default function FilterProducts(props: filterProps) {
   }
 
   useEffect(() => {
+    setSelectedBrand(props.initialBrand ? props.initialBrand : []);
     const fetchBrands = async () => {
       await  getBrands().then((data) => {
         setBrands(data.brands.data);
@@ -73,10 +75,10 @@ return (
                   <AccordionItem value="item-1">
                     <AccordionTrigger className="sticky top-0">الماركات</AccordionTrigger>
                     <AccordionContent>
-                  {brands.map((brand) => (
+                  {brands?.map((brand) => (
                     <div key={brand.documentId} className="flex p-1 justify-between bg-blue_shade">
                       <p >{brand.name}</p>
-                      <Checkbox value={brand.documentId} title={brand.name} onCheckedChange={() => handleBrandChange(brand.documentId)} />
+                      <Checkbox checked={selectedBrand?.includes(brand.documentId)} value={brand.documentId} title={brand.name} onCheckedChange={() => handleBrandChange(brand.documentId)} />
                     </div>
                    ))}
                     </AccordionContent>
