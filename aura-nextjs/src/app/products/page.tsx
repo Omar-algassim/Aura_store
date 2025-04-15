@@ -18,19 +18,20 @@ import { Loader } from "@/components/common/loader";
 
 interface categoryProps {
   ClickHandler: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  initialCAtegory: string[] | undefined;
 }
 
 export function Category(props: categoryProps) {
   const [categories, setCategories] = React.useState<any[]>([]);
-  const [SelectedCategories, setSelectedCAtegory] = React.useState<string[]>([]);
+  const [SelectedCategories, setSelectedCAtegory] = React.useState<string[] | undefined>([]);
   const [loading, setLoading] = React.useState(true);
   const [error , setError] = React.useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
+    setSelectedCAtegory(props.initialCAtegory);
     getCategories().then((data) => {
       setCategories(data.categories.data);
-      console.log("categories", categories);
       setLoading(false);
     }).catch((error) => {
       setError(error.message);
@@ -40,24 +41,26 @@ export function Category(props: categoryProps) {
   , []);
   // console.log("selected categories", SelectedCategories);
 
+  useEffect(() => {
+      setSelectedCAtegory(props.initialCAtegory);
+  }, [props.initialCAtegory]);
+
   function addCategory(item: string) {
     if (SelectedCategories?.includes(item)) {
-      console.log("item", item);
       const newSelection = SelectedCategories.filter(
         (category) => category !== item
       );
+      if (newSelection.length === 0) {
+        setSelectedCAtegory(undefined);
+        props.ClickHandler(undefined);
+        return;
+      }
       setSelectedCAtegory(newSelection);
-      const url = new URL(window.location.href);
-      url.searchParams.delete("category");
-      url.searchParams.set("category", newSelection.join(", "));
       props.ClickHandler(newSelection);
       return;
     }
     const newSelection = [...(SelectedCategories || []), item];
     setSelectedCAtegory(newSelection);
-    const url = new URL(window.location.href);
-    url.searchParams.delete("category");
-    url.searchParams.set("category", newSelection.join(", "));
     props.ClickHandler(newSelection);
     return;
   }
@@ -67,8 +70,9 @@ export function Category(props: categoryProps) {
       {error ? <div>{error}</div> :
        categories.map((item) => (
         <div
+          key={item.documentId}
           className={`p-3 active:bg-primary active:text-white rounded-2xl text-nowrap cursor-pointer ${
-            SelectedCategories.includes(item.documentId) && "bg-primary text-white"
+            SelectedCategories?.includes(item.documentId) && "bg-primary text-white"
           }`}
           onClick={() => addCategory(item.documentId)}
         >
@@ -86,29 +90,35 @@ function ShoppingPage({
 }) {
   const searchParam = useSearchParams();
   const [loading, setLoading] = React.useState(true);
-  const [categories, setCategories] = React.useState<any[]>([]);
   const [SelectedCategories, setSelectedCAtegory] = React.useState<
     string[] | undefined
-  >(searchParam.get("category")?.split(", ") || []);
+  >(searchParam.has('category') ? searchParam.getAll('category') : undefined);
   const [products, setProducts] = React.useState<Product[]>([]);
   const [sort, setSort] = React.useState<string>("الأحدث");
   const [sortValue, setSortValue] = React.useState<string>("createdAt:desc");
-  const [brand, setBrand] = React.useState<string[] | undefined>(searchParam.get("brand")?.split(", ") || []);
-  const [search, setSearch] = React.useState<string | string[] | undefined>(searchParam.getAll("search"));
+  const [brand, setBrand] = React.useState<string[] | undefined>(searchParam.has('brand') ? searchParam.getAll('brand') : undefined);
+  const [search, setSearch] = React.useState<string | string[] | undefined>(searchParam.has('search') ? searchParam.getAll('search') : undefined);
   const [maxPrice, setMaxPrice] = React.useState<number>(25000);
   const [minPrice, setMinPrice] = React.useState<number>(0);
   const [openFilter, setOpenFilter] = React.useState(false);
   const [selectAll, setSelectAll] = React.useState(true);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPage, setTotalPage] = React.useState(1);
+  const [error, setError] = React.useState<string | null>(null);
   const route = useRouter();
   const query = qs.stringify({
     category: SelectedCategories?.join(", "),
     brand: brand?.join(", "),
     search: search,
     sort: sortValue
-  });
+  }, {
+    skipNulls: true,
+    encode: false,
+    indices: false,
+    addQueryPrefix: true,
+    strictNullHandling: true,
 
+  });
   const sortType = [
     "الأحدث",
     "الأكثر شعبية",
@@ -124,24 +134,16 @@ function ShoppingPage({
     "السعر من الأكثر إلى الأقل": "price:desc",
     "العروض": "discount:desc",
   };
-
-  
-  // const params = searchParam.getAll("");
-  //   const { category, searchParam, brands } = params;
-  //   // console.log("params", params);
-  //   const BrandArray = Array.isArray(brands) ? brands : brands?.split(",");
-  //   const categoryArray = Array.isArray(category)
-  //     ? category
-  //     : category?.split(",");
-  //   setBrand(BrandArray);
-  //   setSearch(searchParam);
-  //   setSelectedCAtegory(categoryArray);
-  //   setSelectAll(false);
-  
   useEffect(() => {
     setLoading(true);
-    console.log(SelectedCategories, search, brand);
-    const fetchCAtegory = async () => {
+    // const category = searchParam.getAll("category");
+    // const searchQuery = searchParam.getAll("search");
+    // const brands = searchParam.getAll("brand");
+    // setBrand(brands);
+    // setSearch(searchQuery);
+    // setSelectedCAtegory(category);
+    // console.log(SelectedCategories, search, brand);
+    const fetchProducts = async () => {
       if (!SelectedCategories && !search && !brand) {
         setSelectAll(true);
         getProducts().then((data) => {
@@ -149,11 +151,13 @@ function ShoppingPage({
           setCurrentPage(data.pagination.currentPage);
           setTotalPage(data.pagination.pageCount);
           setLoading(false);
+        }).catch((error) => {
+          setError(error.message);
+          setLoading(false);
         });
       } else {
-        console.log("search param test" , searchParam.getAll("category"));
-        console.log("query working" , SelectedCategories, search, brand);
-        setSelectAll(false);
+        
+        SelectedCategories ? setSelectAll(false) : setSelectAll(true);
         getProducts({
           filters: {
             category: SelectedCategories,
@@ -166,18 +170,22 @@ function ShoppingPage({
           sort: sortValue as "createdAt:desc" | "ordered:desc" | "price:desc" | "price:asc" | "discount:desc",
         },currentPage
       ).then((data) => {
-        setProducts(data.products);
-        setCurrentPage(data.pagination.page);
-        setTotalPage(data.pagination.pageCount);
+          setProducts(data.products);
+          setCurrentPage(data.pagination.page);
+          setTotalPage(data.pagination.pageCount);
+          setLoading(false);
+          route.push(`/products${query}`);
+        }).catch((error) => {
+          setError(error.message);
           setLoading(false);
         });
       }
     };
-    fetchCAtegory();
+    fetchProducts();
   }, []);
   
   useEffect(() => {
-    if (SelectedCategories || search || brand || sort || minPrice > 0 || maxPrice < 25000) {
+    if (SelectedCategories || search || brand || minPrice > 0 || maxPrice < 25000) {
       setSelectAll(false);
       getProducts({
         filters: {
@@ -195,15 +203,20 @@ function ShoppingPage({
         setCurrentPage(data.pagination.page);
         setTotalPage(data.pagination.pageCount);
         setLoading(false);
+        route.push(`/products${query}`);
+      }).catch((error) => {
+        setError(error.message);
+        setLoading(false);
       });
     } else {
       setSelectAll(true);
       getProducts().then((data) => {
         setProducts(data.products);
+        route.push(`/products${query}`);
         setLoading(false);
       });
     }
-}, [SelectedCategories, brand, search, sort, maxPrice, minPrice]);
+}, [SelectedCategories, brand, search, sort, maxPrice, minPrice], );
 
   async function getAll() {
     if (!selectAll) {
@@ -218,8 +231,13 @@ function ShoppingPage({
         setSortValue("createdAt:desc");
         setMaxPrice(250000)
         setMinPrice(0)
+        setCurrentPage(data.pagination.page);
+        setTotalPage(data.pagination.pageCount);
+      }).catch((error) => {
+        setError(error.message);
+        setLoading(false);
       });
-      route.push("/products");
+      route.push(`/products`);
     } else {
       route.push(`/products`);
     }
@@ -231,8 +249,12 @@ function ShoppingPage({
   };
 
   function setBrandFilter(brands: string[]) {
-    setBrand(brands);
-    route.push(`/products?${query}`);
+    if (brands.length === 0) {
+      setBrand(undefined);
+      return;
+    } else setBrand(brands);
+    
+    route.push(`/products${query}`);
   }
 
   const ref = useRef<HTMLDivElement>(null)
@@ -254,6 +276,17 @@ function ShoppingPage({
       });
     }
   };
+
+  function HorizontallyScroll(e: React.WheelEvent<HTMLDivElement>) {
+    const element = ref.current;
+    if (element) {
+      e.preventDefault();
+      element.scrollTo({
+        left: element.scrollLeft - e.deltaY,
+        behavior: "smooth",
+      });
+    }
+  }
 
   async function nextPage() {
     if (currentPage < totalPage) {
@@ -287,11 +320,13 @@ function ShoppingPage({
   <div>
     <div>
       {/* categories bar */}
-      <div ref={ref} className="flex gap-4 max-w-[100vw] overflow-x-auto scroll-smooth">
+      <div ref={ref} className="flex gap-4 max-w-[100vw] overflow-x-auto scroll-smooth" onWheel={HorizontallyScroll}>
         <Image className="sticky right-0 shadow-lg bg-white cursor-pointer" onClick={scrollRight} alt="right scroll" src='icons/rightArrow.svg' width={20} height={20} />
         <div className={`p-3 rounded-2xl text-nowrap cursor-pointer ${selectAll && "bg-primary text-white"}`} onClick={getAll}>جميع المنتجات</div>
           <Category
-            ClickHandler={setSelectedCAtegory} />
+            ClickHandler={setSelectedCAtegory}
+            initialCAtegory={SelectedCategories}
+             />
         <Image className="sticky left-0 shadow-lg bg-white cursor-pointer" onClick={scrollLeft} alt="scroll-left" src='icons/leftArrow.svg' width={20} height={20} />
         </div>
       </div>
@@ -300,6 +335,7 @@ function ShoppingPage({
             <p>تصفية النتائج</p>
             <FilterProducts
               openFilter={openFilter}
+              initialBrand={brand}
               onPriceChange={setPriceRange}
               onBrandChange={setBrandFilter}
             >
@@ -330,18 +366,18 @@ function ShoppingPage({
           </div>
         </div>
         <InfiniteScroll
-          dataLength={products.length}
+          dataLength={products?.length || 0}
           next={nextPage}
           hasMore={currentPage < totalPage}
           loader={<Loader />}
           endMessage={
             <p className="text-center">
-              <b>لا يوجد المزيد من المنتجات</b>
+              <b>{error ? error :`لا يوجد المزيد من المنتجات`}</b>
             </p>
           }
         >
           <div className="flex flex-wrap pt-12 pb-12 gap-4 justify-center">
-            {products.map((product) => (
+            {products?.map((product) => (
               <div className="flex justify-center w-[150px] tablet:w-[300px]" key={product.documentId}>
                 <ProductCard key={product.documentId} product={product} />
               </div>
