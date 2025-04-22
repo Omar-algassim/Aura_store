@@ -104,6 +104,7 @@ export const signinAction = async (_prevState: any, formData: FormData) => {
   try {
     const data = {
       provider: formData.get("provider")?.toString(),
+      countryCode: formData.get("countryCode")?.toString(),
       password: formData.get("password")?.toString(),
     };
 
@@ -116,6 +117,7 @@ export const signinAction = async (_prevState: any, formData: FormData) => {
         data: null,
       };
     }
+
     const { error, data: userData } = await apiClient.signin(
       validation.data.provider,
       validation.data.password

@@ -33,11 +33,8 @@ export const signUpSchema = z
 export const signInSchema = z.object({
   provider: z
     .string()
-    .regex(
-      /^[+|00][1-9][\d]{9,11}$/,
-      "رقم الهاتف غير صحيح, يجب ان يبدأ برمز الدولة"
-    )
-    .or(z.string().email("البريد الالكتروني او رقم الهاتف غير صحيح")),
+    .regex(/^[1-9][\d]{8,11}$/, "رقم الهاتف غير صحيح")
+    .or(z.string().email("البريد الالكتروني غير صحيح")),
   password: z.string().min(8, "كلمة المرور يجب ان تحتوي على 8 احرف على الاقل"),
 });
 

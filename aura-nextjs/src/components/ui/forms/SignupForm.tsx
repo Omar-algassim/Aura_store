@@ -130,7 +130,11 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
               placeholder="9xxxxxxxxxx"
               customStyles="flex-1"
             />
-            <CountriesDropdown setCountryKey={setCountryKey} />
+            <CountriesDropdown
+              setCountryKey={setCountryKey}
+              small
+              triggerStyle="w-fit h-14 bg-surface rounded-2xl border-none self-stretch"
+            />
           </div>
           <div className="w-full ">
             {phoneError.map((error, index) => (

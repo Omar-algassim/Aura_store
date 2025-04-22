@@ -1,4 +1,4 @@
-import { ButtonPrimary } from "@/components/common/Buttons";
+import { ButtonSecondary } from "@/components/common/Buttons";
 import { ToolTip } from "@/components/common/ToolTip";
 import { BaseUrl } from "@/constants/api-constants";
 import { starIcon, starIconEmpty } from "@/constants/app-constants";
@@ -65,26 +65,72 @@ function ProductCard({ product }: { product: Product }) {
       </div>
       {/* card body */}
       <div className="w-full flex flex-col gap-y-2 tablet:gap-y-3 px-2 tablet:px-3">
-        {/* product rating */}
-        <div className="w-full tablet:px-2 tablet:py-3 flex justify-end">
-          <div
-            className={`flex items-center justify-center gap-1 w-[64px] h-[24px] tablet:w-[68px] tablet:h-[30px] bg-surface rounded-xl`}
-            dir="rtl"
-          >
-            <Image
-              src={totalRate ? starIcon : starIconEmpty}
-              width={16}
-              height={16}
-              alt="rating"
-              className="w-[10px] h-[10px] tablet:w-[16px] tablet:h-[16px]"
-            />
+        <div className="flex items-center justify-between w-full">
+          {/* product rating */}
+          <div className="w-full tablet:px-2 tablet:py-3 flex">
             <div
-              className={`"flex flex-col item-center justify-center font-[400] p-0 m-0 ${
-                totalRate === 0 ? "text-gray-5000 text-[10px]" : "text-[13px] "
-              }`}
+              className={`flex items-center justify-center gap-1 w-[64px] h-[24px] tablet:w-[68px] tablet:h-[30px] bg-surface rounded-xl`}
+              dir="rtl"
             >
-              {totalRate || "لا يوجد"}
+              <Image
+                src={totalRate ? starIcon : starIconEmpty}
+                width={16}
+                height={16}
+                alt="rating"
+                className="w-[10px] h-[10px] tablet:w-[16px] tablet:h-[16px]"
+              />
+              <div
+                className={`"flex flex-col item-center justify-center font-[400] p-0 m-0 ${
+                  totalRate === 0
+                    ? "text-gray-5000 text-[10px]"
+                    : "text-[13px] "
+                }`}
+              >
+                {totalRate || "لا يوجد"}
+              </div>
             </div>
+          </div>
+          {/* add to cart */}
+          <div className="flex flex-1 justify-end items-end gap-4">
+            {addedToCart ? (
+              <>
+                <div className="w-full bg-white rounded-lg p-2 flex items-center justify-center gap-2 absolute top-1/3 left-0 tablet:relative tablet:top-auto tablet:left-auto animate-enterFromRightAndExitToLeft">
+                  <CheckCircle size={24} color="#02C3F9" />
+                  <span className="text-center text-[12px] tablet:text-[16px] text-primary font-[500] tablet:font-[600]">
+                    تم الإضافة للسلة
+                  </span>
+                </div>
+                <ButtonSecondary
+                  variant="outline"
+                  className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-end hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
+                  preloader
+                  handleClick={() => handleRemoveFromCart(product)}
+                >
+                  <Image
+                    src="/icons/cart-empty.svg"
+                    width={24}
+                    height={24}
+                    alt="remove from cart"
+                    className="w-auto h-full max-h-[24px]"
+                  />
+                </ButtonSecondary>
+              </>
+            ) : (
+              <ButtonSecondary
+                variant="outline"
+                className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-end hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
+                preloader
+                handleClick={() => handleAddToCart(product)}
+              >
+                <Image
+                  src="/icons/cart-add.svg"
+                  width={24}
+                  height={24}
+                  alt="add to cart"
+                  className="w-auto h-full max-h-[24px]"
+                />
+              </ButtonSecondary>
+            )}
           </div>
         </div>
         {/* product title */}
@@ -118,36 +164,6 @@ function ProductCard({ product }: { product: Product }) {
             </p>
           )}
         </div>
-      </div>
-
-      {/* add to cart */}
-      <div className="flex flex-1 justify-end items-end gap-4 px-2 tablet:px-3 pb-3">
-        {addedToCart ? (
-          <>
-            <div className="w-full bg-white rounded-lg p-2 flex items-center justify-center gap-2 absolute top-1/3 left-0 tablet:relative tablet:top-auto tablet:left-auto animate-enterFromRightAndExitToLeft">
-              <CheckCircle size={24} color="#02C3F9" />
-              <span className="text-center text-[12px] tablet:text-[16px] text-primary font-[500] tablet:font-[600]">
-                تم الإضافة للسلة
-              </span>
-            </div>
-            <ButtonPrimary
-              variant="outline"
-              className="w-[140px] h-[56px] text-[13px] tablet:text-[18px] tablet:w-[156px] font-[600] border-[3px] text-primary-dark"
-              preloader
-              handleClick={() => handleRemoveFromCart(product)}
-            >
-              إزالة من السلة
-            </ButtonPrimary>
-          </>
-        ) : (
-          <ButtonPrimary
-            className="w-[140px] h-[56px] text-[13px] tablet:text-[18px] tablet:w-[156px] font-[600]"
-            preloader
-            handleClick={() => handleAddToCart(product)}
-          >
-            أضف للسلة
-          </ButtonPrimary>
-        )}
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ export const getUserOrders = async (
   userId: string
 ): Promise<{ error?: any; data?: OrderDTO[] }> => {
   const q = qs.stringify({
-    filter: {
+    filters: {
       user: {
         documentId: {
           $eq: userId,

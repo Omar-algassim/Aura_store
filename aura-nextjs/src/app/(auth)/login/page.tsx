@@ -2,11 +2,20 @@
 import ProviderSigninButton from "@/components/common/ProviderSigninButton";
 import { LoginForm } from "@/components/ui";
 import ForgetPwdModal from "@/components/ui/modals/ForgetPwdModal";
+import { Button } from "@/components/ui/shadcn/button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/shadcn/tabs";
+import { ArrowDownCircle } from "lucide-react";
 
 import Link from "next/link";
 import React, { useEffect } from "react";
 
 function LoginPage() {
+  const [isOpen, setIsOpen] = React.useState("phone-signup");
   const [showForgetPwd, setShowForgetPwd] = React.useState(false);
 
   useEffect(() => {
@@ -48,12 +57,56 @@ function LoginPage() {
       </div>
       <div className="w-full text-center text-[16px] font-[400] font-alex">
         {/* show more options [email/password form] */}
-        <div
+        <Tabs
+          defaultValue="phone-signup"
           dir="rtl"
-          className="overflow-hidden w-full px-4 pb-4 flex flex-col items-center justify-center"
+          className="overflow-hidden w-full p-4 flex flex-col items-center justify-center"
         >
-          <LoginForm />
-        </div>
+          <TabsList className="flex w-full justify-between tablet:justify-center tablet:gap-4">
+            <TabsTrigger className="w-full" value="phone-signup" asChild>
+              <Button
+                className={`w-[48%] tablet:w-[320px] h-[56px] py-3 px-6 rounded-[12px] text-[14px] font-[400] font-alex text-foreground hover:scale-105 active:scale-100 focus:outline-none focus:scale-100 transition-all ${
+                  isOpen === "phone-signup" ? "bg-slate-600" : "bg-slate-400"
+                }`}
+                onClick={() => setIsOpen("phone-signup")}
+              >
+                بإستخدام الهاتف
+                {isOpen === "phone-signup" ? (
+                  <ArrowDownCircle size={24} className="mr-1 transition-all" />
+                ) : (
+                  <ArrowDownCircle
+                    size={24}
+                    className="mr-1 transform rotate-180 transition-all"
+                  />
+                )}
+              </Button>
+            </TabsTrigger>
+            <TabsTrigger value="email-signup" asChild>
+              <Button
+                className={`w-[48%] tablet:w-[320px] h-[56px] py-3 px-6 rounded-[12px] text-[14px] font-[400] font-alex text-foreground hover:scale-105 active:scale-100 focus:outline-none focus:scale-100 transition-all active:bg-slate-600 ${
+                  isOpen === "email-signup" ? "bg-slate-600" : "bg-slate-400"
+                }`}
+                onClick={() => setIsOpen("email-signup")}
+              >
+                بإستخدام الإيميل
+                {isOpen === "email-signup" ? (
+                  <ArrowDownCircle size={24} className="mr-1 transition-all" />
+                ) : (
+                  <ArrowDownCircle
+                    size={24}
+                    className="mr-1 transform rotate-180 transition-all"
+                  />
+                )}
+              </Button>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="phone-signup" className="w-full">
+            <LoginForm type="phone" />
+          </TabsContent>
+          <TabsContent value="email-signup" className="w-full">
+            <LoginForm type="email" />
+          </TabsContent>
+        </Tabs>
         {/* forget password */}
         <div className="">
           <button

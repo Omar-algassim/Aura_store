@@ -134,6 +134,10 @@ export class CartEntity {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<{ error?: any; data?: any }> {
     // upload the checkout image to the server
+    // if (!this.products || Object.keys(this.products).length === 0) {
+    //   console.log("Cart is empty");
+    //   return { error: "Cart is empty, no orders to checkout!" };
+    // }
     const receiptFormData = new FormData();
     receiptFormData.append(
       "files",

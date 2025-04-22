@@ -12,7 +12,7 @@ import { City, Region, Regions } from "@/interfaces/dto";
 import { checkoutAction } from "@/utils/services/cart-services/checkoutAction";
 import { getFieldError } from "./handleError";
 import { ButtonPrimary } from "@/components/common/Buttons";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useState } from "react";
 import { Preloader } from "../Preloader";
 import { useCart, useCartDispatcher, useUser } from "@/components/context";
 import { CartEntity } from "@/entities/cart-entity";
@@ -50,7 +50,45 @@ export function CartForm(props: Props) {
   const countryError = getFieldError(formState?.error, "country");
   const cityError = getFieldError(formState?.error, "city");
   const addressError = getFieldError(formState?.error, "address");
-  
+
+  const checkout = useCallback(async () => {
+    const jwt = Cookies.get("jwt");
+    if (!jwt) {
+      onError("الرجاء تسجيل الدخول");
+      setLoading(false);
+      return;
+    }
+    if (!formState?.data) {
+      setLoading(false);
+      return;
+    }
+    console.log("\n\nCalled Once ?\n");
+    setLoading(true);
+    const { error, data } = await cart.checkout(
+      jwt,
+      user.documentId,
+      formState.data.country as Regions,
+      {
+        region: formState.data.country as Regions,
+        city: formState.data.city,
+        address: formState.data.address,
+        recipient_phone: formState.data.phone,
+        recipient_email: formState.data.email,
+        recipient_name: formState.data.username,
+      },
+      formState.data.checkoutReceipt,
+      "pending"
+    );
+    if (error || !data) {
+      console.log(JSON.stringify(error, null, 2));
+      onError(error);
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+    router.push(`/cart/checkout/${data}`);
+  }, [formState]);
+
   useEffect(() => {
     const fetchAvailableRegions = async () => {
       const response = await getAvailableRegions();
@@ -72,166 +110,140 @@ export function CartForm(props: Props) {
     }
     setLoading(false);
   }, [region, availableRegions]);
-
   useEffect(() => {
-    const checkout = async () => {
-      setLoading(true);
-      const jwt = Cookies.get("jwt");
-      if (!jwt) {
-        onError("الرجاء تسجيل الدخول");
-        setLoading(false);
-        return;
-      }
-      if (!formState?.data) {
-        setLoading(true);
-        return;
-      }
-      const { error, data } = await cart.checkout(
-        jwt,
-        user.documentId,
-        formState.data.country as Regions,
-        {
-          region: formState.data.country as Regions,
-          city: formState.data.city,
-          address: formState.data.address,
-          recipient_phone: formState.data.phone,
-          recipient_email: formState.data.email,
-          recipient_name: formState.data.username,
-        },
-        formState.data.checkoutReceipt,
-        "pending"
-      );
-      if (error || !data) {
-        console.log(JSON.stringify(error, null, 2));
-        onError(error);
-        setLoading(false);
-        return;
-      }
-      setLoading(false);
+    if (formState?.data) {
+      formState.data = null;
+      checkout();
       cartDispatcher({ type: "DELETE", payload: { cart } });
-      router.push(`/cart/checkout/${data}`);
-    };
-    checkout();
-  }, [formState, user, cart, cartDispatcher, onError, router]);
-
+    }
+  }, [formState]);
   return (
     <form
       action={action}
-      className="flex flex-col gap-0 tablet:gap-5 px-4 overflow-x-hidden"
+      className="w-full flex flex-col gap-5 px-4 overflow-x-hidden"
     >
-      <div className="w-full max-w-[360px] gap-4 flex flex-col tablet:py-5">
-        <p>الأسم الأول *</p>
-        <Input
-          name="firstName"
-          placeholder="الاسم الأول"
-          customStyles={`${
-            firstNameError.length > 0 && "border-primary border"
-          }`}
-        />
-        {firstNameError.length > 0 ? (
-          firstNameError.map((error, index) => (
-            <span
-              key={index}
-              className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-            >
-              {error.message}
-            </span>
-          ))
-        ) : (
-          <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
-        )}
-      </div>
-      <div className="w-full max-w-[360px] gap-4 flex flex-col tablet:py-5">
-        <p>الأسم الأخير *</p>
-        <Input
-          name="lastName"
-          placeholder="الاسم الأخير"
-          customStyles={`${
-            lastNameError.length > 0 && "border-primary border"
-          }`}
-        />
-        {lastNameError.length > 0 ? (
-          lastNameError.map((error, index) => (
-            <span
-              key={index}
-              className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-            >
-              {error.message}
-            </span>
-          ))
-        ) : (
-          <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
-        )}
-      </div>
-      <div className="w-full max-w-[360px] gap-4 flex flex-col tablet:py-5">
-        <p>البريد الإلكتروني*</p>
-        <Input
-          name="email"
-          type="email"
-          placeholder="Example@gmail.com"
-          customStyles={`${emailError.length > 0 && "border-primary border"}`}
-        />
-        {emailError.length > 0 ? (
-          emailError.map((error, index) => (
-            <span
-              key={index}
-              className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-            >
-              {error.message}
-            </span>
-          ))
-        ) : (
-          <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
-        )}
-      </div>
-      <div className="w-full max-w-[360px] gap-4 flex flex-col tablet:py-5">
-        <p>رقم الهاتف *</p>
-        <Input
-          name="phone"
-          hidden
-          readonly
-          value={`${countryCode}${phone.replace(/^0/, "")}`}
-          placeholder="9xxxxxxxxxx"
-        />
-        <div className="relative w-full flex flex-row-reverse justify-between items-center gap-4">
-          <CountriesDropdown
-            setCountryKey={setCountryCode}
-            className="w-[56px] shadow-none border-0"
-            triggerStyle="absolute left-3 border-0 items-center gap-[2px] w-[56px] shadow-none"
-            defaultValue={countryCode}
-            small
-          />
+      <div className="w-full flex flex-wrap justify-between gap-5">
+        <div className="w-full flex-1 min-w-[120px] max-w-[320px] gap-4 flex flex-col tablet:py-5">
+          <p>الأسم الأول *</p>
           <Input
-            name="phoneNumber"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="رقم الهاتف"
-            type="tel"
+            name="firstName"
+            placeholder="الاسم الأول"
             customStyles={`${
-              phoneError.length > 0 && "border-primary border"
-            } bg-transparent bg-surface`}
+              firstNameError.length > 0 && "border-primary border"
+            }`}
           />
+          {firstNameError.length > 0 ? (
+            firstNameError.map((error, index) => (
+              <span
+                key={index}
+                className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+              >
+                {error.message}
+              </span>
+            ))
+          ) : (
+            <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+          )}
         </div>
-        {phoneError.length > 0 ? (
-          phoneError.map((error, index) => (
-            <span
-              key={index}
-              className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-            >
-              {error.message}
-            </span>
-          ))
-        ) : (
-          <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
-        )}
+        <div className="w-full flex-1 min-w-[120px] max-w-[320px] gap-4 flex flex-col tablet:py-5">
+          <p>الأسم الأخير *</p>
+          <Input
+            name="lastName"
+            placeholder="الاسم الأخير"
+            customStyles={`${
+              lastNameError.length > 0 && "border-primary border"
+            }`}
+          />
+          {lastNameError.length > 0 ? (
+            lastNameError.map((error, index) => (
+              <span
+                key={index}
+                className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+              >
+                {error.message}
+              </span>
+            ))
+          ) : (
+            <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+          )}
+        </div>
       </div>
-      <div className="flex justify-between gap-5 w-full max-w-[360px]">
-        <div className="w-full tablet:w-[120px] gap-4 flex flex-col ">
+
+      <div className="w-full flex flex-wrap justify-between gap-5">
+        <div className="w-full flex-1 min-w-[220px] max-w-[320px] gap-4 flex flex-col tablet:py-5">
+          <p>البريد الإلكتروني*</p>
+          <Input
+            name="email"
+            type="email"
+            placeholder="Example@gmail.com"
+            customStyles={`${emailError.length > 0 && "border-primary border"}`}
+          />
+          {emailError.length > 0 ? (
+            emailError.map((error, index) => (
+              <span
+                key={index}
+                className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+              >
+                {error.message}
+              </span>
+            ))
+          ) : (
+            <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+          )}
+        </div>
+        <div className="w-full flex-1 min-w-[220px] max-w-[320px] gap-4 flex flex-col tablet:py-5">
+          <p>رقم الهاتف *</p>
+          <Input
+            name="phone"
+            hidden
+            readonly
+            value={`${countryCode}${phone.replace(/^0/, "")}`}
+            placeholder="9xxxxxxxxxx"
+          />
+          <div className="relative w-full flex flex-row-reverse justify-between items-center gap-4">
+            <CountriesDropdown
+              setCountryKey={setCountryCode}
+              className="w-[56px] shadow-none border-0"
+              triggerStyle="absolute left-3 border-0 items-center gap-[2px] w-[56px] shadow-none"
+              defaultValue={countryCode}
+              small
+            />
+            <Input
+              name="phoneNumber"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="رقم الهاتف"
+              type="tel"
+              customStyles={`${
+                phoneError.length > 0 && "border-primary border"
+              } bg-transparent bg-surface`}
+            />
+          </div>
+          {phoneError.length > 0 ? (
+            phoneError.map((error, index) => (
+              <span
+                key={index}
+                className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+              >
+                {error.message}
+              </span>
+            ))
+          ) : (
+            <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+          )}
+        </div>
+      </div>
+
+      <div className="w-full flex flex-wrap items-center gap-5">
+        <div className="w-[120px] gap-4 flex flex-col ">
           <p>الدولة *</p>
           {/* <SelectMenu placeholder="الدولة" items={regions} itemName="country" /> */}
           <Input name="country" hidden readonly value={region} />
           <Dropdown
-            data={availableRegions.map((region) => ({ name: region.name, available: region.available }))}
+            data={availableRegions.map((region) => ({
+              name: region.name,
+              available: region.available,
+            }))}
             disabled={availableRegions.length <= 1}
             onSelect={(selected) => setRegion(selected)}
             value={region}
@@ -268,11 +280,20 @@ export function CartForm(props: Props) {
             <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
           )}
         </div>
-        <div className="w-full tablet:w-[120px] gap-4 flex flex-col">
+        <div className="w-[120px] gap-4 flex flex-col">
           <p>المدينة *</p>
-          <Input name="city" hidden readonly value={city} placeholder="المدينة " />
+          <Input
+            name="city"
+            hidden
+            readonly
+            value={city}
+            placeholder="المدينة "
+          />
           <Dropdown
-            data={availableCities.map((city) => ({name: city.name, available: city.available}))}
+            data={availableCities.map((city) => ({
+              name: city.name,
+              available: city.available,
+            }))}
             disabled={availableCities.length <= 0}
             onSelect={(selected) => setCity(selected)}
             value={city}
@@ -309,26 +330,28 @@ export function CartForm(props: Props) {
             <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
           )}
         </div>
-      </div>
-      <div className="w-full max-w-[360px] gap-4 flex flex-col tablet:py-5">
-        <p>العنوان *</p>
-        <Input
-          name="address"
-          placeholder="الحي, الشارع, رقم المنزل"
-          customStyles={`${addressError.length > 0 && "border-primary border"}`}
-        />
-        {addressError.length > 0 ? (
-          addressError.map((error, index) => (
-            <span
-              key={index}
-              className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-            >
-              {error.message}
-            </span>
-          ))
-        ) : (
-          <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
-        )}
+        <div className="flex-1 min-w-[220px] gap-4 flex flex-col">
+          <p>العنوان *</p>
+          <Input
+            name="address"
+            placeholder="الحي, الشارع, رقم المنزل"
+            customStyles={`${
+              addressError.length > 0 && "border-primary border"
+            }`}
+          />
+          {addressError.length > 0 ? (
+            addressError.map((error, index) => (
+              <span
+                key={index}
+                className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+              >
+                {error.message}
+              </span>
+            ))
+          ) : (
+            <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+          )}
+        </div>
       </div>
 
       {/* children goes here */}

@@ -12,6 +12,7 @@ import {
   useUserDispatch,
 } from "@/components/context";
 import { CartEntity } from "@/entities/cart-entity";
+import { CountriesDropdown } from "../CountriesDropdown";
 
 const getError = (
   error: { message: string; path: string[] }[],
@@ -30,7 +31,7 @@ const initialState = {
   error: [],
 };
 
-export function LoginForm() {
+export function LoginForm({ type = "phone" }: { type?: "phone" | "email" }) {
   const router = useRouter();
   const userDispatcher = useUserDispatch();
   const CartDispatcher = useCartDispatcher();
@@ -39,6 +40,8 @@ export function LoginForm() {
     signinAction,
     initialState
   );
+  const [phone, setPhone] = React.useState("");
+  const [countryKey, setCountryKey] = React.useState("+249");
   const providerError = getError(formState.error, "provider");
   const passwordError = getError(formState.error, "password");
 
@@ -73,7 +76,7 @@ export function LoginForm() {
           {formError}
         </span>
       )}
-      <div className="w-full tablet:max-w-[460px]">
+      {/* <div className="w-full tablet:max-w-[460px]">
         <Input name="provider" placeholder="البريد او رقم الهاتف" />
         {providerError.map((error, index) => (
           <span
@@ -83,9 +86,85 @@ export function LoginForm() {
             {error.message}
           </span>
         ))}
-      </div>
-      <div className="w-full tablet:max-w-[460px]">
-        <Input name="password" type="password" placeholder="كلمة المرور*" />
+      </div> */}
+      {type === "email" ? (
+        <div className="w-full flex items-center justify-center gap-2">
+          <Input
+            type="email"
+            name="provider"
+            placeholder="name@example.com"
+            customStyles="w-full max-w-[460px] bg-surface"
+          />
+          {providerError.map((error, index) => (
+            <span
+              key={index}
+              className="flex-1 text-primary-dark text-xs 
+                text-right font-[400] font-alex max-w-[200px] text-wrap"
+            >
+              {error.message}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <div className="w-full flex flex-col items-center justify-center">
+          <div className="relative w-full max-w-[460px] flex gap-2">
+            <Input
+              type="text"
+              // value
+              name="countryCode"
+              value={countryKey}
+              hidden={true}
+              readonly={true}
+            />
+            <Input
+              type="tel"
+              name="provider"
+              placeholder="9xxxxxxxxxx"
+              customStyles="w-full bg-surface"
+              value={phone}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.startsWith("0")) {
+                  alert("الرجاء ادخال رقم الهاتف بدون الصفر");
+                  setPhone(value.slice(1));
+                  return;
+                }
+                if (!value.startsWith("+")) {
+                  setPhone(countryKey + value);
+                } else {
+                  setPhone(value);
+                }
+              }}
+            />
+            <CountriesDropdown
+              defaultValue={countryKey}
+              setCountryKey={(code) => {
+                setCountryKey(code);
+                setPhone("");
+              }}
+              small
+              triggerStyle="w-fit h-14 bg-surface rounded-xl border-none self-stretch absolute left-0"
+            />
+          </div>
+          <div className="w-full ">
+            {providerError.map((error, index) => (
+              <span
+                key={index}
+                className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] text-wrap"
+              >
+                {error.message}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="w-full flex items-center justify-center gap-2">
+        <Input
+          name="password"
+          type="password"
+          placeholder="كلمة المرور*"
+          customStyles="w-full max-w-[460px] bg-surface"
+        />
         {passwordError.map((error, index) => (
           <span
             key={index}
