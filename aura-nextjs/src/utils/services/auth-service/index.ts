@@ -70,6 +70,7 @@ export const signupAction = async (
         ? validation.data.phone?.slice(1)
         : validation.data.phone;
       data.phone_number = `${validation.data.countryCode}${phone}`;
+      data.country_code = validation.data.countryCode;
       // /console.log("phone signup", JSON.stringify(data, null, 2));
       // return { message: "تم التسجيل بنجاح", error: data };
 
@@ -108,6 +109,7 @@ export const signinAction = async (_prevState: any, formData: FormData) => {
       password: formData.get("password")?.toString(),
     };
 
+    // console.log("Attempt to sign in", JSON.stringify(data));
     const validation = signInSchema.safeParse(data);
     if (!validation.success) {
       return {

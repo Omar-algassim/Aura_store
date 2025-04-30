@@ -3,12 +3,12 @@ import ProviderSigninButton from "@/components/common/ProviderSigninButton";
 import { SignupForm } from "@/components/ui";
 import { Button } from "@/components/ui/shadcn/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import { ArrowDownCircle } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
 function SignupPage() {
-  const [isOpen, setIsOpen] = React.useState("");
+  const [isOpen, setIsOpen] = React.useState("phone-signup");
 
   return (
     <div className="w-full max-w-screen-tablet mx-9 py-10 border-none rounded-3xl bg-white flex flex-col items-center gap-8">
@@ -34,14 +34,7 @@ function SignupPage() {
                 onClick={() => setIsOpen("phone-signup")}
               >
                 بإستخدام الهاتف
-                {isOpen === "phone-signup" ? (
-                  <ArrowDownCircle size={24} className="mr-1 transition-all" />
-                ) : (
-                  <ArrowDownCircle
-                    size={24}
-                    className="mr-1 transform rotate-180 transition-all"
-                  />
-                )}
+                <Phone size={24} className="mr-1 transition-all" />
               </Button>
             </TabsTrigger>
             <TabsTrigger value="email-signup" asChild>
@@ -52,14 +45,7 @@ function SignupPage() {
                 onClick={() => setIsOpen("email-signup")}
               >
                 بإستخدام الإيميل
-                {isOpen === "email-signup" ? (
-                  <ArrowDownCircle size={24} className="mr-1 transition-all" />
-                ) : (
-                  <ArrowDownCircle
-                    size={24}
-                    className="mr-1 transform rotate-180 transition-all"
-                  />
-                )}
+                <Mail size={24} className="mr-1 transition-all" />
               </Button>
             </TabsTrigger>
           </TabsList>

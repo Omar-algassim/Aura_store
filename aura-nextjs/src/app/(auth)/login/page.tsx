@@ -9,7 +9,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/shadcn/tabs";
-import { ArrowDownCircle } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 
 import Link from "next/link";
 import React, { useEffect } from "react";
@@ -66,37 +66,23 @@ function LoginPage() {
             <TabsTrigger className="w-full" value="phone-signup" asChild>
               <Button
                 className={`w-[48%] tablet:w-[320px] h-[56px] py-3 px-6 rounded-[12px] text-[14px] font-[400] font-alex text-foreground hover:scale-105 active:scale-100 focus:outline-none focus:scale-100 transition-all ${
-                  isOpen === "phone-signup" ? "bg-slate-600" : "bg-slate-400"
+                  isOpen === "phone-signup" ? "bg-slate-400" : "bg-surface"
                 }`}
                 onClick={() => setIsOpen("phone-signup")}
               >
                 بإستخدام الهاتف
-                {isOpen === "phone-signup" ? (
-                  <ArrowDownCircle size={24} className="mr-1 transition-all" />
-                ) : (
-                  <ArrowDownCircle
-                    size={24}
-                    className="mr-1 transform rotate-180 transition-all"
-                  />
-                )}
+                <Phone size={24} className="mr-1 transition-all" />
               </Button>
             </TabsTrigger>
             <TabsTrigger value="email-signup" asChild>
               <Button
                 className={`w-[48%] tablet:w-[320px] h-[56px] py-3 px-6 rounded-[12px] text-[14px] font-[400] font-alex text-foreground hover:scale-105 active:scale-100 focus:outline-none focus:scale-100 transition-all active:bg-slate-600 ${
-                  isOpen === "email-signup" ? "bg-slate-600" : "bg-slate-400"
+                  isOpen === "email-signup" ? "bg-slate-400" : "bg-surface"
                 }`}
                 onClick={() => setIsOpen("email-signup")}
               >
                 بإستخدام الإيميل
-                {isOpen === "email-signup" ? (
-                  <ArrowDownCircle size={24} className="mr-1 transition-all" />
-                ) : (
-                  <ArrowDownCircle
-                    size={24}
-                    className="mr-1 transform rotate-180 transition-all"
-                  />
-                )}
+                <Mail size={24} className="mr-1 transition-all" />
               </Button>
             </TabsTrigger>
           </TabsList>
