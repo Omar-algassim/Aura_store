@@ -87,7 +87,7 @@ export interface Review {
   rate: number;
   user: { documentId: string; username: string; email: string };
   product: Product;
-  likes?: string[];
+  likes?: { documentId: string; username?: string; email?: string }[];
   updatedAt: string;
 }
 
