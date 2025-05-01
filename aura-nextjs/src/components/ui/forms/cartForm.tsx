@@ -403,7 +403,7 @@ export function CartForm(props: Props) {
           alt="receipt"
           width={200}
           height={200}
-          className="self-center w-full max-w-[72px] h-auto tablet:max-w-[200px] rounded-lg"
+          className="self-center w-[220px] h-auto tablet:w-[320px] rounded-lg"
         />
       )}
 
