@@ -33,8 +33,10 @@ export function CartForm(props: Props) {
   const cart = useCart() as CartEntity;
   const cartDispatcher = useCartDispatcher();
   const [formState, action, isPending] = useActionState(checkoutAction, null);
-  const [countryCode, setCountryCode] = useState("+249");
-  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState(user.country_code || "+249");
+  const [phone, setPhone] = useState(
+    user.phone_number?.replace(countryCode, "") || ""
+  );
   const [availableRegions, setAvailableRegions] = useState<Region[]>([]);
   const [region, setRegion] = useState("");
   const [availableCities, setAvailableCities] = useState<City[]>([]);
@@ -131,6 +133,7 @@ export function CartForm(props: Props) {
           <Input
             name="firstName"
             placeholder="الاسم الأول"
+            defaultValue={user.username.split(" ")[0]}
             customStyles={`${
               firstNameError.length > 0 && "border-primary border"
             }`}
@@ -153,6 +156,7 @@ export function CartForm(props: Props) {
           <Input
             name="lastName"
             placeholder="الاسم الأخير"
+            defaultValue={user.username.split(" ")[1]}
             customStyles={`${
               lastNameError.length > 0 && "border-primary border"
             }`}
@@ -179,6 +183,7 @@ export function CartForm(props: Props) {
             name="email"
             type="email"
             placeholder="Example@gmail.com"
+            defaultValue={user.email}
             customStyles={`${emailError.length > 0 && "border-primary border"}`}
           />
           {emailError.length > 0 ? (
@@ -196,30 +201,43 @@ export function CartForm(props: Props) {
         </div>
         <div className="w-full flex-1 min-w-[220px] max-w-[320px] gap-4 flex flex-col tablet:py-5">
           <p>رقم الهاتف *</p>
-          <Input
-            name="phone"
-            hidden
-            readonly
-            value={`${countryCode}${phone.replace(/^0/, "")}`}
-            placeholder="9xxxxxxxxxx"
-          />
           <div className="relative w-full flex flex-row-reverse justify-between items-center gap-4">
-            <CountriesDropdown
-              setCountryKey={setCountryCode}
-              className="w-[56px] shadow-none border-0"
-              triggerStyle="absolute left-3 border-0 items-center gap-[2px] w-[56px] shadow-none"
-              defaultValue={countryCode}
-              small
+            <Input
+              type="text"
+              // value
+              name="countryCode"
+              value={countryCode}
+              hidden={true}
+              readonly={true}
             />
             <Input
-              name="phoneNumber"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="رقم الهاتف"
               type="tel"
-              customStyles={`${
-                phoneError.length > 0 && "border-primary border"
-              } bg-transparent bg-surface`}
+              name="phone"
+              placeholder="9xxxxxxxxxx"
+              customStyles="w-full bg-surface"
+              value={phone}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.startsWith("0")) {
+                  alert("الرجاء ادخال رقم الهاتف بدون الصفر");
+                  setPhone(value.slice(1));
+                  return;
+                }
+                if (!value.startsWith("+")) {
+                  setPhone(countryCode + value);
+                } else {
+                  setPhone(value);
+                }
+              }}
+            />
+            <CountriesDropdown
+              defaultValue={countryCode}
+              setCountryKey={(code) => {
+                setCountryCode(code);
+                setPhone("");
+              }}
+              small
+              triggerStyle="w-fit h-14 bg-surface rounded-xl border-none self-stretch absolute left-0"
             />
           </div>
           {phoneError.length > 0 ? (
