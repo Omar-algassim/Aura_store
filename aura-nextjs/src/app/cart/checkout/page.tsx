@@ -1,18 +1,19 @@
 "use client";
-import React, { useEffect } from "react";
 import { CartForm } from "@/components/ui";
 import { useCart } from "@/components/context";
 import { CartEntity } from "@/entities/cart-entity";
 import AlertDialogElement from "@/components/common/alert-dialog";
 import { CopyCheck, CopyIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function CheckoutPage() {
   const cart = useCart() as CartEntity;
   const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [error, setError] = React.useState<any>(null);
-  const [copied, setCopied] = React.useState(false);
+  const [error, setError] = useState<any>(null);
+  const [copied, setCopied] = useState(false);
+
   const total = cart?.total_pay ? 3000 + cart?.total_pay : 3000;
 
   const copyBankNum = async () => {
@@ -24,11 +25,13 @@ function CheckoutPage() {
       setError("حدث خطأ أثناء نسخ رقم الحساب");
     }
   };
+
   useEffect(() => {
-    if (!cart || cart.total_items === 0) {
+    if (!cart || cart?.total_items === 0) {
       router.push("/cart");
     }
-  }, [cart, router]);
+  }, []);
+
   return (
     <div className=" w-full max-w-[760px] flex flex-col items-center justify-center gap-5 mt-8 overflow-x-hidden">
       {/* cart form */}

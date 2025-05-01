@@ -12,7 +12,7 @@ import { City, Region, Regions } from "@/interfaces/dto";
 import { checkoutAction } from "@/utils/services/cart-services/checkoutAction";
 import { getFieldError } from "./handleError";
 import { ButtonPrimary } from "@/components/common/Buttons";
-import { useActionState, useCallback, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Preloader } from "../Preloader";
 import { useCart, useCartDispatcher, useUser } from "@/components/context";
 import { CartEntity } from "@/entities/cart-entity";
@@ -51,43 +51,7 @@ export function CartForm(props: Props) {
   const cityError = getFieldError(formState?.error, "city");
   const addressError = getFieldError(formState?.error, "address");
 
-  const checkout = useCallback(async () => {
-    const jwt = Cookies.get("jwt");
-    if (!jwt) {
-      onError("الرجاء تسجيل الدخول");
-      setLoading(false);
-      return;
-    }
-    if (!formState?.data) {
-      setLoading(false);
-      return;
-    }
-    console.log("\n\nCalled Once ?\n");
-    setLoading(true);
-    const { error, data } = await cart.checkout(
-      jwt,
-      user.documentId,
-      formState.data.country as Regions,
-      {
-        region: formState.data.country as Regions,
-        city: formState.data.city,
-        address: formState.data.address,
-        recipient_phone: formState.data.phone,
-        recipient_email: formState.data.email,
-        recipient_name: formState.data.username,
-      },
-      formState.data.checkoutReceipt,
-      "pending"
-    );
-    if (error || !data) {
-      console.log(JSON.stringify(error, null, 2));
-      onError(error);
-      setLoading(false);
-      return;
-    }
-    setLoading(false);
-    router.push(`/cart/checkout/${data}`);
-  }, [formState]);
+  const cartCheckedOut = useRef<boolean>(false);
 
   useEffect(() => {
     const fetchAvailableRegions = async () => {
@@ -110,13 +74,52 @@ export function CartForm(props: Props) {
     }
     setLoading(false);
   }, [region, availableRegions]);
+
   useEffect(() => {
-    if (formState?.data) {
-      formState.data = null;
-      checkout();
+    const checkout = async () => {
+      const jwt = Cookies.get("jwt");
+      if (!jwt) {
+        onError("الرجاء تسجيل الدخول");
+        setLoading(false);
+        return;
+      }
+      if (!formState?.data) {
+        setLoading(false);
+        return;
+      }
+      console.log("\n\nCalled Once ?\n");
+      setLoading(true);
+      const { error, data } = await cart.checkout(
+        jwt,
+        user.documentId,
+        formState.data.country as Regions,
+        {
+          region: formState.data.country as Regions,
+          city: formState.data.city,
+          address: formState.data.address,
+          recipient_phone: formState.data.phone,
+          recipient_email: formState.data.email,
+          recipient_name: formState.data.username,
+        },
+        formState.data.checkoutReceipt,
+        "pending"
+      );
+      if (error || !data) {
+        console.log(JSON.stringify(error, null, 2));
+        onError(error);
+        setLoading(false);
+        return;
+      }
+      setLoading(false);
+      console.log("checkout data", data);
       cartDispatcher({ type: "DELETE", payload: { cart } });
+      router.push(`/cart/checkout/${data}`);
+    };
+    if (formState?.data && !cartCheckedOut.current) {
+      cartCheckedOut.current = true;
+      checkout();
     }
-  }, [formState]);
+  });
   return (
     <form
       action={action}

@@ -1,12 +1,21 @@
+"use client";
+import { useCart, useCartDispatcher } from "@/components/context";
+import { CartEntity } from "@/entities/cart-entity";
 import Image from "next/image";
-import React from "react";
+import { usePathname } from "next/navigation";
+import React, { useEffect } from "react";
 
-async function ConfirmPage({
-  params,
-}: {
-  params: Promise<{ orderId: string }>;
-}) {
-  const { orderId } = await params;
+function ConfirmPage() {
+  const orderId = usePathname().split("/").pop();
+
+  const cartDispatcher = useCartDispatcher();
+  const cart = useCart() as CartEntity;
+
+  // insure that the cart is empty after the order is confirmed
+  useEffect(() => {
+    cartDispatcher({ type: "DELETE", payload: { cart: cart } });
+  });
+
   return (
     <div className=" w-full max-w-[760px] flex flex-col items-center justify-center gap-5 mt-8 overflow-x-hidden">
       <Image
@@ -23,7 +32,7 @@ async function ConfirmPage({
         سيقوم فريقنا بالتواصل معك عبر الواتساب لإتمام عملية التوصيل
       </p>
       <div className="w-full max-w-[360px] flex items-center justify-center gap-3">
-        <p className="text-sm font-bold">رقم الطلب</p>
+        <p className="text-sm font-bold">رمز الطلب</p>
         <p className="text-sm font-bold">{orderId}</p>
       </div>
     </div>

@@ -20,7 +20,7 @@ function ProductCard({ product }: { product: Product }) {
 
   useEffect(() => {
     setAddedToCart(product.documentId in cart.products);
-  }, [cart.products, product.documentId]);
+  }, [cart, cart.products, product.documentId]);
 
   const handleAddToCart = async (product: Product, amount?: number) => {
     await cart.addProduct(product, amount);
