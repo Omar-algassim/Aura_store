@@ -26,17 +26,17 @@ export function Header() {
         // const containerHeight = containerRef.current.offsetHeight;
 
         if (scrollTop === 0) {
-          containerRef.current.classList.remove("top-[0]");
+          containerRef.current.classList.remove("top-0");
           containerRef.current.classList.add("-top-[200px]");
           return;
         }
 
         if (scrollTop > prevScrollTop) {
-          containerRef.current.classList.remove("top-[0]");
+          containerRef.current.classList.remove("top-0");
           containerRef.current.classList.add("-top-[200px]");
         } else {
           containerRef.current.classList.remove("-top-[200px]");
-          containerRef.current.classList.add("top-[0]");
+          containerRef.current.classList.add("top-0");
         }
         prevScrollTop = scrollTop;
       }

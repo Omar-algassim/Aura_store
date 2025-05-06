@@ -11,7 +11,7 @@ function SignupPage() {
   const [isOpen, setIsOpen] = React.useState("phone-signup");
 
   return (
-    <div className="w-full max-w-screen-tablet mx-9 py-10 border-none rounded-3xl bg-white flex flex-col items-center gap-8">
+    <div className="w-full max-w-(--breakpoint-tablet) mx-9 py-10 border-none rounded-3xl bg-white flex flex-col items-center gap-8">
       <div className="w-full text-center text-[17px] text-foreground font-[700] font-alex">
         إنشاء حساب جديد
       </div>
