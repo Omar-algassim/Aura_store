@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // hold all the api calls, and base logic
 // uses axios for http requests
@@ -223,7 +222,10 @@ class APIClient {
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
       }
       // /console.log(JSON.stringify(fetchedProducts.data, null, 2));
-      return { data: fetchedProducts.data.data, meta: fetchedProducts.data.meta };
+      return {
+        data: fetchedProducts.data.data,
+        meta: fetchedProducts.data.meta,
+      };
     } catch (error: any) {
       //console.error(JSON.stringify(error, null, 2));
       return { error: error.message };
@@ -296,7 +298,9 @@ class APIClient {
    */
   async fetchCategories() {
     try {
-      const fetchedCategories = await this.api.get("/categories?sort=priority:desc");
+      const fetchedCategories = await this.api.get(
+        "/categories?sort=priority:desc"
+      );
       if (fetchedCategories.status !== 200) {
         // /console.log(JSON.stringify(fetchedCategories.data, null, 2));
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
@@ -410,11 +414,21 @@ class APIClient {
       );
       if (response.status === 200 || response.status === 201) {
         const order_id = response.data.data.documentId;
-        const { error, data } = await this.createOrderItems(
+        const { error, data, totalCreated } = await this.createOrderItems(
           jwt,
           order_id,
           order_items
         );
+        if (totalCreated === 0) {
+          console.error("No order items created, deleting order...");
+          // delete the order
+          await this.api.delete(`/orders/${order_id}`, {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          });
+          return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+        }
         if (error || !data) {
           return { error };
         }
@@ -447,6 +461,7 @@ class APIClient {
       };
     });
 
+    let totalCreated = 0;
     try {
       for (const data of ordersData) {
         // console.log("Creating order item...", JSON.stringify(data, null, 2));
@@ -461,17 +476,18 @@ class APIClient {
             }
           );
           console.log(`Order item created: ${data.product.connect}`);
+          totalCreated++;
         } catch (error: any) {
           console.error(
             `Failed to create order item: ${data.product.connect}`,
             error.response?.data || error.message
           );
-          return { error: error.response?.data || error.message };
+          // return { error: error.response?.data || error.message };
         }
       }
-      return { data: "Order items created" };
+      return { data: "Order items created", totalCreated };
     } catch (error: any) {
-      return { error: error.response?.data || error.message };
+      return { error: error.response?.data || error.message, totalCreated };
     }
   }
 
@@ -501,11 +517,13 @@ class APIClient {
     };
     try {
       const response = await axios.post(
-        "https://countriesnow.space/api/v0.1/countries/cities", data, {
+        "https://countriesnow.space/api/v0.1/countries/cities",
+        data,
+        {
           headers: {
             "Content-Type": "application/json",
           },
-      }
+        }
       );
       if (response.status === 200 || response.status === 201) {
         return { data: response.data.data };
