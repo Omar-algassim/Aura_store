@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Alexandria } from "next/font/google";
-import { Outfit } from 'next/font/google';
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import UserContextProvider from "@/components/context/UserContext";
 import CartContextProvider from "@/components/context/CartContext";
-// import {Input} from "@/components/ui/shadcn/input";
 
 const alexandria = Alexandria({
   variable: "--font-alexandria",
@@ -13,7 +12,7 @@ const alexandria = Alexandria({
 });
 const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-outfit"
+  variable: "--font-outfit",
 });
 
 export const metadata: Metadata = {
@@ -52,12 +51,14 @@ export default function RootLayout({
 }>) {
   // console.log("Root Layout RENDERED");
   return (
-    <html lang="ar" dir="rtl">
+    <html
+      lang="ar"
+      dir="rtl"
+      className={`${alexandria.variable} ${outfit.variable}`}
+    >
       <body
         dir="rtl"
-        className={`${alexandria.variable} ${outfit.className} 
-        antialiased flex flex-col items-center justify-start
-        `}
+        className="antialiased flex flex-col items-center justify-start"
       >
         <UserContextProvider>
           <CartContextProvider>{children}</CartContextProvider>
