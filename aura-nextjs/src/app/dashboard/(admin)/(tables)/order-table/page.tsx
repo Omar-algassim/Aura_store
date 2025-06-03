@@ -1,201 +1,70 @@
 "use client"
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/dashboard/ui/table";
 
-import Badge from "@/components/ui/badge/Badge";
-import Image from "next/image";
-import { Modal } from "@/components/ui/modal";
-import Button from "@/components/ui/button/Button";
-import Label from "@/components/form/Label";
-import Input from "@/components/form/input/InputField";
+import Badge from "@/components/ui/dashboard/ui/badge/Badge";
+import { Modal } from "@/components/ui/dashboard/ui/modal";
+import Button from "@/components/ui/dashboard/ui/button/Button";
+import Label from "@/components/ui/dashboard/form/Label";
+import Input from "@/components/ui/dashboard/form/input/InputField";
 import { useModal } from "@/hooks/useModal";
-import { Dropdown } from "@/components/ui/dropdown/Dropdown";
-import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
-import { ChevronDownIcon, TrashBinIcon } from "@/icons";
-import Select from "@/components/form/Select";
+import { ChevronDownIcon } from "@/icons";
+import Select from "@/components/ui/dashboard/form/Select";
+import OrderItems from "@/components/ui/dashboard/form/order-items";
+import { OrderDTO, OrderItem, OrderStatus, Product } from "@/interfaces/dto";
+import { getOrders } from "@/utils/services/dashboard/orders";
+import cookie from "js-cookie";
 
-interface Order {
-  id: number;
-  user: {
-    image: string;
-    name: string;
-    role: string;
-  };
-  projectName: string;
-  team: {
-    images: string[];
-  };
-  status: string;
-  budget: string;
-}
 
-interface Product {
-    id: number; // Unique identifier for each product
-    name: string; // Product name
-    variants: string; // Number of variants (e.g., "1 Variant", "2 Variants")
-    brand: string; // brand of the product
-    price: string; // Price of the product (as a string with currency symbol)
-    // status: string; // Status of the product
-    image: string; // URL or path to the product image
-    status: "Delivered" | "Pending" | "Canceled"; // Status of the product
-  }
-
-const tableProduct: Product[] = [
-    {
-      id: 1,
-      name: "MacBook Pro 13”",
-      variants: "2 Variants",
-      brand: "Laptop",
-      price: "$2399.00",
-      status: "Delivered",
-      image: "/images/product/product-01.jpg", // Replace with actual image URL
-    },
-    {
-      id: 2,
-      name: "Apple Watch Ultra",
-      variants: "1 Variant",
-     brand: "Watch",
-      price: "$879.00",
-      status: "Pending",
-      image: "/images/product/product-02.jpg", // Replace with actual image URL
-    },
-    {
-      id: 3,
-      name: "iPhone 15 Pro Max",
-      variants: "2 Variants",
-      brand: "SmartPhone",
-      price: "$1869.00",
-      status: "Delivered",
-      image: "/images/product/product-03.jpg", // Replace with actual image URL
-    },
-    {
-      id: 4,
-      name: "iPad Pro 3rd Gen",
-      variants: "2 Variants",
-      brand: "Electronics",
-      price: "$1699.00",
-      status: "Canceled",
-      image: "/images/product/product-04.jpg", // Replace with actual image URL
-    },
-    {
-      id: 5,
-      name: "AirPods Pro 2nd Gen",
-      variants: "1 Variant",
-      brand: "Accessories",
-      price: "$240.00",
-      status: "Delivered",
-      image: "/images/product/product-05.jpg", // Replace with actual image URL
-    },
-  ];
-
-// Define the table data using the interface
-const tableData: Order[] = [
-  {
-    id: 1,
-    user: {
-      image: "/images/user/user-17.jpg",
-      name: "Lindsey Curtis",
-      role: "Web Designer",
-    },
-    projectName: "Agency Website",
-    team: {
-      images: [
-        "/images/user/user-22.jpg",
-        "/images/user/user-23.jpg",
-        "/images/user/user-24.jpg",
-      ],
-    },
-    budget: "3.9K",
-    status: "Active",
-  },
-  {
-    id: 2,
-    user: {
-      image: "/images/user/user-18.jpg",
-      name: "Kaiya George",
-      role: "Project Manager",
-    },
-    projectName: "Technology",
-    team: {
-      images: ["/images/user/user-25.jpg", "/images/user/user-26.jpg"],
-    },
-    budget: "24.9K",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    user: {
-      image: "/images/user/user-17.jpg",
-      name: "Zain Geidt",
-      role: "Content Writing",
-    },
-    projectName: "Blog Writing",
-    team: {
-      images: ["/images/user/user-27.jpg"],
-    },
-    budget: "12.7K",
-    status: "Active",
-  },
-  {
-    id: 4,
-    user: {
-      image: "/images/user/user-20.jpg",
-      name: "Abram Schleifer",
-      role: "Digital Marketer",
-    },
-    projectName: "Social Media",
-    team: {
-      images: [
-        "/images/user/user-28.jpg",
-        "/images/user/user-29.jpg",
-        "/images/user/user-30.jpg",
-      ],
-    },
-    budget: "2.8K",
-    status: "Cancel",
-  },
-  {
-    id: 5,
-    user: {
-      image: "/images/user/user-21.jpg",
-      name: "Carla George",
-      role: "Front-end Developer",
-    },
-    projectName: "Website",
-    team: {
-      images: [
-        "/images/user/user-31.jpg",
-        "/images/user/user-32.jpg",
-        "/images/user/user-33.jpg",
-      ],
-    },
-    budget: "4.5K",
-    status: "Active",
-  },
-];
 
 export default function OrderTable() {
-    const {isOpen, openModal, closeModal} = useModal();
-    const [status, setStatus] = React.useState('pending')
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [edit, setEdit] = React.useState<OrderDTO | undefined>();
+    const [orders, setOrders] = React.useState<OrderDTO[]>([]);
+    const [status, setStatus] = React.useState<OrderStatus>('pending')
     const [amount, setAmount] = React.useState(0)
 
+
+    useEffect(() => {
+        // Fetch initial data or perform any setup 
+        const jwt = cookie.get("jwt");
+        const fetchData = async () => {
+          if (!jwt) {
+            console.error("JWT token is not available");
+            return;
+          }
+          try {
+            const response = await getOrders(jwt);
+            if (response.data) {
+              setOrders(response.data);
+            } else if (response.error) {
+              console.error("Error fetching orders:", response.error);
+            }
+          } catch (error) {
+            console.error("An error occurred while fetching orders:", error);
+          }
+        };
+        fetchData();
+    },[]);
+    
     function handleSave(): void {
         throw new Error("Function not implemented.");
     }
 
-    function increaseAmount() {
-        setAmount(amount + 1);
-    }
 
-    function decreaseAmount() {
-        setAmount(amount - 1);
+
+  function toggleEditModal(order: OrderDTO | undefined): void {
+    setIsOpen(!isOpen);
+    if (order) {
+      setEdit(order);
     }
+  }
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -246,45 +115,53 @@ export default function OrderTable() {
 
             {/* Table Body */}
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {tableData.map((order) => (
+              {orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
                       <div>
                         <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {order.user.name}
+                          {order.user.username}
                         </span>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {order.projectName}
+                    {order.id}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {/* phone number */}
-                    {order.projectName} 
+                    {order.user.phone_number ? (
+                      <span className="block font-medium text-gray-800 dark:text-white/90">
+                        {order.user.phone_number}
+                      </span>
+                    ) : (
+                      <span className="block font-medium text-gray-800 dark:text-white/90">
+                        No phone number provided
+                      </span>
+                    )} 
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <Badge
                       size="sm"
                       color={
-                        order.status === "Active"
+                        order.order_status === "confirmed" || "delivered"
                           ? "success"
-                          : order.status === "Pending"
+                          : order.order_status === "pending"
                           ? "warning"
                           : "error"
                       }
                     >
-                      {order.status}
+                      {order.order_status}
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {order.budget}
+                    {order.total_pay}
                   </TableCell>
                   <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={openModal}
+                        onClick={() => toggleEditModal(order)}
                         className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
                         >
                        <svg
@@ -312,7 +189,7 @@ export default function OrderTable() {
           </Table>
         </div>
       </div>
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
+      <Modal isOpen={isOpen} onClose={() => toggleEditModal(undefined)} className="max-w-[700px] m-4">
         <div className="no-scrollbar relative w-full max-w-[800px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
@@ -330,17 +207,16 @@ export default function OrderTable() {
                 </h5>
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div>
-                    <Label>Name *</Label>
-                    <Input placeholder="the name of product" type="text"/>
-                  </div>
-                  <div>
                     <Label>Order status</Label>
                     <div className="relative">
                         <Select
+                        defaultValue={edit?.order_status}
                          options={[{value:'pending', label: 'pending'}, {value:'confirmed', label: 'confirmed'}, {value:'delivered', label: 'delivered'}, {value:'canceled', label: 'cancel'}]}
                          placeholder="Select Option"
 
-                         onChange={(value => setStatus(value))}
+                         onChange={(value => {
+                            setStatus(value as OrderStatus);
+                         })}
                          className="dark:bg-dark-900"
                         />
                         <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
@@ -354,113 +230,13 @@ export default function OrderTable() {
                 <div className="p-6">
                     <Label>Products</Label>
                 </div>
-                  <Table>
-                    {/* Table Header */}
-                    <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
-                      <TableRow>
-                        <TableCell
-                          isHeader
-                          className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                        >
-                          Product
-                        </TableCell>
-                        <TableCell
-                          isHeader
-                          className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                        >
-                          price
-                        </TableCell>
-                        <TableCell
-                          isHeader
-                          className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                        >
-                          brand
-                        </TableCell>
-                        <TableCell
-                          isHeader
-                          className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                        >
-                          Amount
-                        </TableCell>
-                        <TableCell
-                          isHeader
-                          className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                        >
-                          operations
-                        </TableCell>
-                      </TableRow>
-                    </TableHeader>
-            
-                    {/* Table Body */}
-            
-                    <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {tableProduct.map((product) => (
-                        <TableRow key={product.id} className="">
-                          <TableCell className="py-3">
-                            <div className="flex items-center gap-3">
-                              <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
-                                <Image
-                                  width={50}
-                                  height={50}
-                                  src={product.image}
-                                  className="h-[50px] w-[50px]"
-                                  alt={product.name}
-                                />
-                              </div>
-                              <div>
-                                <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                                  {product.name}
-                                </p>
-                                <span className="text-gray-500 text-theme-xs dark:text-gray-400">
-                                  {product.variants}
-                                </span>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                            {product.price}
-                          </TableCell>
-                          <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                            {product.brand}
-                          </TableCell>
-                          <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                            <div className="flex gap-1">
-                                <div>
-                                    {amount}
-                                </div>
-                                <span className="flex flex-col gap-1">
-                                    <Image
-                                    onClick={increaseAmount}
-                                    alt='increase'
-                                    width={18}
-                                    height={18}
-                                    className="cursor-pointer"
-                                    src='/icons/angle-up.svg' />
-                                    <Image
-                                    onClick={decreaseAmount}
-                                    alt='decrease'
-                                    width={18}
-                                    height={18}
-                                    className="cursor-pointer"
-                                    src='/icons/angle-down.svg' />
-                                </span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                           <div className="flex items-center gap-2">
-                           <button
-                              onClick={openModal}
-                              className="flex w-full items-center justify-center gap-2 rounded-full border border-red-900 bg-red-800 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-red-950 hover:text-white dark:border-red-950 dark:bg-red-800 dark:text-white dark:hover:bg-red-950 dark:hover:text-white lg:inline-flex lg:w-auto"
-                            >
-                              <TrashBinIcon />
-                              Delete
-                            </button>                            
-                           </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                {edit?.order_items.map((orderItem: OrderItem) => (
+                  <OrderItems 
+                    key={orderItem.order_id} 
+                    count={orderItem.quantity} 
+                    product={orderItem}
+                  />
+                ))}
               </div>
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">

@@ -1,163 +1,721 @@
-'use client';
-import DropzoneComponent from "@/components/form/form-elements/DropZone";
-import FileInput from "@/components/form/input/FileInput";
-import Input from "@/components/form/input/InputField";
-import TextArea from "@/components/form/input/TextArea";
-import Label from "@/components/form/Label";
-import MultiSelect from "@/components/form/MultiSelect";
-import Select from "@/components/form/Select";
-import Button from "@/components/ui/button/Button";
+"use client";
+import DropzoneComponent from "@/components/ui/dashboard/form/form-elements/DropZone";
+import FileInput from "@/components/ui/dashboard/form/input/FileInput";
+import Input from "@/components/ui/dashboard/form/input/InputField";
+import Label from "@/components/ui/dashboard/form/Label";
+import MultiSelect from "@/components/ui/dashboard/form/MultiSelect";
+import Select from "@/components/ui/dashboard/form/Select";
+import Button from "@/components/ui/dashboard/ui/button/Button";
+import MarkDownInput from "@/components/ui/markdownEditor";
 import { ChevronDownIcon } from "@/icons";
-import React from "react";
+import { Product } from "@/interfaces/dto";
+import { newProductAction } from "@/utils/services/dashboard/newProduct";
+import {
+  createProduct,
+  deleteProductImage,
+  getBrands,
+  getCategories,
+  updateProduct,
+  uploadProductImage,
+} from "@/utils/services/products-services";
+import cookie from "js-cookie";
+import React, { useEffect } from "react";
+import { getFieldError } from "@/components/ui/forms/handleError";
+
+interface ProductForm {
+  editMode?: boolean;
+  data?: Product;
+}
+
+interface images {
+  id: string;
+  url: string;
+  imageId: string;
+}
+
+export default function ProductForm(props: ProductForm) {
+  const [thumbnail, setThumbnail] = React.useState<File | undefined>();
+  const [images, setImages] = React.useState<images[]>(
+    props.data?.images || []
+  );
+  const [newImages, setNewImages] = React.useState<File[]>([]);
+  const [description, setDescription] = React.useState<string>(
+    props.data?.description || ""
+  );
+  const [usage, setUsage] = React.useState<string>(props.data?.usage || "");
+  const [specifications, setSpecifications] = React.useState<string>(
+    props.data?.specifications || ""
+  );
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
+    props.data?.categories.map((category) => category.documentId) || []
+  );
+  const [selectedBrand, setSelectedBrand] = React.useState<string | undefined>(
+    props.data?.brand?.name || undefined
+  );
+  const [Categories, setCategories] = React.useState<any[]>([]);
+  const [brands, setBrands] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [state, action, isPending] = React.useActionState(handleSave, null);
+
+  const nameError = getFieldError(state?.error, "name");
+  const titleError = getFieldError(state?.error, "title");
+  const priceError = getFieldError(state?.error, "price");
+  const descriptionError = getFieldError(state?.error, "description");
+  const usageError = getFieldError(state?.error, "usage");
+  const specificationsError = getFieldError(state?.error, "specifications");
+  const categoriesError = getFieldError(state?.error, "categories");
+  const brandError = getFieldError(state?.error, "brand");
+  const thumbnailError = getFieldError(state?.error, "thumbnail");
+  const imagesError = getFieldError(state?.error, "images");
+  const colorGradeError = getFieldError(state?.error, "color_grade");
+  const discountError = getFieldError(state?.error, "discount");
+  const stockError = getFieldError(state?.error, "stock");
+  const weightError = getFieldError(state?.error, "weight");
+
+  useEffect(() => {
+    const getBrandsAndCategories = async () => {
+      getCategories()
+        .then((data) => {
+          setCategories(data.categories.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          setLoading(false);
+        });
+      getBrands()
+        .then((data) => {
+          setBrands(data.brands.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          setLoading(false);
+        });
+    };
+    getBrandsAndCategories();
+  }, []);
+
+  const categoriesOptions = Categories.map((category) => ({
+    value: category?.documentId,
+    text: category?.title,
+    selected:
+      props.data?.categories.some(
+        (cat) => cat.documentId === category.documentId
+      ) || false,
+  }));
+  const brandOptions = brands.map((brand) => ({
+    value: brand?.documentId,
+    label: brand?.name,
+  }));
 
 
-export default function NewProductForm() {
-  const [description, setDescription] = React.useState<string>("");
-  const [Categories, setCategories] = React.useState<string[]>([]);
-  const [brand, setBrand] = React.useState<string>('');
-  function handleSave(): void {
-    throw new Error("Function not implemented.");
+  async function backtraceStorage(
+    uploadedThumbnail:{data?:any},
+     uploadedImages:{url:string, imageId:string}[],
+      jwt:string):
+       Promise<{
+        message:string,
+        type:string,
+        data:any,
+        error:string
+        }>
+            {
+    // delete product thumbnail if available
+    if (uploadedThumbnail.data) {
+      const deleteThumbnail = await deleteProductImage(
+        uploadedThumbnail.data[0].id,
+        jwt
+      );
+      if (deleteThumbnail.error) {
+        console.log("error deleting thumbnail", deleteThumbnail.error);
+      }
+    }
+    // error handling
+    setError("error uploading images");
+    console.log(
+      "error uploading Images",
+      "One or more images didn't uploaded successfully"
+    );
+    for (const img of uploadedImages) {
+      const { error: _error } = await deleteProductImage(img.imageId, jwt);
+      if (_error) {
+        console.error(_error);
+      }
+    }
+    return {
+      message: "error uploading Images",
+      type: "server",
+      data: null,
+      error: "One or more images didn't uploaded successfully",
+    }; // for now
   }
+
+  async function handleSave(
+    prev: any,
+    formData: FormData
+  ): Promise<{
+    message: string;
+    type?: string;
+    data: Product | null;
+    error?: any;
+  }> {
+    const jwt = cookie.get("jwt");
+    if (!jwt) {
+      setError("please login to continue");
+      return {
+        message: "please login to continue",
+        type: "error",
+        data: null,
+        error: null,
+      };
+    }
+
+    // upload the thumbnail and images
+    if (!thumbnail && !props.editMode) {
+      setError("please upload the thumbnail");
+      return {
+        message: "please upload the thumbnail",
+        type: "validation",
+        data: null,
+        error: null,
+      }
+    }
+    // check the data of form (validation)
+    const validation = newProductAction(prev, formData);
+    if (validation.error) {
+      setError("please check the data");
+      return {
+        message: "please check the data",
+        type: "validation",
+        data: null,
+        error: validation.error,
+      };
+    }
+
+    let uploadedThumbnail: {error?:any, data?:any} = {};
+    if (thumbnail instanceof File) {
+    uploadedThumbnail = await uploadProductImage(thumbnail, jwt);
+    if (uploadedThumbnail.error) {
+      setError("error uploading thumbnail");
+      return {
+        message: "error uploading thumbnail",
+        type: "validation",
+        data: null,
+        error: uploadedThumbnail.error,
+      };
+    } else {
+      // formData.append("thumbnail", uploadedThumbnail.data.url);
+      validation.data.thumbnail = uploadedThumbnail.data[0].url;
+    }
+  }
+
+    const uploadedImages: { url: string; imageId: string }[] = [];
+    console.log("newImages", newImages);
+    for (const image of newImages) {
+      try {
+        const { error, data: response } = await uploadProductImage(image, jwt);
+        if (error) {
+          console.log("error uploading Images", error);
+          setError("error uploading images");
+          break;
+        }
+        const resultImageUrl: string = response[0].url;
+        const imageId = response[0].id;
+        if (!resultImageUrl) {
+          setError("error uploading images");
+          break;
+        }
+        uploadedImages.push({ url: resultImageUrl, imageId });
+      } catch (error) {
+        console.log("error uploading Images", error);
+        setError("error uploading images");
+        break;
+      }
+    }
+
+    // backtrace storage on error, deleting all the uploaded images
+    if (uploadedImages.length !== newImages.length) {
+     return await backtraceStorage(uploadedThumbnail, uploadedImages, jwt);
+    }
+
+    // add the images and the thumbnail urls to the product data
+    validation.data.images = uploadedImages;
+
+    // create the product
+    if (props.editMode) {
+      const productId = props.data?.documentId;
+      console.log("productId", props.data?.documentId);
+      if (productId) {
+        const editProduct = await updateProduct(
+          productId,
+          validation.data,
+          jwt
+        );
+        if (editProduct.error) {
+          setError("error updating product");
+          console.log("error", JSON.stringify(editProduct.error, null, 2));
+          return await backtraceStorage(uploadedThumbnail, uploadedImages, jwt);
+        } else {
+          setError(null);
+          console.log("product", JSON.stringify(editProduct, null, 2));
+          return {
+            message: "product updated successfully",
+            type: "success",
+            data: editProduct.data,
+            error: null,
+          };
+        }
+      } else {
+        return {
+          message: "Product Id is missing",
+          type: 'validation',
+          data: null,
+        }
+      }
+    }
+
+    // create mode
+    const product = await createProduct(validation.data, jwt);
+    if (product.error) {
+      // delete the uploaded images
+      for (const image of uploadedImages) {
+        const deleteImage = await deleteProductImage(image.imageId, jwt);
+        if (deleteImage.error) {
+          console.log("error deleting image", deleteImage.error);
+        }
+      }
+      // delete the thumbnail
+      const deleteThumbnail = await deleteProductImage(
+        uploadedThumbnail.data[0].id,
+        jwt
+      );
+      if (deleteThumbnail.error) {
+        console.log("error deleting thumbnail", deleteThumbnail.error);
+      }
+      setError("error creating product");
+      console.log("error", JSON.stringify(product.error, null, 2));
+      return {
+        message: "error creating product",
+        type: "server Error",
+        data: null,
+        error: product.error,
+      };
+    } else {
+      setError(null);
+      console.log("product", JSON.stringify(product, null, 2));
+      return {
+        message: "product created successfully",
+        type: "success",
+        data: product.data,
+        error: null,
+      };
+    }
+  }
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      console.log("Selected file:", file.name);
+      setThumbnail(file);
     }
   };
+
   return (
-      <div className="no-scrollbar relative w-full max-w-screen overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-                <div className="px-2 pr-14">
-                  <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-                    Fill Product Information
-                  </h4>
-                  <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-                    register new product in store.
-                  </p>
-                </div>
-                <form className="flex flex-col">
-                  <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
-                    <div>
-                      <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                        Main information 
-                      </h5>
-      
-                      <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                        <div>
-                          <Label>Name *</Label>
-                          <Input placeholder="the name of product" type="text"/>
-                        </div>
-                        
-                        <div>
-                          <Label>Title *</Label>
-                          <Input placeholder="the title of product" type="text" />
-                        </div>
-                        
-                        <div>
-                          <MultiSelect
-                            label="Category"
-                            options={[{value:'category1', text: 'category1', selected: false}, {value:'category2', text: 'category2', selected: false}, {value:'category3', text: 'category3', selected: false}]}
-                            onChange={(values) => setCategories(values)}
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label>Brand *</Label>
-                         <div className="relative">
-                           <Select
-                            options={[{value:'brand1', label: 'brand1'}, {value:'brand id', label: 'brand2'}, {value:'brand id', label: 'brand3'}]}
-                            placeholder="Select Option"
-
-                            onChange={(value => setBrand(value))}
-                            className="dark:bg-dark-900"
-                          />
-                          <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
-                              <ChevronDownIcon/>
-                            </span>
-                         </div>
-                        </div>
-      
-                      </div>
-                    </div>
-                    <div className="mt-7">
-                      <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                        Price information
-                      </h5>
-
-                      <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                        <div className="col-span-2 lg:col-span-1">
-                          <Label>Price *</Label>
-                          <Input placeholder="product price" type="text" />
-                        </div>
-      
-                        <div className="col-span-2 lg:col-span-1">
-                          <Label>Discount</Label>
-                          <Input placeholder="Discount amount" type="text" />
-                        </div>
-      
-                      </div>
-                        <div>
-                        <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                          Additional information
-                        </h5>
-                      <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">  
-                        <div className="col-span-2 lg:col-span-1">
-                          <Label>Stock *</Label>
-                          <Input placeholder="amount of products in stock" type="text" />
-                        </div>
-
-                        <div className="col-span-2 lg:col-span-1">
-                          <Label>Color Grade</Label>
-                          <Input placeholder="product color grade" type="text" />
-                        </div>
-                        <div className="col-span-2 lg:col-span-1">
-                          <Label>Weight</Label>
-                          <Input placeholder="product weight" type="text" />
-                        </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-x-10 gap-y-6 lg:grid-cols-1 py-6">
-                        <div>
-                          <Label>Description *</Label>
-                          <TextArea
-                            value={description}
-                            onChange={(value) => setDescription(value)}
-                            placeholder="product description"
-                          />
-                        </div>
-                        <div>
-                          <Label>Specifications</Label>
-                          <TextArea
-                            value={description}
-                            onChange={(value) => setDescription(value)}
-                            placeholder="product description"
-                          />
-                        </div>
-                        <div>
-                          <Label>How to Use</Label>
-                          <TextArea
-                            value={description}
-                            onChange={(value) => setDescription(value)}
-                            placeholder="Description of how to use the product"
-                          />
-                        </div>
-                        <div>
-                          <Label>Product Thumbnail *</Label>
-                          <FileInput onChange={handleFileChange} className="custom-class" />
-                        </div>
-                        <div>
-                          <Label>Product Image *</Label>
-                          <DropzoneComponent
-                          />
-                        </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-                    <Button size="sm" onClick={handleSave}>
-                      Save Changes
-                    </Button>
-                  </div>
-                </form>
+    <div
+      dir="ltr"
+      className="no-scrollbar relative w-full max-w-screen overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11"
+    >
+      <div className="px-2 pr-14">
+        <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+          Fill Product Information
+        </h4>
+        {error && (
+          <div className="mb-4 text-sm border rounded-xl border-bg-brand-600 p-2 text-center text-red-600">
+            {error}
+          </div>
+        )}
+        <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
+          {props.editMode
+            ? `edit ${props.data?.name} product in store.`
+            : "register new product in store."}
+        </p>
+      </div>
+      <form action={action} className="flex flex-col">
+        <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
+          <div>
+            <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+              Main information
+            </h5>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+              <div>
+                <Label>Name *</Label>
+                <Input
+                  name="name"
+                  error={nameError.length > 0}
+                  defaultValue={props.data?.name}
+                  placeholder="the name of product"
+                  type="text"
+                />
+                {nameError.length > 0 ? (
+                  nameError.map((error, index) => (
+                    <span
+                      key={index}
+                      className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                    >
+                      {error.message}
+                    </span>
+                  ))
+                ) : (
+                  <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                )}
               </div>
+
+              <div>
+                <Label>Title *</Label>
+                <Input
+                  error={titleError.length > 0}
+                  name="title"
+                  defaultValue={props.data?.name}
+                  placeholder="the title of product"
+                  type="text"
+                />
+                {titleError.length > 0 ? (
+                  titleError.map((error, index) => (
+                    <span
+                      key={index}
+                      className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                    >
+                      {error.message}
+                    </span>
+                  ))
+                ) : (
+                  <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                )}
+              </div>
+
+              <div>
+                <MultiSelect
+                  label="Category *"
+                  options={categoriesOptions}
+                  name="categories"
+                  defaultSelected={selectedCategories}
+                  onChange={(values) => setSelectedCategories(values)}
+                />
+                {categoriesError.length > 0 ? (
+                  categoriesError.map((error, index) => (
+                    <span
+                      key={index}
+                      className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                    >
+                      {error.message}
+                    </span>
+                  ))
+                ) : (
+                  <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                )}
+                <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                  {selectedCategories.map((value) => (
+                    <input
+                      key={value}
+                      type="hidden"
+                      accept=""
+                      name="categories[]"
+                      value={value}
+                    />
+                  ))}
+                </span>
+              </div>
+
+              <div>
+                <Label>Brand *</Label>
+                <div className="relative">
+                  <Select
+                    options={brandOptions}
+                    defaultValue={selectedBrand}
+                    placeholder="Select Option"
+                    onChange={(value) => setSelectedBrand(value)}
+                    className="dark:bg-dark-900"
+                  />
+                  {brandError.length > 0 ? (
+                    brandError.map((error, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                      >
+                        {error.message}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                  )}
+                  <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                    <input type="hidden" name="brand" value={selectedBrand} />
+                  </span>
+                  <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                    <ChevronDownIcon />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-7">
+            <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+              Price information
+            </h5>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+              <div className="col-span-2 lg:col-span-1">
+                <Label>Price *</Label>
+                <Input
+                  error={priceError.length > 0}
+                  name="price"
+                  type="number"
+                  defaultValue={props.data?.price}
+                  placeholder="product price"
+                />
+                {priceError.length > 0 ? (
+                  priceError.map((error, index) => (
+                    <span
+                      key={index}
+                      className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                    >
+                      {error.message}
+                    </span>
+                  ))
+                ) : (
+                  <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                )}
+              </div>
+              <div className="col-span-2 lg:col-span-1">
+                <Label>Discount</Label>
+                <Input
+                  error={discountError.length > 0}
+                  name="discount"
+                  type="number"
+                  defaultValue={props.data?.discount}
+                  placeholder="Discount amount"
+                />
+                {discountError.length > 0 ? (
+                  discountError.map((error, index) => (
+                    <span
+                      key={index}
+                      className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                    >
+                      {error.message}
+                    </span>
+                  ))
+                ) : (
+                  <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                )}
+              </div>
+            </div>
+            <div className="mt-7">
+              <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+                Additional information
+              </h5>
+              <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-1">
+                <div className="col-span-2 lg:col-span-1">
+                  <Label>Color Grade</Label>
+                  <Input
+                    error={colorGradeError.length > 0}
+                    name="color_grade"
+                    defaultValue={props.data?.color_grade}
+                    placeholder="product color grade"
+                    type="text"
+                  />
+                  {colorGradeError.length > 0 ? (
+                    colorGradeError.map((error, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                      >
+                        {error.message}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                  )}
+                </div>
+                <div className="col-span-2 lg:col-span-1">
+                  <Label>Weight</Label>
+                  <Input
+                    error={weightError.length > 0}
+                    name="weight"
+                    defaultValue={props.data?.weight}
+                    placeholder="product weight"
+                    type="number"
+                  />
+                  {weightError.length > 0 ? (
+                    weightError.map((error, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                      >
+                        {error.message}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Stock *</Label>
+                    <Input
+                      error={stockError.length > 0}
+                      name="stock"
+                      type="number"
+                      defaultValue={props.data?.stock}
+                      placeholder="amount of products in stock"
+                    />
+                    {stockError.length > 0 ? (
+                      stockError.map((error, index) => (
+                        <span
+                          key={index}
+                          className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                        >
+                          {error.message}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-x-10 gap-y-6 lg:grid-cols-1 py-6">
+                <div className="col-span-2">
+                  <Label>Description *</Label>
+                  <MarkDownInput
+                    value={description}
+                    onChange={(value) => setDescription(value)}
+                    placeholder="product description"
+                  />
+                  {descriptionError.length > 0 ? (
+                    descriptionError.map((error, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                      >
+                        {error.message}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                  )}
+                  <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                    <input
+                      type="hidden"
+                      name="description"
+                      value={description}
+                    />
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <Label>Specifications</Label>
+                  <MarkDownInput
+                    value={specifications}
+                    onChange={(value) => setSpecifications(value)}
+                    placeholder="product Specifications"
+                  />
+                  {specificationsError.length > 0 ? (
+                    specificationsError.map((error, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                      >
+                        {error.message}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                  )}
+                  <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                    <input
+                      type="hidden"
+                      name="specification"
+                      value={specifications}
+                    />
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <Label>How to Use</Label>
+                  <MarkDownInput
+                    value={usage}
+                    onChange={(value) => setUsage(value)}
+                    placeholder="Description of how to use the product"
+                  />
+                  {usageError.length > 0 ? (
+                    usageError.map((error, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                      >
+                        {error.message}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                  )}
+                  <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                    <input type="hidden" name="usage" value={usage} />
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <Label>Product Thumbnail *</Label>
+                  <FileInput
+                    onChange={handleFileChange}
+                    className="custom-class"
+                  />
+                  {thumbnailError.length > 0 ? (
+                    thumbnailError.map((error, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                      >
+                        {error.message}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                  )}
+                </div>
+                <div className="col-span-2">
+                  <Label>Product Image *</Label>
+                  <DropzoneComponent
+                    images={images}
+                    onDrop={(acceptedFiles) => {
+                      setNewImages([...newImages, ...acceptedFiles]);
+                    }}
+                    onDelete={(img) => {
+                      setNewImages(
+                        newImages.filter((image) => image.name !== img)
+                      );
+                    }}
+                  />
+                  {imagesError.length > 0 ? (
+                    imagesError.map((error, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                      >
+                        {error.message}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
+          <Button size="sm">
+            {props.editMode ? "Save Changes" : "Submit"}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

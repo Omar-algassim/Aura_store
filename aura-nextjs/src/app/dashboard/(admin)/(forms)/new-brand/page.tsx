@@ -1,16 +1,114 @@
 'use client';
-import Input from "@/components/form/input/InputField";
-import Label from "@/components/form/Label";
-import Button from "@/components/ui/button/Button";
+import Input from "@/components/ui/dashboard/form/input/InputField";
+import Label from "@/components/ui/dashboard/form/Label";
+import Button from "@/components/ui/dashboard/ui/button/Button";
+import { getFieldError } from "@/components/ui/forms/handleError";
+import { createBrand, newBrandAction, updateBrand } from "@/utils/services/dashboard/brand";
+import { create } from "domain";
+import cookie from "js-cookie";
 import React from "react";
 
+interface Brand {
+  id: string;
+  documentId: string;
+  name: string;
+}
+interface BrandFormProps {
+  editMode?: boolean;
+  brand?: Brand;
+}
 
-export default function NewProductForm() {
-  const [brand, setBrand] = React.useState<string>('');
+export default function NewBrandForm(props: BrandFormProps) {
+  const [state, action, isPending] = React.useActionState(handleSave,null);
+
+  const nameError = getFieldError(state?.error, "name");
+
+
+  async function handleSave(
+    prev: any,
+    formData: FormData): Promise<{
+    message: string;
+    type?: string;
+    data: any | null;
+    error?: any;
+    }> {
+    const jwt = cookie.get("jwt");
+    if (!jwt) {
+      console.error("JWT token is missing");
+      return{
+        message: "JWT token is missing",
+        type: "error",
+        data: null,
+        error: "Authentication failed",
+      };
+    }
+    const validation = newBrandAction(prev, formData);
+    if (validation.error) {
+      console.error("Validation error", validation.error);
+      return {
+        message: "Please check the data",
+        type: "validation",
+        error: validation.error,
+        data: null,
+      };
+    }
+    const data = validation.data;
+    if (!data) {
+      console.error("No data returned from validation");
+      return {
+        message: "No data returned from validation",
+        type: "error",
+        data: null,
+        error: "Validation failed",
+      };
+    }
+    if (props.editMode && props.brand) {
+      console.log("send data to update",data);
+      const response = await updateBrand(props.brand.documentId, data, jwt);
+      if (response.error) {
+        console.error("Error updating brand", response.error);
+        return {
+          message: response.error.message || "Failed to update brand",
+          type: "error",
+          data: null,
+          error: response.error,
+        };
+      } if (response.data) {
+
+        return {
+          message: "Brand updated successfully",
+          type: "success",
+          data: response.data,
+          error: null,
+        };
+      }
+    }
+    const response = await createBrand(jwt, data);
+    if (response.error) {
+      console.error("Error creating brand", response.error);
+      return {
+        message: response.error.message || "Failed to create brand",
+        type: "error",
+        data: null,
+        error: response.error,
+      };
+    } if (response.data) {
+      console.log("Brand created successfully", response.data);
+      return {
+        message: "Brand created successfully",
+        type: "success",
+        data: response.data,
+        error: null,
+      };
+    }
+    return {
+      message: "No brand created",
+      type: "info",
+      data: null,
+      error: null,
+    };
+}
   
-  function handleSave(): void {
-    throw new Error("Function not implemented.");
-  }
   return (
       <div className="no-scrollbar relative w-full max-w-screen overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
         <div className="px-2 pr-14">
@@ -21,7 +119,9 @@ export default function NewProductForm() {
             register new brand in store.
           </p>
         </div>
-        <form className="flex flex-col">
+        <form
+        action={action} 
+        className="flex flex-col">
           <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
             <div>
               <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
@@ -29,12 +129,24 @@ export default function NewProductForm() {
               </h5>
                 <div>
                   <Label>Name *</Label>
-                  <Input placeholder="the name of product" type="text"/>
+                  <Input name="name" defaultValue={props.brand?.name} placeholder="the name of product" type="text"/>
                 </div>
+                {nameError.length > 0 ? (
+                  nameError.map((error, index) => (
+                    <span
+                      key={index}
+                      className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                    >
+                      {error.message}
+                    </span>
+                  ))
+                ) : (
+                  <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                )}
             </div>
           </div>
           <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-            <Button size="sm" onClick={handleSave}>
+            <Button size="sm">
               Save Changes
             </Button>
           </div>

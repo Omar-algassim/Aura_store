@@ -6,126 +6,107 @@ import {
   TableCell,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useModal } from "@/hooks/useModal";
-import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
-import Label from "@/components/form/Label";
-import Input from "@/components/form/input/InputField";
+} from "@/components/ui/dashboard/ui/table";
+import { Modal } from "@/components/ui/dashboard/ui/modal";
 import { PlusIcon, TrashBinIcon } from "@/icons";
+import { getBrands } from "@/utils/services/products-services";
+import cookie from "js-cookie";
+import NewBrandForm from "../../(forms)/new-brand/page";
+import { deleteBrand } from "@/utils/services/dashboard/brand";
 
-// Define the TypeScript interface for the table rows
-interface Product {
-  id: number; // Unique identifier for each product
-  name: string; // Product name
-  variants: string; // Number of variants (e.g., "1 Variant", "2 Variants")
-  brand: string; // brand of the product
-  price: string; // Price of the product (as a string with currency symbol)
-  // status: string; // Status of the product
-  image: string; // URL or path to the product image
-  status: "Delivered" | "Pending" | "Canceled"; // Status of the product
+interface Brand {
+  id: string;
+  documentId: string;
+  name: string;
 }
 
-// Define the table data using the interface
-const tableData: Product[] = [
-  {
-    id: 1,
-    name: "MacBook Pro 13”",
-    variants: "2 Variants",
-    brand: "Laptop",
-    price: "$2399.00",
-    status: "Delivered",
-    image: "/images/product/product-01.jpg", // Replace with actual image URL
-  },
-  {
-    id: 2,
-    name: "Apple Watch Ultra",
-    variants: "1 Variant",
-   brand: "Watch",
-    price: "$879.00",
-    status: "Pending",
-    image: "/images/product/product-02.jpg", // Replace with actual image URL
-  },
-  {
-    id: 3,
-    name: "iPhone 15 Pro Max",
-    variants: "2 Variants",
-    brand: "SmartPhone",
-    price: "$1869.00",
-    status: "Delivered",
-    image: "/images/product/product-03.jpg", // Replace with actual image URL
-  },
-  {
-    id: 4,
-    name: "iPad Pro 3rd Gen",
-    variants: "2 Variants",
-    brand: "Electronics",
-    price: "$1699.00",
-    status: "Canceled",
-    image: "/images/product/product-04.jpg", // Replace with actual image URL
-  },
-  {
-    id: 5,
-    name: "AirPods Pro 2nd Gen",
-    variants: "1 Variant",
-    brand: "Accessories",
-    price: "$240.00",
-    status: "Delivered",
-    image: "/images/product/product-05.jpg", // Replace with actual image URL
-  },
-];
-
 export default function BrandList() {
-  const [RecentOrders, setRecentOrders] = React.useState<Product[] | []>(tableData || []);
-  const { isOpen, openModal, closeModal } = useModal();
+  const [brands, setBrands] = React.useState<Brand[]>([]);
+  const [toDelete, setToDelete] = React.useState<Brand | undefined>(undefined);
+  const [edit, setEdit] = React.useState<Brand | undefined>(undefined);
+  const [isOpen, setIsOpen] = React.useState(false);
   const [alerting, setAlerting] = React.useState(false)
-  const [openNewProduct, setOpenNewProduct] = React.useState(false)
+  const [openNewBrand, setOpenNewBrand] = React.useState(false)
 
   React.useEffect(() => {
-    // Simulate an API call to fetch data
     const fetchData = async () => {
-      // Simulate a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // Set the fetched data to state
-      setRecentOrders(tableData);
+      const response = await getBrands();
+      console.log("Fetched brands:", response);
+      if (response.error) {
+        console.error("Error fetching brands:", response.error);
+        return;
+      }
+      if (!response.brands || !response.brands.data) {
+        console.warn("No brands data found in response");
+        return;
+      }
+      setBrands(response.brands.data || []);
     };
     fetchData();
   }, []);
 
-  function alertingToggle() {
+  function alertingToggle(brand: Brand |undefined) {
     setAlerting(!alerting);
-  }
-
-  function newProductWindow() {
-    setOpenNewProduct(!openNewProduct);
-  }
-
-  function handleSave(): void {
-    throw new Error("Function not implemented.");
-  }
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      console.log("Selected file:", file.name);
+    if (brand) {
+      setToDelete(brand);
+    } else {
+      setToDelete(undefined);
     }
   };
 
-  if (RecentOrders.length === 0) {
+  function newBrandWindow() {
+    setOpenNewBrand(!openNewBrand);
+  }
+
+  function toggleEditModal(brand: Brand | undefined): void {
+    setIsOpen(!isOpen);
+    if (brand) {
+      setEdit(brand);
+    } else {
+      setEdit(undefined);
+    }
+  }
+
+  async function handleDeleteBrand() {
+    if (!toDelete) return;
+    try {
+      const jwt = cookie.get("jwt");
+      if (!jwt) {
+        console.error("JWT token is missing");
+        return;
+      }
+      const response = await deleteBrand(toDelete.documentId, jwt);
+      if (response.error) {
+        console.error("Error deleting brand:", response.error);
+        return;
+      }
+      console.log("Brand deleted successfully:", response.data);
+      setBrands((prevBrands) =>
+        prevBrands.filter((brand) => brand.documentId !== toDelete.documentId)
+      );
+      setAlerting(false);
+      setToDelete(undefined);
+    } catch (error) {
+      console.error("Error deleting brand:", error);
+      return;
+    }
+  }
+
+  if (brands.length === 0) {
     return (
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
         <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-              Products
+              Brands
             </h3>
           </div>
         </div>
-        <p className="text-center text-gray-500">No products available</p>
+        <p className="text-center text-gray-500">No Brands available</p>
       </div>
     );
   }
-
-  // Render the table if there are products
+  // Render the table if there are brands
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
@@ -137,7 +118,7 @@ export default function BrandList() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={newProductWindow} className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+          <button onClick={newBrandWindow} className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
             <PlusIcon />
             New Brand
           </button>
@@ -166,13 +147,13 @@ export default function BrandList() {
           {/* Table Body */}
 
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {tableData.map((product) => (
-              <TableRow key={product.id} className="">
+            {brands.map((brand) => (
+              <TableRow key={brand.id} className="">
                 <TableCell className="py-3">
                   <div className="flex items-center gap-3">
                     <div>
                       <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                        {product.name}
+                        {brand.name}
                       </p>
                     </div>
                   </div>
@@ -180,7 +161,7 @@ export default function BrandList() {
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                  <div className="flex items-center gap-2">
                  <button
-                    onClick={openModal}
+                    onClick={() => toggleEditModal(brand)}
                     className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
                   >
                     <svg
@@ -201,7 +182,7 @@ export default function BrandList() {
                     Edit
                   </button>
                  <button
-                    onClick={alertingToggle}
+                    onClick={() => alertingToggle(brand)}
                     className="flex w-full items-center justify-center gap-2 rounded-full border border-red-900 bg-red-800 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-red-950 hover:text-white dark:border-red-950 dark:bg-red-800 dark:text-white dark:hover:bg-red-950 dark:hover:text-white lg:inline-flex lg:w-auto"
                   >
                     <TrashBinIcon />
@@ -215,50 +196,25 @@ export default function BrandList() {
           </TableBody>
         </Table>
       </div>
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
-              <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-              <div className="px-2 pr-14">
-                  <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-                    Fill Brand Information
-                  </h4>
-                  <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-                    register new brand in store.
-                  </p>
-                </div>
-                <form className="flex flex-col">
-                  <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
-                    <div>
-                      <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                        Main information 
-                      </h5>
-      
-                        <div>
-                          <Label>Name *</Label>
-                          <Input placeholder="the name of product" type="text"/>
-                        </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-                    <Button size="sm" onClick={handleSave}>
-                      Save Changes
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            </Modal>
-            <Modal isOpen={alerting} onClose={alertingToggle} className="max-w-[400px] m-4">
+      <Modal isOpen={isOpen} onClose={() => toggleEditModal(undefined)} className="max-w-[700px] m-4">
+        <NewBrandForm
+        editMode={true}
+        brand={edit}
+        />
+        </Modal>
+            <Modal isOpen={alerting} onClose={() => alertingToggle(undefined)} className="max-w-[400px] m-4">
                 <div className="no-scrollbar flex flex-col gap-6 mt-4 items-center w-full max-w-[400px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-                    <p className="text-white pt-6 text-center text-bold">{`Are you sure to delete "Brand Name" brand`}</p>
+                    <p className="text-gray-800 pt-6 text-center text-bold">{`Are you sure to delete ${toDelete?.name} brand`}</p>
                     <div className="flex p-4">
                       <div className="flex gap-6">
                       <button
-                    onClick={() => console.log("Delete")}
+                    onClick={handleDeleteBrand}
                     className="flex w-full items-center justify-center gap-2 rounded-full border border-red-900 bg-red-800 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-red-950 hover:text-white dark:border-red-950 dark:bg-red-800 dark:text-white dark:hover:bg-red-950 dark:hover:text-white lg:inline-flex lg:w-auto"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={alertingToggle}
+                    onClick={() => alertingToggle(undefined)}
                     className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
                   >
                           No
@@ -267,36 +223,10 @@ export default function BrandList() {
                     </div>
                 </div>
             </Modal>
-            <Modal isOpen={openNewProduct} onClose={newProductWindow} className="max-w-[700px] m-4">
-            <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-              <div className="px-2 pr-14">
-                  <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-                    Fill Brand Information
-                  </h4>
-                  <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-                    register new brand in store.
-                  </p>
-                </div>
-                <form className="flex flex-col">
-                  <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
-                    <div>
-                      <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                        Main information 
-                      </h5>
-      
-                        <div>
-                          <Label>Name *</Label>
-                          <Input placeholder="the name of product" type="text"/>
-                        </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-                    <Button size="sm" onClick={handleSave}>
-                      Submit
-                    </Button>
-                  </div>
-                </form>
-              </div>
+            <Modal isOpen={openNewBrand} onClose={newBrandWindow} className="max-w-[700px] m-4">
+              <NewBrandForm
+              editMode={false}
+                />
             </Modal>
     </div>
   );

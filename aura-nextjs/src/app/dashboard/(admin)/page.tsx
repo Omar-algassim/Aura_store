@@ -4,13 +4,13 @@ import React from "react";
 import MonthlyTarget from "@/components/ui/dashboard/ecommerce/MonthlyTarget";
 import MonthlySalesChart from "@/components/ui/dashboard/ecommerce/MonthlySalesChart";
 import StatisticsChart from "@/components/ui/dashboard/ecommerce/StatisticsChart";
-import RecentOrders from "@/components/ui/dashboard/ecommerce/RecentOrders";
+import TopProduct from "@/components/ui/dashboard/ecommerce/TopProduct";
 import DemographicCard from "@/components/ui/dashboard/ecommerce/DemographicCard";
 
 export const metadata: Metadata = {
   title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
+    "Aura-Admin",
+  description: "This is dashboard page for Aura admins",
 };
 
 export default function Ecommerce() {
@@ -30,12 +30,12 @@ export default function Ecommerce() {
         <StatisticsChart />
       </div>
 
-      <div className="col-span-12 xl:col-span-5">
+      {/* <div className="col-span-12 xl:col-span-5">
         <DemographicCard />
-      </div>
+      </div> */}
 
       <div className="col-span-12 xl:col-span-7">
-        <RecentOrders />
+        <TopProduct />
       </div>
     </div>
   );
