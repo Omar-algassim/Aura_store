@@ -17,7 +17,6 @@ export default async function getAvailableRegions() {
 
 export async function getAvailableCities(region: string) {
   const response = await apiClient.getCities(region);
-  console.log("response", response.data);
   return response.data;
 }
 // fetch data from database base and return the object
