@@ -14,7 +14,6 @@ export function Header() {
   const user = useUser();
   const [cartCount, setCartCount] = React.useState(cart?.total_items);
 
-  console.log(user);
   useEffect(() => {
     setCartCount(cart?.total_items);
   }, [cart?.total_items]);
