@@ -1,3 +1,5 @@
+import { User } from "@/entities/user-entity";
+
 export interface SignupDTO {
   email?: string;
   phone_number?: string;
@@ -23,6 +25,7 @@ export interface OrderDTO {
   id?: string;
   documentId?: string;
   region: Regions;
+  user: User;
   total_pay: number;
   order_items: OrderItem[];
   order_status: OrderStatus;
@@ -61,10 +64,11 @@ export interface CartProductsDTO {
 
 export interface Product {
   documentId: string;
+  id: string;
   title: string;
   name: string;
   thumbnail: string;
-  images: { id: string; url: string }[];
+  images: { id: string; url: string , imageId: string}[];
   price: number;
   stock: number;
   ordered: number;
