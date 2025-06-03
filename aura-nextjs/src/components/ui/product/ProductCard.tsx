@@ -44,7 +44,10 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div className="relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full bg-white p-0 m-0 rounded-xl tablet:hover:drop-shadow-xl transition-all duration-150">
+    <div
+      className="relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full bg-white p-0 m-0 rounded-xl tablet:hover:drop-shadow-xl transition-all duration-150"
+      dir="ltr"
+    >
       {/* Sale tag */}
       {product.discount && (
         <div className="absolute z-30 top-0 right-0 bg-primary text-white text-[13px] font-[500] p-1 rounded-bl-xl rounded-tr-xl">
@@ -107,15 +110,15 @@ function ProductCard({ product }: { product: Product }) {
             {product.stock > 0 ? (
               addedToCart ? (
                 <>
-                  <div className="w-full bg-white rounded-lg p-2 flex items-center justify-center gap-2 absolute top-1/3 left-0 tablet:relative tablet:top-auto tablet:left-auto animate-enterFromRightAndExitToLeft">
-                    <CheckCircle size={24} color="#02C3F9" />
-                    <span className="text-center text-[12px] tablet:text-[16px] text-primary font-[500] tablet:font-[600]">
+                  <div className="w-full bg-white rounded-lg py-2 flex items-center justify-center absolute top-1/3 left-0 tablet:relative tablet:top-auto tablet:left-auto animate-enter-from-right-and-exit-to-left">
+                    <CheckCircle color="#02C3F9" className="size-3 mr-1" />
+                    <span className="text-center text-[11px] tablet:text-[12px] text-primary font-[500] tablet:font-[600]">
                       تم الإضافة للسلة
                     </span>
                   </div>
                   <ButtonSecondary
                     variant="outline"
-                    className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-end hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
+                    className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-center hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
                     preloader
                     handleClick={() => handleRemoveFromCart(product)}
                   >
@@ -131,7 +134,7 @@ function ProductCard({ product }: { product: Product }) {
               ) : (
                 <ButtonSecondary
                   variant="outline"
-                  className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-end hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
+                  className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-center hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
                   preloader
                   handleClick={() => handleAddToCart(product)}
                 >

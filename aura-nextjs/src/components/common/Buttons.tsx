@@ -54,7 +54,7 @@ function BaseButton(props: BaseButtonProps) {
       variant={variant || "default"}
       type={type}
       className={`w-full max-w-[320px] h-14 rounded-[12px] flex items-center 
-      justify-center gap-2 hover:bg-primary-dark hover:text-white active:bg-primary-dark active:text-white focus:outline-none focus:bg-primary-dark focus:text-white
+      justify-center gap-2 hover:bg-primary-dark hover:text-white active:bg-primary-dark active:text-white focus:outline-none focus:bg-primary-dark focus:text-white cursor-pointer
       ${customStyles}`}
       onClick={onClick}
     >

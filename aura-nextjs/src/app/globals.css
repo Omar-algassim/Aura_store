@@ -1,10 +1,8 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
 
-
 @custom-variant dark (&:is(.dark *));
-
 
 @theme {
   --animate-*: initial;
@@ -20,8 +18,8 @@
   --animate-enter-from-right: enterFromRight 250ms ease;
   --animate-exit-to-left: exitToLeft 250ms ease;
   --animate-exit-to-right: exitToRight 250ms ease;
-  --animate-enter-from-right-and-exit-to-left:
-    enterFromRight 500ms ease, exitToLeft 500ms ease 2s forwards;
+  --animate-enter-from-right-and-exit-to-left: enterFromRight 500ms ease,
+    exitToLeft 500ms ease 2s forwards;
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
@@ -40,7 +38,7 @@
 
   --cursor-zoom-in: zoom-in;
   --cursor-zoom-out: zoom-out;
-  --cursor-whatsapp: url('/icons/conversion.svg'), pointer;
+  --cursor-whatsapp: url("/icons/conversion.svg"), pointer;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -86,7 +84,7 @@
 
   --font-alex: var(--font-alexandria);
 
-/* dashboard theme */
+  /* dashboard theme */
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -212,29 +210,24 @@
 
   --color-theme-purple-500: #7a5af8;
 
-  --shadow-theme-md:
-    0px 4px 8px -2px rgba(16, 24, 40, 0.1),
+  --shadow-theme-md: 0px 4px 8px -2px rgba(16, 24, 40, 0.1),
     0px 2px 4px -2px rgba(16, 24, 40, 0.06);
-  --shadow-theme-lg:
-    0px 12px 16px -4px rgba(16, 24, 40, 0.08),
+  --shadow-theme-lg: 0px 12px 16px -4px rgba(16, 24, 40, 0.08),
     0px 4px 6px -2px rgba(16, 24, 40, 0.03);
-  --shadow-theme-sm:
-    0px 1px 3px 0px rgba(16, 24, 40, 0.1),
+  --shadow-theme-sm: 0px 1px 3px 0px rgba(16, 24, 40, 0.1),
     0px 1px 2px 0px rgba(16, 24, 40, 0.06);
   --shadow-theme-xs: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  --shadow-theme-xl:
-    0px 20px 24px -4px rgba(16, 24, 40, 0.08),
+  --shadow-theme-xl: 0px 20px 24px -4px rgba(16, 24, 40, 0.08),
     0px 8px 8px -4px rgba(16, 24, 40, 0.03);
   --shadow-datepicker: -5px 0 0 #262d3c, 5px 0 0 #262d3c;
   --shadow-focus-ring: 0px 0px 0px 4px rgba(70, 95, 255, 0.12);
-  --shadow-slider-navigation:
-    0px 1px 2px 0px rgba(16, 24, 40, 0.1), 0px 1px 3px 0px rgba(16, 24, 40, 0.1);
-  --shadow-tooltip:
-    0px 4px 6px -2px rgba(16, 24, 40, 0.05),
+  --shadow-slider-navigation: 0px 1px 2px 0px rgba(16, 24, 40, 0.1),
+    0px 1px 3px 0px rgba(16, 24, 40, 0.1);
+  --shadow-tooltip: 0px 4px 6px -2px rgba(16, 24, 40, 0.05),
     -8px 0px 20px 8px rgba(16, 24, 40, 0.05);
 
-  --drop-shadow-4xl:
-    0 35px 35px rgba(0, 0, 0, 0.25), 0 45px 65px rgba(0, 0, 0, 0.15);
+  --drop-shadow-4xl: 0 35px 35px rgba(0, 0, 0, 0.25),
+    0 45px 65px rgba(0, 0, 0, 0.15);
 
   --z-index-1: 1;
   --z-index-9: 9;
@@ -243,7 +236,6 @@
   --z-index-9999: 9999;
   --z-index-99999: 99999;
   --z-index-999999: 999999;
-
 
   @keyframes slide-in {
     0% {
@@ -263,7 +255,7 @@
     }
     20%,
     50% {
-      opacity: 0;
+      opacity: 0.6;
     }
   }
   @keyframes ping {
@@ -374,8 +366,6 @@
   }
 }
 
-
-
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
@@ -481,8 +471,6 @@
   background-color: #344054;
 }
 
-
-
 @layer utilities {
   /* For Remove Date Icon */
   input[type="date"]::-webkit-inner-spin-button,
@@ -585,8 +573,8 @@
   font-weight: 500;
 }
 .flatpickr-month
-.flatpickr-current-month
-.flatpickr-monthDropdown-months:focus {
+  .flatpickr-current-month
+  .flatpickr-monthDropdown-months:focus {
   outline: none !important;
   border: 0 !important;
 }
@@ -941,7 +929,6 @@ span.flatpickr-weekday,
   cursor: grabbing; /* Changes the cursor to indicate dragging */
 }
 
-
 @layer utilities {
   body {
     scrollbar-width: 0;
@@ -952,13 +939,13 @@ span.flatpickr-weekday,
 
 @layer base {
   ::-webkit-scrollbar {
-      width: 0px;
-      height: 0px;
-      display: none;
-      background-color: var(--foreground);
-      color: var(--primary);
-      border-radius: 16px;
-    }
+    width: 0px;
+    height: 0px;
+    display: none;
+    background-color: var(--foreground);
+    color: var(--primary);
+    border-radius: 16px;
+  }
   :root {
     --surface: #dde1f2;
     --white: #f8f8f8;
@@ -966,7 +953,7 @@ span.flatpickr-weekday,
     --primary: #d5167b;
     --primary-light: #ffeee7;
     --primary-dark: #8b0e50;
-    --blue-shade: #EDF1F7;
+    --blue-shade: #edf1f7;
     --secondary: #ac93ba;
     /* shadcn variables */
     --background: var(--white);
