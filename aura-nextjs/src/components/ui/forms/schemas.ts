@@ -1,4 +1,3 @@
-import { Weight } from "lucide-react";
 import { z } from "zod";
 
 export const signUpSchema = z
