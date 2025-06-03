@@ -103,7 +103,7 @@ function cleanPhone(phone: string) {
 }
 //send whatsapp message to user
 export default async function sendWhatsappMessage(user: any, data: requestData) {
-  const { template, token} = data;
+  const { template, token } = data;
   const phone = user.phone_number;
   if (!phone || !template) {
     throw new ApplicationError("Phone number and template message is required");

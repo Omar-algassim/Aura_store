@@ -9,6 +9,10 @@
     "url": {
       "type": "string",
       "required": true
+    },
+    "imageId": {
+      "unique": true,
+      "type": "biginteger"
     }
   }
 }
