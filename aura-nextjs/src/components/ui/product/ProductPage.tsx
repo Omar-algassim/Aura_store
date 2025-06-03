@@ -244,35 +244,46 @@ function ProductPageComponent(params: { product: Product }) {
                 <h2 className="w-full text-lg font-[700] text-right">الكمية</h2>
               </div>
               <div className="w-full flex">
-                {/* decrease */}
-                <div
-                  className={`flex w-[70px] h-[58px] items-center justify-center border-2 rounded-lg ${
-                    quantity >= product.stock && "opacity-50"
+                {/* increase */}
+                <button
+                  onClick={increaseQuantity}
+                  disabled={quantity >= product.stock}
+                  className={`flex w-[70px] h-[58px] items-center justify-center border-2 rounded-lg cursor-pointer disabled:cursor-not-allowed bg-white hover:bg-primary-dark hover:text-white transition-colors duration-300 ease-in-out group ${
+                    quantity >= product.stock
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
                   }"`}
                 >
-                  <button
-                    onClick={increaseQuantity}
-                    disabled={quantity >= product.stock}
-                  >
-                    <Plus size={30} fontWeight={700} color="#202020" />
-                  </button>
-                </div>
+                  <Plus
+                    size={30}
+                    fontWeight={700}
+                    className="group-hover:animate-ping"
+                    style={{ animationDuration: "0.5s" }}
+                  />
+                </button>
 
                 {/* amount */}
                 <div className="flex w-[70px] h-[58px] items-center justify-center border-0 rounded-lg">
                   <p className="text-[18px] font-[500]">{quantity}</p>
                 </div>
 
-                {/* increase  */}
-                <div
-                  className={`flex w-[70px] h-[58px] items-center justify-center border-2 rounded-lg ${
-                    quantity <= 1 && "opacity-50"
+                {/* decrease  */}
+                <button
+                  onClick={decreaseQuantity}
+                  disabled={quantity <= 1}
+                  className={`flex w-[70px] h-[58px] items-center justify-center border-2 rounded-lg cursor-pointer disabled:cursor-not-allowed bg-white hover:bg-primary-dark hover:text-white transition-colors duration-300 ease-in-out group ${
+                    quantity <= 1
+                      ? "opacity-50 cursor-not-allowed pointer-events-none"
+                      : "cursor-pointer"
                   }`}
                 >
-                  <button onClick={decreaseQuantity} disabled={quantity <= 1}>
-                    <Minus size={30} fontWeight={700} color="#202020" />
-                  </button>
-                </div>
+                  <Minus
+                    size={30}
+                    fontWeight={700}
+                    className="group-hover:animate-ping"
+                    style={{ animationDuration: "0.5s" }}
+                  />
+                </button>
               </div>
             </div>
 
@@ -428,11 +439,14 @@ function ProductPageComponent(params: { product: Product }) {
         </section>
 
         {/* related products */}
-        <section className="w-full max-w-[1400px] flex flex-col gap-4 px-4 mb-8 tablet:mb-12 laptop:mb-20 overflow-visible">
-          <h2 className="w-full text-right text-lg font-[700] tablet:text-2xl">
+        <section className="w-full flex flex-col items-center justify-center gap-4 mb-8 tablet:mb-12 laptop:mb-20 overflow-auto">
+          <h2 className="w-full  px-3  text-right text-lg font-[700] tablet:text-2xl">
             منتجات ذات صلة
           </h2>
-          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center laptop:px-[36px] justify-center gap-4 mt-6 tablet:mt-10">
+          <div
+            className="w-full relative min-h-[408px] tablet:min-h-[526px] flex laptop:px-[36px] gap-4 mt-6 tablet:mt-10 overflow-hidden"
+            dir="ltr"
+          >
             <ProductsCarousel
               productsType="similar"
               productId={product.documentId}

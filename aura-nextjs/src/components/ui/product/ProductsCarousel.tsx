@@ -109,17 +109,17 @@ function ProductsCarousel({
   }, []);
 
   return (
-    <div className="w-full flex flex-col">
+    <>
       {error && <div>{error}</div>}
       <Carousel
         opts={{
           align: "end",
         }}
-        className="w-full max-w-[360px] tablet:max-w-[760px] laptop:max-w-[1400px] scroll-m-3 laptop:scroll-m-0"
+        className="flex flex-col items-center justify-center px-0  tablet:px-3 laptop:px-5 rounded-2xl scroll-m-3 laptop:scroll-m-0"
         dir="ltr"
       >
         <CarouselContent
-          className="-mr-2 py-4 items-stretch justify-items-stretch"
+          className="w-full -mr-2 py-4 items-stretch justify-items-stretch"
           dir="ltr"
         >
           {loading
@@ -134,16 +134,16 @@ function ProductsCarousel({
             : products.map((product) => (
                 <CarouselItem
                   key={`${product.documentId}-${productsType}`}
-                  className="basis-1/2 max-w-[173px] tablet:max-w-none laptop:basis-1/3 pr-2 by-2 flex items-stretch justify-items-stretch"
+                  className="max-w-[173px] tablet:max-w-[340px] pr-2 by-2 flex items-stretch justify-items-stretch"
                 >
                   <ProductCard product={product} />
                 </CarouselItem>
               ))}
         </CarouselContent>
-        <CarouselPrevious className="bg-black text-white hidden laptop:flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]" />
-        <CarouselNext className="bg-black text-white hidden laptop:flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]" />
+        <CarouselPrevious className="absolute -left-3 bg-black text-white flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]" />
+        <CarouselNext className="absolute -right-3 bg-black text-white flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]" />
       </Carousel>
-    </div>
+    </>
   );
 }
 
