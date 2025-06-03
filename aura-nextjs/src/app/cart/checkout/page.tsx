@@ -97,7 +97,10 @@ function CheckoutPage() {
 
       {error && (
         <AlertDialogElement open>
-          <div className="hidden"></div>
+          <div className="" >
+            <h2 className="text-lg font-semibold">خطأ</h2>
+            <p className="text-sm text-red-600">{error}</p> 
+          </div>
         </AlertDialogElement>
       )}
     </div>

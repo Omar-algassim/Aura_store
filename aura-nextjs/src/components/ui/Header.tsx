@@ -14,6 +14,7 @@ export function Header() {
   const user = useUser();
   const [cartCount, setCartCount] = React.useState(cart?.total_items);
 
+  console.log(user);
   useEffect(() => {
     setCartCount(cart?.total_items);
   }, [cart?.total_items]);
@@ -26,17 +27,17 @@ export function Header() {
         // const containerHeight = containerRef.current.offsetHeight;
 
         if (scrollTop === 0) {
-          containerRef.current.classList.remove("top-[0]");
+          containerRef.current.classList.remove("top-0");
           containerRef.current.classList.add("-top-[200px]");
           return;
         }
 
         if (scrollTop > prevScrollTop) {
-          containerRef.current.classList.remove("top-[0]");
+          containerRef.current.classList.remove("top-0");
           containerRef.current.classList.add("-top-[200px]");
         } else {
           containerRef.current.classList.remove("-top-[200px]");
-          containerRef.current.classList.add("top-[0]");
+          containerRef.current.classList.add("top-0");
         }
         prevScrollTop = scrollTop;
       }
@@ -65,7 +66,7 @@ export function Header() {
                   </ButtonPrimary>
                 </div>
               ) : (
-                <div className="w-[158px] h-[58px] hidden laptop:flex">
+                <div className="w-[158px] h-[58px] hidden tablet:flex">
                   <ButtonPrimary handleClick={() => route.push("/register")}>
                     إنشاء حساب
                   </ButtonPrimary>

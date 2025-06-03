@@ -107,7 +107,7 @@ function ConfirmPhonePage(props: ConfirmPhonePageProps) {
         <div className="absolute top-20 left-0 w-full h-[120px] bg-transparent flex flex-col items-center justify-center">
           <AlertError
             description={message}
-            className="w-full max-w-screen-tablet"
+            className="w-full max-w-(--breakpoint-tablet)"
           />
         </div>
       )}

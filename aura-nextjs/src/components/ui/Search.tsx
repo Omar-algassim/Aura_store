@@ -120,7 +120,7 @@ export function Search() {
   return (
     <>
       <div className="flex flex-col justify-center items-center relative z-30">
-        <div className="flex items-center rounded-lg justify-between p-[24px] w-full max-w-[495px] h-[78px] bg-blue_shade has-[:focus]:ring-2 has-[:focus]:ring-primary">
+        <div className="flex items-center rounded-lg justify-between p-[24px] w-full max-w-[495px] h-[78px] bg-blue_shade has-focus:ring-2 has-focus:ring-primary">
           <InputComponent
             name="search"
             type="search"
@@ -164,7 +164,7 @@ export function Search() {
       {/* overlay */}
       {(Typing || results.length > 0) && (
         <div
-          className="fixed z-20 bg-[#00000065] top-0 bottom-0  w-full h-screen  left-0 peer-has-[:focus]:animate-fadeIn peer-placeholder-shown:animate-scaleOut"
+          className="fixed z-20 bg-[#00000065] top-0 bottom-0  w-full h-screen  left-0 peer-has-focus:animate-fadeIn peer-placeholder-shown:animate-scaleOut"
           aria-expanded
         ></div>
       )}

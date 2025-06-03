@@ -1,21 +1,22 @@
-import type { Schema, Struct } from "@strapi/strapi";
+import type { Schema, Struct } from '@strapi/strapi';
 
 export interface ImagesImages extends Struct.ComponentSchema {
-  collectionName: "components_images_images";
+  collectionName: 'components_images_images';
   info: {
-    description: "";
-    displayName: "images";
+    description: '';
+    displayName: 'images';
   };
   attributes: {
+    imageId: Schema.Attribute.BigInteger & Schema.Attribute.Unique;
     url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
 export interface LocationDeliveryAddress extends Struct.ComponentSchema {
-  collectionName: "components_location_delivery_addresses";
+  collectionName: 'components_location_delivery_addresses';
   info: {
-    displayName: "Delivery Address";
-    icon: "pinMap";
+    displayName: 'Delivery Address';
+    icon: 'pinMap';
   };
   attributes: {
     address: Schema.Attribute.String & Schema.Attribute.Required;
@@ -25,11 +26,11 @@ export interface LocationDeliveryAddress extends Struct.ComponentSchema {
 }
 
 export interface LocationLocation extends Struct.ComponentSchema {
-  collectionName: "components_location_locations";
+  collectionName: 'components_location_locations';
   info: {
-    description: "";
-    displayName: "Location";
-    icon: "earth";
+    description: '';
+    displayName: 'Location';
+    icon: 'earth';
   };
   attributes: {
     address: Schema.Attribute.String &
@@ -44,12 +45,12 @@ export interface LocationLocation extends Struct.ComponentSchema {
   };
 }
 
-declare module "@strapi/strapi" {
+declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
-      "images.images": ImagesImages;
-      "location.delivery-address": LocationDeliveryAddress;
-      "location.location": LocationLocation;
+      'images.images': ImagesImages;
+      'location.delivery-address': LocationDeliveryAddress;
+      'location.location': LocationLocation;
     }
   }
 }

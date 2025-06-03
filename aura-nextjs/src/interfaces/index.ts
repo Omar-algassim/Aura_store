@@ -10,6 +10,7 @@ export interface ProductQueryFilters {
   };
   sort?:
     | "createdAt:desc"
+    | "updatedAt:desc"
     | "ordered:desc"
     | "price:desc"
     | "price:asc"

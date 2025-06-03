@@ -11,7 +11,7 @@ async function StaticPage({ params }: { params: Promise<{ page: string }> }) {
   }
   const pageContent = fetchedPage.data.body;
   return (
-    <div className="w-full max-w-screen-laptop px-4 mb-10">
+    <div className="w-full max-w-(--breakpoint-laptop) px-4 mb-10">
       <RenderMarkdown page={pageContent} />
     </div>
   );
