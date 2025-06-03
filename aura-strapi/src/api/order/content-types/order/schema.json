@@ -12,14 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "region": {
-      "type": "enumeration",
-      "enum": [
-        "sudan",
-        "egypt",
-        "saudi arabia"
-      ]
-    },
     "total_pay": {
       "type": "decimal",
       "required": true
@@ -27,32 +19,38 @@
     "order_status": {
       "type": "enumeration",
       "enum": [
-        "draft",
         "pending",
         "confirmed",
         "preparing",
-        "out to deliver",
-        "delivered"
+        "onDelivery",
+        "delivered",
+        "cancelled"
       ]
     },
-    "checkout_image": {
-      "type": "media",
-      "multiple": true,
-      "required": true,
-      "allowedTypes": [
-        "images"
-      ]
-    },
-    "users_id": {
+    "order_items": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
+      "relation": "oneToMany",
+      "target": "api::order-item.order-item",
+      "mappedBy": "order"
     },
     "delivery_address": {
-      "displayName": "Delivery Address",
-      "type": "component",
-      "repeatable": false,
-      "component": "location.delivery-address"
+      "type": "json",
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "orders"
+    },
+    "checkout_image": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "region": {
+      "type": "string",
+      "required": true
     }
   }
 }

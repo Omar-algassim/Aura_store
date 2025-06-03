@@ -12,11 +12,11 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "region": {
+    "name": {
       "type": "string",
       "required": true
     },
-    "currently_available": {
+    "available": {
       "type": "boolean",
       "default": true
     }

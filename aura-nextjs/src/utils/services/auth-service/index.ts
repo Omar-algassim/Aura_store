@@ -42,6 +42,7 @@ export const signupAction = async (
     const data: SignupDTO = {
       email: undefined,
       phone_number: undefined,
+      country_code: undefined,
       password: validation.data.password,
       username: `${validation.data.firstName} ${validation.data.lastName}`,
     };
@@ -69,6 +70,7 @@ export const signupAction = async (
         ? validation.data.phone?.slice(1)
         : validation.data.phone;
       data.phone_number = `${validation.data.countryCode}${phone}`;
+      data.country_code = validation.data.countryCode;
       // /console.log("phone signup", JSON.stringify(data, null, 2));
       // return { message: "تم التسجيل بنجاح", error: data };
 
@@ -103,9 +105,11 @@ export const signinAction = async (_prevState: any, formData: FormData) => {
   try {
     const data = {
       provider: formData.get("provider")?.toString(),
+      countryCode: formData.get("countryCode")?.toString(),
       password: formData.get("password")?.toString(),
     };
 
+    // console.log("Attempt to sign in", JSON.stringify(data));
     const validation = signInSchema.safeParse(data);
     if (!validation.success) {
       return {
@@ -115,6 +119,7 @@ export const signinAction = async (_prevState: any, formData: FormData) => {
         data: null,
       };
     }
+
     const { error, data: userData } = await apiClient.signin(
       validation.data.provider,
       validation.data.password

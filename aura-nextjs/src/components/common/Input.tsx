@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input } from "../ui/shadcn/input";
 import { Eye, EyeClosed } from "lucide-react";
 import Image from "next/image";
-import { CountriesDropdown } from "../ui/CountriesDropdown";
+// import { CountriesDropdown } from "../ui/CountriesDropdown";
 
 interface InputProps {
   name: string;
@@ -21,31 +21,31 @@ function InputComponent(props: InputProps) {
 
   const [showPassword, setShowPassword] = useState(false);
   const [inputType, setInputType] = useState(type);
-  const [countryKey, setCountryKey] = useState("");
-  if (props.type === "tel") {
-    return (
-      <div className="w-full flex items-center justify-center gap-2">
-        <Input
-          type="text"
-          // value
-          name="countryCode"
-          value={countryKey}
-          // hidden={true}
-          readOnly={true}
-        />
-        <Input
-          value={value}
-          name="phone"
-          placeholder="9xxxxxxxxxx"
-          className="flex-1"
-        />
-        <CountriesDropdown setCountryKey={setCountryKey} />
-      </div>
-    )
-  }
+  // const [countryKey, setCountryKey] = useState("");
+  // if (props.type === "tel") {
+  //   return (
+  //     <div className="w-full flex items-center justify-center gap-2">
+  //       {/* <Input
+  //         type="text"
+  //         // value
+  //         name="countryCode"
+  //         value={countryKey}
+  //         hidden
+  //         readOnly={true}
+  //       /> */}
+  //       <Input
+  //         value={value}
+  //         name="phone"
+  //         placeholder="9xxxxxxxxxx"
+  //         className="flex-1"
+  //       />
+  //       {/* <CountriesDropdown setCountryKey={setCountryKey} /> */}
+  //     </div>
+  //   );
+  // }
   return (
     <div
-      className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none  text-foreground text-[16px] text-right font-[400] font-alex ${
+      className={`w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] text-foreground text-[16px] text-right font-[400] font-alex ${
         customStyles || "bg-surface"
       } ${props.hidden && "hidden"} `}
     >
@@ -59,7 +59,7 @@ function InputComponent(props: InputProps) {
         type={inputType || "text"}
         name={name}
         onChange={props.onChange}
-        className={`peer w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right font-[400] font-alex ${customStyles} `}
+        className={`peer w-full max-width-[320px] h-14 flex items-center justify-center rounded-[12px] border-none bg-surface text-foreground text-[16px] text-right leading-10 font-[400] font-alex ${customStyles} `}
       />
       {type === "search" && (
         <Image

@@ -1,13 +1,15 @@
-import React from 'react'
-import {Header } from '@/components/ui/Header'
+import React from "react";
+import { Header } from "@/components/ui/Header";
 
-function CartLayout({children}: {children: React.ReactNode}) {
+function CartLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center">
+    <>
       <Header />
-      {children}
-    </div>
-  )
+      <main className="w-full flex flex-col items-center justify-center  max-w-[1440px] mb-20">
+        {children}
+      </main>
+    </>
+  );
 }
 
-export default CartLayout
+export default CartLayout;

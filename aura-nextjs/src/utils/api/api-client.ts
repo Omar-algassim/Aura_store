@@ -1,9 +1,12 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // hold all the api calls, and base logic
 // uses axios for http requests
 // export a class instance of the api client, which contains all the api calls
-import { SignupDTO } from "@/interfaces/dto";
+import { User } from "@/entities/user-entity";
+import { OrderDTO, OrderItem, SignupDTO } from "@/interfaces/dto";
 import axios from "axios";
+import { string } from "zod";
 class APIClient {
   private baseUrl =
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
@@ -14,9 +17,25 @@ class APIClient {
     },
   });
 
+  async getUsers(jwt: string) {
+    try {
+      const result = await this.api.get("/users?populate=*", {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      return { error: error.message };
+    } 
+  }
+
   async getMe(jwt: string) {
     try {
-      const result = await this.api.get("/users/me", {
+      const result = await this.api.get("/users/me?populate=*", {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
@@ -30,8 +49,71 @@ class APIClient {
     }
   }
 
+  async updateUser(jwt: string, id: string, data: Partial<User>) {
+    try {
+      delete data.id;
+      delete data.createdAt;
+      delete data.updatedAt;
+      delete data.publishedAt;
+
+      const result = await this.api.put(`/users-permissions/users/me`, data, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      //console.error(error);
+      return { error: error.message };
+    }
+  }
+
+  async blockUser(jwt: string, id: number) {
+    try {
+      const result = await this.api.put(
+        `/users/${id}`,
+        { blocked: true },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      //console.error(error);
+      return { error: error.message };
+    }
+  }
+  async unblockUser(jwt: string, id: number) {
+    try {
+      const result = await this.api.put(
+        `/users/${id}`,
+        { blocked: false },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      //console.error(error);
+      return { error: error.message };
+    }
+  }
+
   async signup(data: SignupDTO): Promise<{ data?: any; error?: string }> {
-    console.log("API => signup", JSON.stringify(data, null, 2));
+    //console.log("API => signup", JSON.stringify(data, null, 2));
     try {
       const result = await this.api.post("/auth/local/register", data);
       // // /console.log(JSON.stringify(result.data));
@@ -41,7 +123,7 @@ class APIClient {
       // return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
       throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
     } catch (error: any) {
-      console.error(error);
+      //console.error(error);
       return {
         error,
       };
@@ -49,7 +131,7 @@ class APIClient {
   }
 
   async signin(identifier: string, password: string) {
-    console.log("Login with", identifier, " ", password);
+    //console.log("Login with", identifier, " ", password);
     try {
       const result = await this.api.post("/auth/local", {
         identifier,
@@ -59,8 +141,8 @@ class APIClient {
         return { data: result.data };
       }
       return { error: "كلمة المرور او البريد الالكتروني غير صحيح" };
-    } catch (error: any) {
-      console.error(error);
+    } catch {
+      //console.error(error);
       return {
         error: "كلمة المرور او البريد الالكتروني غير صحيح",
       };
@@ -78,7 +160,7 @@ class APIClient {
       }
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
-      console.error(error);
+      //console.error(error);
       return {
         error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى",
       };
@@ -89,9 +171,9 @@ class APIClient {
     indicatorType: "email" | "phone_number",
     indicator: string
   ) {
-    console.log(
-      `API => request reset password code with ${indicatorType}: ${indicator}`
-    );
+    // console.log(
+    //   `API => request reset password code with ${indicatorType}: ${indicator}`
+    // );
     try {
       const result = await this.api.post("/auth/forgot-password", {
         [indicatorType]: indicator,
@@ -194,14 +276,14 @@ class APIClient {
     try {
       const fetchedProducts = await this.api.get(`/products?${query}`);
 
+      // console.log("fetched data", JSON.stringify(fetchedProducts.data.meta, null, 2));
       if (fetchedProducts.status !== 200) {
-        // /console.log(JSON.stringify(fetchedProducts.data, null, 2));
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
       }
       // /console.log(JSON.stringify(fetchedProducts.data, null, 2));
-      return { data: fetchedProducts.data.data };
+      return { data: fetchedProducts.data.data, meta: fetchedProducts.data.meta };
     } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
+      //console.error(JSON.stringify(error, null, 2));
       return { error: error.message };
     }
   }
@@ -220,6 +302,94 @@ class APIClient {
       }
       return { data: fetchedProduct.data };
     } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * Create a new product
+   * @param data the product data to be created
+   * @returns a Promise which resolved to the created product data or an error
+   */
+  async createProduct(data: any, jwt: string) {
+    try {
+      const result = await this.api.post("/products", { data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 201) {
+        // /console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error, null, 2);
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * update a product
+   * @param id the product id to be updated
+   * @param data the product data to be updated
+   * @returns a Promise which resolved to the updated product data or an error
+   */
+  async updateProduct(id: string, data: any, jwt: string) {
+    delete data.id;
+    delete data.createdAt;
+    delete data.updatedAt;
+    delete data.publishedAt;
+    delete data.documentId;
+    const brandId = data.brand?.documentId;
+    if (brandId) {
+      data.brand = {
+        set: brandId,
+      };
+    }
+    const categoryId = data.categories?.documentId;
+    console.log("categoryId", categoryId);
+    if (categoryId) {
+      data.categories = {
+        set: categoryId,
+      };
+    }
+    try {
+      const result = await this.api.put(`/products/${id}`, { data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 201) {
+        // /console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error, null, 2);
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * delete a product
+   * @param id the product id to be deleted
+   * @returns a Promise which resolved to the deleted product data or an error
+   */
+  async deleteProduct(id: string, jwt: string) {
+    try {
+      const result = await this.api.delete(`/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 204) {
+        // /console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      // console.log(error, null, 2);
       return { error: error.message };
     }
   }
@@ -272,7 +442,7 @@ class APIClient {
    */
   async fetchCategories() {
     try {
-      const fetchedCategories = await this.api.get("/categories");
+      const fetchedCategories = await this.api.get("/categories?sort=priority:desc");
       if (fetchedCategories.status !== 200) {
         // /console.log(JSON.stringify(fetchedCategories.data, null, 2));
         throw new Error("حدث خطأ ما, الرجاء المحاوله مره اخرى");
@@ -280,7 +450,61 @@ class APIClient {
       // // /console.log(JSON.stringify(fetchedCategories, null, 2));
       return { data: fetchedCategories.data };
     } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
+      //console.error(JSON.stringify(error, null, 2));
+      return { error: error.message };
+    }
+  }
+
+  async updateCategory(id: string, data: any, jwt: string) {
+    try {
+      const result = await this.api.put(`/categories/${id}`, { data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      // console.log(JSON.stringify(result, null, 2));
+      if (result.status === 200 || result.status === 201) {
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error, null, 2);
+      return { error: error.message };
+    }
+  }
+
+  async createCategory(jwt: string, data: any) {
+    try {
+      const result = await this.api.post("/categories", { data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 201) {
+        // /console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error, null, 2);
+      return { error: error.message };
+    }
+  }
+
+  async deleteCategory(id: string, jwt: string) {
+    try {
+      const result = await this.api.delete(`/categories/${id}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 204) {
+        // /console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      // console.log(error, null, 2);
       return { error: error.message };
     }
   }
@@ -298,10 +522,64 @@ class APIClient {
       }
       return { data: fetchedBrands.data };
     } catch (error: any) {
-      console.error(JSON.stringify(error, null, 2));
+      //console.error(JSON.stringify(error, null, 2));
       return { error: error.message };
     }
   }
+  async updateBrand(id: string, data: any, jwt: string) {
+    try {
+      const result = await this.api.put(`/brands/${id}`, { data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      console.log("updateBrand result", JSON.stringify(result, null, 2));
+      if (result.status === 200 || result.status === 201) {
+        // /console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      console.log(error, null, 2);
+
+      return { error: error.message };
+    }
+  }
+  async createBrand(data: any, jwt: string) {
+    try {
+      const result = await this.api.post("/brands", { data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 201) {
+        // /console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      // console.log(error, null, 2);
+      return { error: error.message };
+    }
+  }
+  async deleteBrand(id: string, jwt: string) {
+    try {
+      const result = await this.api.delete(`/brands/${id}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (result.status === 200 || result.status === 204) {
+        // /console.log(JSON.stringify(result.data, null, 2));
+        return { data: result.data.data };
+      }
+      return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    } catch (error: any) {
+      // console.log(error, null, 2);
+      return { error: error.message };
+    }
+  }
+
   async search(query: string) {
     try {
       const response = await this.api.get(`/products?${query}`);
@@ -335,6 +613,388 @@ class APIClient {
       }
     } catch (error: any) {
       return { error: error.message };
+    }
+  }
+
+  async updateAvailableRegions(
+    id: string,
+    jwt: string | undefined,
+    data: any
+  ) {
+    try {
+      const response = await this.api.put(`/available-countries/${id}`, { data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
+  async createAvailableRegion(
+    data: any,
+    jwt: string | undefined
+  ) {
+    try {
+      const response = await this.api.post("/available-countries", { data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      console.log("createAvailableRegion response", JSON.stringify(response, null, 2));
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
+  async deleteAvailableRegion(
+    id: string,
+    jwt: string | undefined
+  ) {
+    try {
+      const response = await this.api.delete(`/available-countries/${id}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 204) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
+  async availableCities(query: string, jwt: string | undefined) {
+    try {
+      const response = await this.api.get(`/available-cities?${query}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
+  async updateAvailableCities(
+    id: string,
+    data: any,
+    jwt: string | undefined
+  ) {
+    try {
+      const response = await this.api.put(`/available-cities/${id}`,{ data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
+  async createAvailableCity(
+    data: any,
+    jwt: string | undefined
+  ) {
+    try {
+      const response = await this.api.post("/available-cities",{ data }, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
+  async deleteAvailableCity(
+    id: string,
+    jwt: string | undefined
+  ) {
+    try {
+      const response = await this.api.delete(`/available-cities/${id}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 204) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
+  async uploadFile(data: FormData, jwt: string) {
+    try {
+      const response = await this.api.post("/upload", data, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error };
+    }
+  }
+
+  async createOrder(jwt: string, orderData: OrderDTO) {
+    const { order_items, ...data } = orderData;
+    //console.log("Order data: ", JSON.stringify(data, null, 2));
+    //console.log("Order items: ", JSON.stringify(order_items, null, 2));
+    try {
+      const response = await this.api.post(
+        "/orders",
+        {
+          data: {
+            region: data.region,
+            total_pay: data.total_pay,
+            order_status: data.order_status,
+            delivery_address: data.delivery_address,
+            user: {
+              connect: data.user_id,
+            },
+            checkout_image: data.checkout_image,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        const order_id = response.data.data.documentId;
+        const { error, data } = await this.createOrderItems(
+          jwt,
+          order_id,
+          order_items
+        );
+        if (error || !data) {
+          return { error };
+        }
+        return { data: order_id };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error };
+    }
+  }
+
+  async createOrderItems(
+    jwt: string,
+    order_id: string,
+    orderItems: OrderItem[]
+  ) {
+    const ordersData = orderItems.map((item) => {
+      return {
+        count: item.quantity,
+        product: {
+          connect: item.product.documentId,
+        },
+        order: {
+          connect: order_id,
+        },
+      };
+    });
+
+    try {
+      for (const data of ordersData) {
+        console.log("Creating order item...", JSON.stringify(data, null, 2));
+        try {
+          await this.api.post(
+            "/order-items",
+            { data },
+            {
+              headers: {
+                Authorization: `Bearer ${jwt}`,
+              },
+            }
+          );
+          console.log(`Order item created: ${data.product.connect}`);
+        } catch (error: any) {
+          console.error(
+            `Failed to create order item: ${data.product.connect}`,
+            error
+          );
+          return { error: error.response?.data || error.message };
+        }
+      }
+      return { data: "Order items created" };
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  async getUserOrders(jwt: string, query: string) {
+    try {
+      const response = await this.api.get(`/orders?${query}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      console.log(error);
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  async fetchOrder(jwt: string) {
+    try {
+      const response = await this.api.get(`/orders?populate=*`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    }
+    catch (error: any) {
+      // console.log(error);
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  async getCities(country: string) {
+    const data = {
+      country: country,
+    };
+    try {
+      const response = await axios.post(
+        "https://countriesnow.space/api/v0.1/countries/cities", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+      }
+      );
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  async uploadImage(formData: FormData, jwt: string) {
+    try {
+      const response = await this.api.post("/upload", formData, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  async deleteImage(id: string, jwt: string) {
+    try {
+      const response = await this.api.delete(`/upload/files/${id}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data };
+      }
+      return {
+        error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+        code: response.status,
+      };
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
     }
   }
 }

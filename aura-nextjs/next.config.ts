@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     domains: [
       "res.cloudinary.com",
@@ -11,4 +10,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+import removeImports from "next-remove-imports";
+export default removeImports()(nextConfig);

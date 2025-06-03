@@ -65,12 +65,6 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "location": {
-      "displayName": "Location",
-      "type": "component",
-      "repeatable": false,
-      "component": "location.location"
-    },
     "phone_number": {
       "type": "string",
       "required": false,
@@ -81,6 +75,18 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::review.review",
+      "mappedBy": "user"
+    },
+    "country_code": {
+      "type": "string"
+    },
+    "location": {
+      "type": "json"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
       "mappedBy": "user"
     }
   }

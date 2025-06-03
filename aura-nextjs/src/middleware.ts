@@ -3,9 +3,9 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "./entities/user-entity";
 
-const protectedRoutes = ["/cart/checkout", "/profile"];
+const protectedRoutes = ["/cart/checkout", "/profile", "/dashboard"];
 const isProtectedRoute = (path: string) => {
-  return protectedRoutes.some((route) => path.includes(route));
+  return protectedRoutes.some((route) => path.startsWith(route));
 };
 
 export async function middleware(request: NextRequest) {
@@ -13,10 +13,26 @@ export async function middleware(request: NextRequest) {
   const currentPath = request.nextUrl.pathname;
   const jwt = cookieStore.get("jwt")?.value;
   const user = await getUserMe(jwt);
+  const nextPage = cookieStore.get("nextPage")?.value;
   const userFromCookie = JSON.parse(
     cookieStore.get("user")?.value || "{}"
   ) as User;
 
+  if (currentPath.startsWith("/dashboard")) {
+    if (user.ok && 'data' in user) {
+    // check if the user is logged as editor
+      if (user.data.role.name !== "editor" && user.data.role.name !== "admin") {
+        // redirect to public dashboard
+        return NextResponse.redirect(
+          new URL("/profile", request.url)
+        );
+      }
+    } else {
+      // if the user is not logged in, redirect to login page
+      cookieStore.set("nextPage", currentPath);
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
   const message = {
     phone_number: "الرجاء تأكيد رقم الهاتف للمتابعة",
     email: "الرجاء تأكيد البريد الالكتروني للمتابعة",
@@ -32,7 +48,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(
           new URL(`/confirm-phone?message=${message.phone_number}`, request.url)
         );
-      } else {
+      } else  {
         return NextResponse.redirect(
           new URL(`/confirm-email?message=${message.email}`, request.url)
         );
@@ -44,6 +60,11 @@ export async function middleware(request: NextRequest) {
 
   if (["/login", "/register"].includes(currentPath)) {
     if (user.ok) {
+      if (nextPage) {
+        // redirect to the last visited page
+        return NextResponse.redirect(new URL(nextPage, request.url));
+      }
+      // redirect to profile page
       return NextResponse.redirect(new URL("/profile", request.url));
     } else if (userFromCookie?.documentId?.length) {
       if (userFromCookie.phone_number) {

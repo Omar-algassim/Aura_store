@@ -11,8 +11,8 @@ export const initialCart = new CartEntity({
 });
 
 export type CartReducerAction = {
-  type: string;
-  payload: { cart: CartEntity };
+  type: "CREATE" | "DELETE" | "UPDATE";
+  payload: { cart: CartEntity | null };
 };
 
 export const CartReducer = (_prevState: any, action: CartReducerAction) => {
@@ -43,6 +43,9 @@ export const CartReducer = (_prevState: any, action: CartReducerAction) => {
 
     case "UPDATE": {
       const cart = payload.cart;
+      if (!cart) {
+        throw new Error("Cart is null");
+      }
       console.log("Updating cart", cart.total_items, cart.total_pay);
       cookie.remove("cart");
       cookie.set("cart", JSON.stringify(cart.toJson()));

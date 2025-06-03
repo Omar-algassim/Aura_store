@@ -1,7 +1,8 @@
 export interface ProductQueryFilters {
   filters: {
-    category?: string;
-    brand?: string;
+    category?: string[];
+    brand?: string[];
+    search?: string | string[];
     price?: {
       from: number;
       to: number;
@@ -9,6 +10,7 @@ export interface ProductQueryFilters {
   };
   sort?:
     | "createdAt:desc"
+    | "updatedAt:desc"
     | "ordered:desc"
     | "price:desc"
     | "price:asc"

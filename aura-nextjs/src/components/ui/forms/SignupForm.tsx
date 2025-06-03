@@ -12,29 +12,13 @@ import {
 import { redirect } from "next/navigation";
 import { CartEntity } from "@/entities/cart-entity";
 import { CountriesDropdown } from "../CountriesDropdown";
+import { getFieldError, getFormError } from "./handleError";
 
 const initialState = {
   message: "",
   type: "",
   data: null,
   error: [],
-};
-
-const getFieldError = (
-  error: { message: string; path: string[] }[],
-  key: string
-) => {
-  if (Array.isArray(error)) {
-    return error?.filter((err) => err.path.includes(key)) || [];
-  }
-  return [];
-};
-
-const getFormError = (
-  error: { message: string; path: string[] }[] | string
-) => {
-  if (typeof error === "string") return error;
-  return null;
 };
 
 export function SignupForm({ type }: { type: "phone" | "email" }) {
@@ -146,7 +130,11 @@ export function SignupForm({ type }: { type: "phone" | "email" }) {
               placeholder="9xxxxxxxxxx"
               customStyles="flex-1"
             />
-            <CountriesDropdown setCountryKey={setCountryKey} />
+            <CountriesDropdown
+              setCountryKey={setCountryKey}
+              small
+              triggerStyle="w-fit h-14 bg-surface rounded-2xl border-none self-stretch"
+            />
           </div>
           <div className="w-full ">
             {phoneError.map((error, index) => (

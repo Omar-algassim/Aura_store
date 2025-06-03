@@ -117,45 +117,18 @@ export const seedData = async (strapi: Core.Strapi) => {
   // /console.log("Seeding data...");
 
   const images = [
-    {
-    "url": "/uploads/curology_X1s_Ir53_Dhz_A_unsplash_99ed957a0f.jpg"
-    },
-    {
-    "url": "/uploads/ashley_piszek_y_Vcxnd_Medak_unsplash_581698f340.jpg"
-    },
-    {
-    "url": "/uploads/valeriia_miller_42_NKYROG_7g_unsplash_41000f02a5.jpg"
-    },
-    {
-    "url": "/uploads/sincerely_media_Gte_R27txma_M_unsplash_1636786edf.jpg"
-    },
-    {
-    "url": "/uploads/alexandra_tran_ie_Sbbgr3_I_unsplash_7f2f08c237.jpg"
-    },
-    {
-    "url": "/uploads/jocelyn_morales_R3_Mi_Y1_JQ_4_unsplash_fcbe6b884d.jpg"
-    },
-    {
-    "url": "/uploads/taisiia_stupak_KP_97dx0_G_Ov8_unsplash_0305d3f554.jpg"
-    },
-    {
-    "url": "/uploads/curology_Z_Iih_Tgf5u_Gg_unsplash_e6de3f666d.jpg"
-    },
-    {
-    "url": "/uploads/lina_verovaya_Bib_Jj_O4s_Yr_I_unsplash_1_d2581da40b.jpg"
-    },
-    {
-    "url": "/uploads/lina_verovaya_Bib_Jj_O4s_Yr_I_unsplash_e6950f12d2.jpg"
-    },
-    {
-    "url": "/uploads/sincerely_media_55u9s_VVJ_4p8_unsplash_bb0c4c4ce5.jpg"
-    },
-    {
-    "url": "/uploads/reuben_mansell_Zii_Mj_Tnwoh_E_unsplash_d1da6219dd.jpg"
-    },
-    {
-    "url": "/uploads/lina_verovaya_F39_Yk_FM_fg_unsplash_6d5ddb5e97.jpg"
-    },
+    { url: "/uploads/product_placeholder_image_5_da374e12fb.jpg" },
+    { url: "/uploads/product_placeholder_image_2_3f78f8b5d3.jpg" },
+    { url: "/uploads/product_placeholder_image_3_5830479cf5.jpg" },
+    { url: "/uploads/product_placeholder_image_1_7568010c06.jpg" },
+    { url: "/uploads/product_placeholder_image_6_b899e26b24.jpg" },
+    { url: "/uploads/product_placeholder_image_4_65891e7883.jpg" },
+    { url: "/uploads/product_placeholder_image_8_d68b615abf.jpg" },
+    { url: "/uploads/product_placeholder_image_9_cc7d3e486d.jpg" },
+    { url: "/uploads/product_placeholder_image_7_d187fb9d0e.jpg" },
+    { url: "/uploads/product_placeholder_image_12_90c6e78887.jpg" },
+    { url: "/uploads/product_placeholder_image_11_258fea6183.jpg" },
+    { url: "/uploads/product_placeholder_image_10_0719c807a0.jpg" },
   ];
   // Generate data
   const categories = generateCategories(8);
@@ -209,19 +182,19 @@ export const seedData = async (strapi: Core.Strapi) => {
   // Insert categories
   for (const category of categories) {
     const cate = await strapi.documents("api::category.category").create({
-      data: {title: category.title, priority: category.priority},
+      data: { title: category.title, priority: category.priority },
       status: "published",
     });
-    categoryIDs.push(cate.documentId); 
+    categoryIDs.push(cate.documentId);
     // /console.log(cate.documentId === category.documentId);
   }
 
   // /console.log("Categories seeded.");
-const brandsIDs = [];
+  const brandsIDs = [];
   // Insert brands
   for (const brand of brands) {
     const br = await strapi.documents("api::brand.brand").create({
-      data: {name: brand.name},
+      data: { name: brand.name },
       status: "published",
     });
     brandsIDs.push(br.documentId);
@@ -250,9 +223,9 @@ const brandsIDs = [];
       brand: product.data.brand,
       createdAt: product.data.createdAt,
     };
-    await strapi.documents("api::product.product").create({ data: productData });
+    await strapi
+      .documents("api::product.product")
+      .create({ data: productData });
     console.log(`Product ${product.data.name} created`);
   });
-  
 };
-

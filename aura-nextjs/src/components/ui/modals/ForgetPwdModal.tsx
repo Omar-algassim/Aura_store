@@ -28,7 +28,7 @@ function ForgetPwdModal({ closeModal }: ForgetPwdFormProps) {
       className="absolute top-0 left-0 w-full h-full bg-[#00000050] flex items-center justify-center"
       id="pwd-reset-modal"
     >
-      <div className="w-full max-w-screen-tablet mx-3 border-none rounded-3xl bg-white flex flex-col items-center gap-4">
+      <div className="w-full max-w-(--breakpoint-tablet) mx-3 border-none rounded-3xl bg-white flex flex-col items-center gap-4">
         <div className="w-full relative">
           <X
             className="relative top-4 right-4 cursor-pointer rounded-full hover:bg-primary hover:text-white active:bg-primary active:text-white focus:outline-none focus:bg-primary focus:text-white transition-colors duration-300"

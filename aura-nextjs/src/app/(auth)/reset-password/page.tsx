@@ -40,7 +40,7 @@ function ResetPasswordPage() {
   };
 
   return (
-    <div className="w-full max-w-screen-tablet mx-9 py-10 border-none rounded-3xl bg-white flex flex-col items-center gap-8">
+    <div className="w-full max-w-(--breakpoint-tablet) mx-9 py-10 border-none rounded-3xl bg-white flex flex-col items-center gap-8">
       <div className="w-full flex flex-col items-center justify-center gap-3">
         <div className="text-[19px] text-foreground font-[700] font-alex">
           تغير كلمة السر
