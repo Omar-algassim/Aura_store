@@ -10,4 +10,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+import removeImports from "next-remove-imports";
+export default removeImports()(nextConfig);
