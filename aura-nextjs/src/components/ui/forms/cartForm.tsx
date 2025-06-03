@@ -54,6 +54,7 @@ export function CartForm(props: Props) {
   const addressError = getFieldError(formState?.error, "address");
 
   const cartCheckedOut = useRef<boolean>(false);
+  const checkoutFormRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     const fetchAvailableRegions = async () => {
@@ -109,7 +110,14 @@ export function CartForm(props: Props) {
       if (error || !data) {
         console.log(JSON.stringify(error, null, 2));
         onError(error);
+        setReceiptImage(null);
         setLoading(false);
+        if (checkoutFormRef.current) {
+          checkoutFormRef.current.scrollIntoView({
+            behavior: "smooth",
+            // block: "start",
+          });
+        }
         return;
       }
       setLoading(false);
@@ -120,12 +128,22 @@ export function CartForm(props: Props) {
     if (formState?.data && !cartCheckedOut.current) {
       cartCheckedOut.current = true;
       checkout();
+    } else if (formState?.error) {
+      setLoading(false);
+      setReceiptImage(null);
+      if (checkoutFormRef.current) {
+        checkoutFormRef.current.scrollIntoView({
+          behavior: "smooth",
+          // block: "start",
+        });
+      }
     }
-  });
+  }, [formState, cart, user, onError, cartDispatcher, router]);
   return (
     <form
       action={action}
-      className="w-full flex flex-col gap-5 px-4 overflow-x-hidden"
+      className="relative w-full flex flex-col gap-5 px-4 overflow-x-hidden"
+      ref={checkoutFormRef}
     >
       <div className="w-full flex flex-wrap justify-between gap-5">
         <div className="w-full flex-1 min-w-[120px] max-w-[320px] gap-4 flex flex-col tablet:py-5">

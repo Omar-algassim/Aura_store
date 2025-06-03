@@ -19,13 +19,11 @@ export async function middleware(request: NextRequest) {
   ) as User;
 
   if (currentPath.startsWith("/dashboard")) {
-    if (user.ok && 'data' in user) {
-    // check if the user is logged as editor
+    if (user.ok && "data" in user) {
+      // check if the user is logged as editor
       if (user.data.role.name !== "editor" && user.data.role.name !== "admin") {
         // redirect to public dashboard
-        return NextResponse.redirect(
-          new URL("/profile", request.url)
-        );
+        return NextResponse.redirect(new URL("/profile", request.url));
       }
     } else {
       // if the user is not logged in, redirect to login page
@@ -48,7 +46,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(
           new URL(`/confirm-phone?message=${message.phone_number}`, request.url)
         );
-      } else  {
+      } else {
         return NextResponse.redirect(
           new URL(`/confirm-email?message=${message.email}`, request.url)
         );

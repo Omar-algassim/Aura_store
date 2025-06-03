@@ -151,10 +151,10 @@ export class CartEntity {
 
     if (uploadError || !uploadData) {
       console.log("Error uploading checkout image: ", uploadError);
-      return { error: uploadError };
+      return { error: "Error uploading checkout image" };
     }
 
-    console.log("Checkout image uploaded: ", uploadData);
+    // console.log("Checkout image uploaded: ", uploadData);
     const checkout_image_url = uploadData[0].url;
 
     // create order from cart
@@ -179,7 +179,7 @@ export class CartEntity {
     );
     if (OrderError || !OrderData) {
       console.log("Error creating order: ", OrderError);
-      return { error: OrderError };
+      return { error: "Error confirming order, please try again" };
     }
     console.log("Order created: ", OrderData);
     return { data: OrderData };

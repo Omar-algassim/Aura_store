@@ -29,7 +29,7 @@ class APIClient {
       return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
     } catch (error: any) {
       return { error: error.message };
-    } 
+    }
   }
 
   async getMe(jwt: string) {
@@ -315,11 +315,15 @@ class APIClient {
    */
   async createProduct(data: any, jwt: string) {
     try {
-      const result = await this.api.post("/products", { data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const result = await this.api.post(
+        "/products",
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       if (result.status === 200 || result.status === 201) {
         // /console.log(JSON.stringify(result.data, null, 2));
         return { data: result.data.data };
@@ -357,11 +361,15 @@ class APIClient {
       };
     }
     try {
-      const result = await this.api.put(`/products/${id}`, { data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const result = await this.api.put(
+        `/products/${id}`,
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       if (result.status === 200 || result.status === 201) {
         // /console.log(JSON.stringify(result.data, null, 2));
         return { data: result.data.data };
@@ -461,11 +469,15 @@ class APIClient {
 
   async updateCategory(id: string, data: any, jwt: string) {
     try {
-      const result = await this.api.put(`/categories/${id}`, { data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const result = await this.api.put(
+        `/categories/${id}`,
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       // console.log(JSON.stringify(result, null, 2));
       if (result.status === 200 || result.status === 201) {
         return { data: result.data.data };
@@ -479,11 +491,15 @@ class APIClient {
 
   async createCategory(jwt: string, data: any) {
     try {
-      const result = await this.api.post("/categories", { data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const result = await this.api.post(
+        "/categories",
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       if (result.status === 200 || result.status === 201) {
         // /console.log(JSON.stringify(result.data, null, 2));
         return { data: result.data.data };
@@ -532,11 +548,15 @@ class APIClient {
   }
   async updateBrand(id: string, data: any, jwt: string) {
     try {
-      const result = await this.api.put(`/brands/${id}`, { data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const result = await this.api.put(
+        `/brands/${id}`,
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       console.log("updateBrand result", JSON.stringify(result, null, 2));
       if (result.status === 200 || result.status === 201) {
         // /console.log(JSON.stringify(result.data, null, 2));
@@ -551,11 +571,15 @@ class APIClient {
   }
   async createBrand(data: any, jwt: string) {
     try {
-      const result = await this.api.post("/brands", { data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const result = await this.api.post(
+        "/brands",
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       if (result.status === 200 || result.status === 201) {
         // /console.log(JSON.stringify(result.data, null, 2));
         return { data: result.data.data };
@@ -620,17 +644,17 @@ class APIClient {
     }
   }
 
-  async updateAvailableRegions(
-    id: string,
-    jwt: string | undefined,
-    data: any
-  ) {
+  async updateAvailableRegions(id: string, jwt: string | undefined, data: any) {
     try {
-      const response = await this.api.put(`/available-countries/${id}`, { data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const response = await this.api.put(
+        `/available-countries/${id}`,
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       if (response.status === 200 || response.status === 201) {
         return { data: response.data };
       } else {
@@ -644,17 +668,21 @@ class APIClient {
     }
   }
 
-  async createAvailableRegion(
-    data: any,
-    jwt: string | undefined
-  ) {
+  async createAvailableRegion(data: any, jwt: string | undefined) {
     try {
-      const response = await this.api.post("/available-countries", { data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      console.log("createAvailableRegion response", JSON.stringify(response, null, 2));
+      const response = await this.api.post(
+        "/available-countries",
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      console.log(
+        "createAvailableRegion response",
+        JSON.stringify(response, null, 2)
+      );
       if (response.status === 200 || response.status === 201) {
         return { data: response.data };
       } else {
@@ -668,10 +696,7 @@ class APIClient {
     }
   }
 
-  async deleteAvailableRegion(
-    id: string,
-    jwt: string | undefined
-  ) {
+  async deleteAvailableRegion(id: string, jwt: string | undefined) {
     try {
       const response = await this.api.delete(`/available-countries/${id}`, {
         headers: {
@@ -711,17 +736,17 @@ class APIClient {
     }
   }
 
-  async updateAvailableCities(
-    id: string,
-    data: any,
-    jwt: string | undefined
-  ) {
+  async updateAvailableCities(id: string, data: any, jwt: string | undefined) {
     try {
-      const response = await this.api.put(`/available-cities/${id}`,{ data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const response = await this.api.put(
+        `/available-cities/${id}`,
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       if (response.status === 200 || response.status === 201) {
         return { data: response.data };
       } else {
@@ -735,16 +760,17 @@ class APIClient {
     }
   }
 
-  async createAvailableCity(
-    data: any,
-    jwt: string | undefined
-  ) {
+  async createAvailableCity(data: any, jwt: string | undefined) {
     try {
-      const response = await this.api.post("/available-cities",{ data }, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const response = await this.api.post(
+        "/available-cities",
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       if (response.status === 200 || response.status === 201) {
         return { data: response.data };
       } else {
@@ -758,10 +784,7 @@ class APIClient {
     }
   }
 
-  async deleteAvailableCity(
-    id: string,
-    jwt: string | undefined
-  ) {
+  async deleteAvailableCity(id: string, jwt: string | undefined) {
     try {
       const response = await this.api.delete(`/available-cities/${id}`, {
         headers: {
@@ -802,7 +825,7 @@ class APIClient {
     }
   }
 
-  async createOrder(jwt: string, orderData: OrderDTO) {
+  async createOrder(jwt: string, orderData: Omit<OrderDTO, "user">) {
     const { order_items, ...data } = orderData;
     //console.log("Order data: ", JSON.stringify(data, null, 2));
     //console.log("Order items: ", JSON.stringify(order_items, null, 2));
@@ -942,8 +965,7 @@ class APIClient {
           code: response.status,
         };
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       // console.log(error);
       return { error: error.response?.data || error.message };
     }
