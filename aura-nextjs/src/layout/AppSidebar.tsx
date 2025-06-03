@@ -29,7 +29,7 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    path: "/",
+    path: "/dashboard",
   },
   {
     icon: <UserCircleIcon />,
@@ -39,47 +39,34 @@ const navItems: NavItem[] = [
   {
     name: "Users",
     icon: <GroupIcon />,
-    subItems: [{ name: "All Users", path: "/basic-tables", pro: false }],
+    subItems: [{ name: "All Users", path: "/dashboard/users-Table", pro: false }],
   },
   {
     name: "Products",
     icon: <GridIcon />,
-    subItems: [{ name: "All Products", path: "/products-table", pro: false },
-      { name: "New Product", path: "/new-product", pro: false }
+    subItems: [{ name: "All Products", path: "/dashboard/products-table", pro: false },
+      { name: "New Product", path: "/dashboard/new-product", pro: false }
     ],
   },
   {
     name: "Orders",
     icon: <ListIcon />,
-    path: "/order-table",
+    path: "/dashboard/order-table",
   },
   {
     name: "Brand",
     icon: <GridIcon />,
-    path: "/brand-table",
+    path: "/dashboard/brand-table",
   },
   {
     name: "Categories",
     icon: <ListIcon />,
-    path: "/category-table",
-  },
-  {
-    name: "Available Cities",
-    icon: <ListIcon />,
-    path: "/cities-table",
+    path: "/dashboard/category-table",
   },
   {
     name: "Available countries",
     icon: <ListIcon />,
-    path: "/countries-table",
-  },
-  {
-    name: "Pages",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
-    ],
+    path: "/dashboard/countries-table",
   },
 ];
 
@@ -310,6 +297,7 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside
+    dir="ltr"
       className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen
