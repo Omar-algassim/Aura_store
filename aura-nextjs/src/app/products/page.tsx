@@ -147,65 +147,67 @@ function ShoppingPage({
     "السعر من الأكثر إلى الأقل": "price:desc",
     العروض: "discount:desc",
   };
-  useEffect(() => {
-    setLoading(true);
-    // const category = searchParam.getAll("category");
-    // const searchQuery = searchParam.getAll("search");
-    // const brands = searchParam.getAll("brand");
-    // setBrand(brands);
-    // setSearch(searchQuery);
-    // setSelectedCAtegory(category);
-    // console.log(SelectedCategories, search, brand);
-    const fetchProducts = async () => {
-      if (!SelectedCategories && !search && !brand) {
-        setSelectAll(true);
-        getProducts()
-          .then((data) => {
-            setProducts(data.products);
-            setCurrentPage(data.pagination.currentPage);
-            setTotalPage(data.pagination.pageCount);
-            setLoading(false);
-          })
-          .catch((error) => {
-            setError(error.message);
-            setLoading(false);
-          });
-      } else {
-        SelectedCategories ? setSelectAll(false) : setSelectAll(true);
-        getProducts(
-          {
-            filters: {
-              category: SelectedCategories,
-              brand: brand,
-              price: {
-                from: minPrice,
-                to: maxPrice,
-              },
-            },
-            sort: sortValue as
-              | "createdAt:desc"
-              | "ordered:desc"
-              | "price:desc"
-              | "price:asc"
-              | "discount:desc",
-          },
-          currentPage
-        )
-          .then((data) => {
-            setProducts(data.products);
-            setCurrentPage(data.pagination.page);
-            setTotalPage(data.pagination.pageCount);
-            setLoading(false);
-            route.push(`/products${query}`);
-          })
-          .catch((error) => {
-            setError(error.message);
-            setLoading(false);
-          });
-      }
-    };
-    fetchProducts();
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   // const category = searchParam.getAll("category");
+  //   // const searchQuery = searchParam.getAll("search");
+  //   // const brands = searchParam.getAll("brand");
+  //   // setBrand(brands);
+  //   // setSearch(searchQuery);
+  //   // setSelectedCAtegory(category);
+  //   // console.log(SelectedCategories, search, brand);
+  //   const fetchProducts = async () => {
+  //     if (!SelectedCategories && !search && !brand) {
+  //       setSelectAll(true);
+  //       getProducts()
+  //         .then((data) => {
+  //           setProducts(data.products);
+  //           setCurrentPage(data.pagination.currentPage);
+  //           setTotalPage(data.pagination.pageCount);
+  //           setLoading(false);
+  //         })
+  //         .catch((error) => {
+  //           setError(error.message);
+  //           setLoading(false);
+  //         });
+  //     } else {
+  //       setLoading(true);
+  //       SelectedCategories ? setSelectAll(false) : setSelectAll(true);
+  //       getProducts(
+  //         {
+  //           filters: {
+  //             category: SelectedCategories,
+  //             brand: brand,
+  //             search: search,
+  //             price: {
+  //               from: minPrice,
+  //               to: maxPrice,
+  //             },
+  //           },
+  //           sort: sortValue as
+  //             | "createdAt:desc"
+  //             | "ordered:desc"
+  //             | "price:desc"
+  //             | "price:asc"
+  //             | "discount:desc",
+  //         },
+  //         currentPage
+  //       )
+  //         .then((data) => {
+  //           setProducts(data.products);
+  //           setCurrentPage(data.pagination.page);
+  //           setTotalPage(data.pagination.pageCount);
+  //           setLoading(false);
+  //           route.push(`/products${query}`);
+  //         })
+  //         .catch((error) => {
+  //           setError(error.message);
+  //           setLoading(false);
+  //         });
+  //     }
+  //   };
+  //   fetchProducts();
+  // }, []);
 
   useEffect(() => {
     if (
@@ -220,6 +222,7 @@ function ShoppingPage({
         filters: {
           category: SelectedCategories,
           brand: brand,
+          search: search,
           price: {
             from: minPrice,
             to: maxPrice,
@@ -244,12 +247,43 @@ function ShoppingPage({
           setLoading(false);
         });
     } else {
-      setSelectAll(true);
-      getProducts().then((data) => {
-        setProducts(data.products);
-        route.push(`/products${query}`);
-        setLoading(false);
-      });
+      getProducts(
+          {
+            filters: {
+              category: SelectedCategories,
+              brand: brand,
+              search: search,
+              price: {
+                from: minPrice,
+                to: maxPrice,
+              },
+            },
+            sort: sortValue as
+              | "createdAt:desc"
+              | "ordered:desc"
+              | "price:desc"
+              | "price:asc"
+              | "discount:desc",
+          },
+          currentPage
+        )
+          .then((data) => {
+            setProducts(data.products);
+            setCurrentPage(data.pagination.page);
+            setSelectAll(true);
+            setTotalPage(data.pagination.pageCount);
+            setLoading(false);
+            route.push(`/products${query}`);
+          })
+          .catch((error) => {
+            setError(error.message);
+            setLoading(false);
+          });
+      // getProducts().then((data) => {
+      //   setProducts(data.products);
+      //   route.push(`/products${query}`);
+      //   setLoading(false);
+      // });
     }
   }, [SelectedCategories, brand, search, sort, maxPrice, minPrice]);
 
