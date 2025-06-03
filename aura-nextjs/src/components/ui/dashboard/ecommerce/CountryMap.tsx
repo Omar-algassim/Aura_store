@@ -49,7 +49,7 @@ const CountryMap: React.FC<CountryMapProps> = ({ mapColor }) => {
       markers={
         [
           {
-            latLng: [37.2580397, -104.657039],
+            latLng: [37.2580397, -104.65709],
             name: "United States",
             style: {
               fill: "#465FFF",

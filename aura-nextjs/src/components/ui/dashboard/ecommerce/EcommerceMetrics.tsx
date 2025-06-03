@@ -1,9 +1,46 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Badge from "../ui/badge/Badge";
 import { ArrowDownIcon, ArrowUpIcon, BoxIconLine, GroupIcon } from "@/icons";
+import cookie from "js-cookie";
+import { getUsers } from "@/utils/services/user-services";
+import { getOrders } from "@/utils/services/dashboard/orders";
 
 export const EcommerceMetrics = () => {
+  const [error, setError] = React.useState<string | null>(null);
+  const [users, setUsers] = React.useState<any[]>([]);
+  const [orders, setOrders] = React.useState<any[]>([]);
+
+  useEffect(() => {
+    const jwt = cookie.get("jwt");
+    if (!jwt) {
+      setError("you have to login as editor first");
+      return;
+    }
+    const fetchUsers = async () => {
+      const jwt = cookie.get("jwt");
+      const response = await getUsers(jwt || "");
+      if (response.error) {
+        console.error("Error fetching users:", response.error);
+        return;
+      }
+      setUsers(response.data);
+       try {
+            const response = await getOrders(jwt || "");
+            if (response.data) {
+              setOrders(response.data);
+            } else if (response.error) {
+              console.error("Error fetching orders:", response.error);
+            }
+          } catch (error) {
+            console.error("An error occurred while fetching orders:", error);
+            setError("An error occurred while fetching orders");
+          }
+    };
+    fetchUsers();
+  }
+  , []);
+  
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
       {/* <!-- Metric Item Start --> */}
@@ -18,7 +55,7 @@ export const EcommerceMetrics = () => {
               Customers
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              3,782
+              {users.length}
             </h4>
           </div>
           <Badge color="success">
@@ -35,14 +72,15 @@ export const EcommerceMetrics = () => {
           <BoxIconLine className="text-gray-800 dark:text-white/90" />
         </div>
         <div className="flex items-end justify-between mt-5">
+          { error ? <div className="text-red-500">{error}</div> :          
           <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
               Orders
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+              {orders.length}
             </h4>
-          </div>
+          </div>}
 
           <Badge color="error">
             <ArrowDownIcon className="text-error-500" />

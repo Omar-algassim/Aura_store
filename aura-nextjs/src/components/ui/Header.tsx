@@ -14,6 +14,7 @@ export function Header() {
   const user = useUser();
   const [cartCount, setCartCount] = React.useState(cart?.total_items);
 
+  console.log(user);
   useEffect(() => {
     setCartCount(cart?.total_items);
   }, [cart?.total_items]);
@@ -65,7 +66,7 @@ export function Header() {
                   </ButtonPrimary>
                 </div>
               ) : (
-                <div className="w-[158px] h-[58px] hidden laptop:flex">
+                <div className="w-[158px] h-[58px] hidden tablet:flex">
                   <ButtonPrimary handleClick={() => route.push("/register")}>
                     إنشاء حساب
                   </ButtonPrimary>

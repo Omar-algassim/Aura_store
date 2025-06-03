@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, {useState, useEffect} from "react";
 
 interface AlertProps {
   variant: "success" | "error" | "warning" | "info"; // Alert type
@@ -18,6 +18,7 @@ const Alert: React.FC<AlertProps> = ({
   linkHref = "#",
   linkText = "Learn more",
 }) => {
+  const [show, setShow] = useState<boolean>(true)
   // Tailwind classes for each variant
   const variantClasses = {
     success: {
@@ -112,9 +113,17 @@ const Alert: React.FC<AlertProps> = ({
     ),
   };
 
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      setShow(false);
+    }, 3000);
+
+    return () => clearTimeout(timeOut);
+  }, [])
+
   return (
     <div
-      className={`rounded-xl border p-4 ${variantClasses[variant].container}`}
+      className={`fixed z-999 top-[4rem] right-4 rounded-xl border p-4 ${variantClasses[variant].container} ${show ? "animate-enter-from-right" : "animate-exit-to-right"}`}
     >
       <div className="flex items-start gap-3">
         <div className={`-mt-0.5 ${variantClasses[variant].icon}`}>
