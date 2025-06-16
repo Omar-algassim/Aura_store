@@ -18,10 +18,14 @@ import { ChevronDownIcon } from "@/icons";
 import Select from "@/components/ui/dashboard/form/Select";
 import OrderItems from "@/components/ui/dashboard/form/order-items";
 import { OrderDTO, OrderItem, OrderStatus, Product } from "@/interfaces/dto";
-import { getOrders } from "@/utils/services/dashboard/orders";
+import { getOrders, updateOrderStatus } from "@/utils/services/dashboard/orders";
 import cookie from "js-cookie";
 
-
+interface OrderItems {
+  order_id: string;
+  count: number;
+  product: Product; // Ensure this matches the expected type
+}
 
 export default function OrderTable() {
     const [isOpen, setIsOpen] = React.useState(false);
@@ -53,13 +57,42 @@ export default function OrderTable() {
         fetchData();
     },[]);
     
-    function handleSave(): void {
-        throw new Error("Function not implemented.");
+    async function handleSave(): Promise<void> {
+    const jwt = cookie.get("jwt");
+    if (!jwt) {
+      console.error("JWT token is not available");
+      return;
     }
+      if (!edit) {
+      console.error("No order to save");
+      return;
+    }
+    if (!edit.documentId) {
+      console.error("No document ID available for the order");
+      return;
+    }
+      const response = await updateOrderStatus(jwt, edit?.documentId, status);
+      if (response.error) {
+        console.error("Error updating order status:", response.error);
+      } else {
+        console.log("Order updated successfully:", response.data);
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order.documentId === edit?.documentId ? { ...order, order_status: status } : order
+          )
+        );
+        setIsOpen(false);
+      }
+    console.log("Saving changes for order:", edit);
+    setEdit(undefined);
+    setStatus('pending'); // Reset status to default
+    setAmount(0); // Reset amount to default
+  }
 
 
 
   function toggleEditModal(order: OrderDTO | undefined): void {
+    console.log("Toggling edit modal for order:", order);
     setIsOpen(!isOpen);
     if (order) {
       setEdit(order);
@@ -69,7 +102,7 @@ export default function OrderTable() {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
-        <div className="min-w-[1102px]">
+        <div className="min-w-full overflow-x-auto">
           <Table>
             {/* Table Header */}
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
@@ -127,7 +160,7 @@ export default function OrderTable() {
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {order.id}
+                    {order.documentId}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {/* phone number */}
@@ -145,8 +178,12 @@ export default function OrderTable() {
                     <Badge
                       size="sm"
                       color={
-                        order.order_status === "confirmed" || "delivered"
+                        order.order_status === "delivered" || order.order_status === "confirmed"
                           ? "success"
+                          : order.order_status === "onDelivery"
+                          ? "info"
+                          : order.order_status === "preparing"
+                          ? "primary"
                           : order.order_status === "pending"
                           ? "warning"
                           : "error"
@@ -156,7 +193,7 @@ export default function OrderTable() {
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {order.total_pay}
+                    {order.total_pay} SDG
                   </TableCell>
                   <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     <div className="flex items-center gap-2">
@@ -205,13 +242,13 @@ export default function OrderTable() {
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   Main information 
                 </h5>
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5">
                   <div>
-                    <Label>Order status</Label>
+                    <Label>Order status:</Label>
                     <div className="relative">
                         <Select
                         defaultValue={edit?.order_status}
-                         options={[{value:'pending', label: 'pending'}, {value:'confirmed', label: 'confirmed'}, {value:'delivered', label: 'delivered'}, {value:'canceled', label: 'cancel'}]}
+                         options={[{value:'pending', label: 'pending'}, {value:'confirmed', label: 'confirm'}, {value:'delivered', label: 'delivered'}, {value:'cancelled', label: 'cancel'}, {value:'onDelivery', label: 'on delivery'}, {value:'preparing', label: 'preparing'}]}
                          placeholder="Select Option"
 
                          onChange={(value => {
@@ -224,17 +261,29 @@ export default function OrderTable() {
                         </span>
                     </div>
                   </div>
+                  <div>
+                    <Label>order Id:</Label>
+                    <p className="ml-6">{edit?.documentId}</p>
+                  </div>
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-5">
+                    <Label>Delivery Address:</Label>
+                    <div className="ml-6 flex flex-col gap-2">
+                    <p>Country: {edit?.delivery_address.region}</p>
+                    <p>City: {edit?.delivery_address.city}</p>
+                    <p>Address: {edit?.delivery_address.address}</p>
+                  </div>
+                  </div>
                 </div>
               </div>
-              <div className="">
+              <div className="w-full">
                 <div className="p-6">
-                    <Label>Products</Label>
+                <Label>Products</Label>
                 </div>
-                {edit?.order_items.map((orderItem: OrderItem) => (
-                  <OrderItems 
-                    key={orderItem.order_id} 
-                    count={orderItem.quantity} 
-                    product={orderItem}
+                {edit?.order_items.map((orderItem : OrderItems) => (
+                  <OrderItems
+                    key={orderItem.order_id}
+                    count={orderItem.quantity}
+                    product={orderItem.product} // Ensure product is of type Product
                   />
                 ))}
               </div>
