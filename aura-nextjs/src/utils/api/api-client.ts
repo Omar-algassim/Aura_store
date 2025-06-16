@@ -952,7 +952,7 @@ class APIClient {
 
   async fetchOrder(jwt: string) {
     try {
-      const response = await this.api.get(`/orders?populate=*`, {
+      const response = await this.api.get(`/orders?populate[order_items][populate]=*&populate=user`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
