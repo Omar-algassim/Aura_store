@@ -929,6 +929,78 @@ class APIClient {
     }
   }
 
+  async updateOrder(
+    jwt: string,
+    id: string,
+    orderData: Omit<OrderDTO, "user">
+  ) {
+    const { order_items, ...data } = orderData;
+    try {
+      const response = await this.api.put(
+        `/orders/${id}`,
+        {
+          data: {
+            region: data.region,
+            total_pay: data.total_pay,
+            order_status: data.order_status,
+            delivery_address: data.delivery_address,
+            user: {
+              connect: data.user_id,
+            },
+            checkout_image: data.checkout_image,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  async updateOrderStatus(
+    jwt: string,
+    id: string,
+    orderStatus: string
+  ) {
+    try {
+      const response = await this.api.put(
+        `/orders/${id}`,
+        {
+          data: {
+            order_status: orderStatus,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
+    }
+  }
+
   async getUserOrders(jwt: string, query: string) {
     try {
       const response = await this.api.get(`/orders?${query}`, {
@@ -952,7 +1024,7 @@ class APIClient {
 
   async fetchOrder(jwt: string) {
     try {
-      const response = await this.api.get(`/orders?populate[order_items][populate]=*&populate=user`, {
+      const response = await this.api.get(`/orders?populate[order_items][populate]=*&populate=user&sort=createdAt:asc`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },

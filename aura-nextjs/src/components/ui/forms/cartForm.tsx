@@ -18,6 +18,7 @@ import { useCart, useCartDispatcher, useUser } from "@/components/context";
 import { CartEntity } from "@/entities/cart-entity";
 import { User } from "@/entities/user-entity";
 import { useRouter } from "next/navigation";
+import { ReceiveOrderMessage } from "@/utils/services/dashboard/orders";
 
 type Props = {
   //   orderId: string;
@@ -121,8 +122,12 @@ export function CartForm(props: Props) {
         return;
       }
       setLoading(false);
-      console.log("checkout data", data);
+      // console.log("checkout data", data);
       cartDispatcher({ type: "DELETE", payload: { cart } });
+      if (user.phone_number) {
+       const response = await ReceiveOrderMessage(user.phone_number, data);
+       console.log("ReceiveOrderMessage response: ", response);
+      }
       router.push(`/cart/checkout/${data}`);
     };
     if (formState?.data && !cartCheckedOut.current) {

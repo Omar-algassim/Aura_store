@@ -16,7 +16,6 @@ export function newRegionAction(
     name: formData.get("name"),
     available: formData.get("available"),
   };
-  console.log("Row data", rowData);
 
   // validate the data using zod
   const validation = newCountrySchema.safeParse(rowData);

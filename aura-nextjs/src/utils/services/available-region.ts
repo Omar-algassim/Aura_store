@@ -6,6 +6,7 @@ export default async function getAvailableRegions() {
     const query = qs.stringify(
         {
           populate: '*',
+          sort: ["available:desc"],
 
         encodeValuesOnly: true, // prettify URL
         }
