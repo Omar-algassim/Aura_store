@@ -21,10 +21,12 @@ import {
 import cookie from "js-cookie";
 import React, { useEffect } from "react";
 import { getFieldError } from "@/components/ui/forms/handleError";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductForm {
   editMode?: boolean;
   data?: Product;
+  toggleEditMode: () => void ;
 }
 
 interface images {
@@ -57,6 +59,7 @@ export default function ProductForm(props: ProductForm) {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
   const [state, action, isPending] = React.useActionState(handleSave, null);
+  const { toast } = useToast();
 
   const nameError = getFieldError(state?.error, "name");
   const titleError = getFieldError(state?.error, "title");
@@ -134,10 +137,6 @@ export default function ProductForm(props: ProductForm) {
     }
     // error handling
     setError("error uploading images");
-    console.log(
-      "error uploading Images",
-      "One or more images didn't uploaded successfully"
-    );
     for (const img of uploadedImages) {
       const { error: _error } = await deleteProductImage(img.imageId, jwt);
       if (_error) {
@@ -254,12 +253,22 @@ export default function ProductForm(props: ProductForm) {
           jwt
         );
         if (editProduct.error) {
-          setError("error updating product");
-          console.log("error", JSON.stringify(editProduct.error, null, 2));
+          props.toggleEditMode();
+          toast({
+            variant: "destructive",
+            title: "Error updating product",
+            description: editProduct.error || "Error in updating product"
+          })
           return await backtraceStorage(uploadedThumbnail, uploadedImages, jwt);
         } else {
           setError(null);
-          console.log("product", JSON.stringify(editProduct, null, 2));
+          props.toggleEditMode();
+          toast({
+            variant: "success",
+             title: "updating success",
+             description: "product updated successfully"
+          })
+          window.location.reload();
           return {
             message: "product updated successfully",
             type: "success",
@@ -294,8 +303,12 @@ export default function ProductForm(props: ProductForm) {
       if (deleteThumbnail.error) {
         console.log("error deleting thumbnail", deleteThumbnail.error);
       }
-      setError("error creating product");
-      console.log("error", JSON.stringify(product.error, null, 2));
+      props.toggleEditMode();
+      toast({
+        variant: "destructive",
+        title: "Error creating",
+        description: product.error || "Error creating Product"
+      })
       return {
         message: "error creating product",
         type: "server Error",
@@ -304,7 +317,13 @@ export default function ProductForm(props: ProductForm) {
       };
     } else {
       setError(null);
-      console.log("product", JSON.stringify(product, null, 2));
+      props.toggleEditMode();
+      toast({
+        variant: "success",
+        title: "creating success",
+        description: "product created successfully"
+      });
+      window.location.reload();
       return {
         message: "product created successfully",
         type: "success",

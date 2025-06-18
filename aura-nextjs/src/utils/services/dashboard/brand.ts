@@ -99,7 +99,7 @@ export async function createBrand(
   error?: any;
 }> {
   try {
-    const { error, data: createdData } = await apiClient.createBrand(jwt, data);
+    const { error, data: createdData } = await apiClient.createBrand(data, jwt);
     if (error) {
       return {
         message: error.message,

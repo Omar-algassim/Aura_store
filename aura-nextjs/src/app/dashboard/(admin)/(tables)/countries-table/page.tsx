@@ -14,6 +14,8 @@ import NewCountryForm from "../../(forms)/new-country/page";
 import getAvailableCountries from "@/utils/services/available-region";
 import { deleteCity } from "@/utils/services/dashboard/available-city";
 import { deleteRegion } from "@/utils/services/dashboard/available-region";
+import { toast } from "@/hooks/use-toast";
+import { table } from "console";
 
 interface City {
   id: string;
@@ -80,23 +82,42 @@ export default function CountryList() {
     try {
       const jwt = cookie.get("jwt");
       if (!jwt) {
-        console.error("JWT token is missing");
+        setAlerting(false);
+        toast({
+          variant: "destructive",
+          title: "Authentication failed",
+          description: "Please login to continue.",
+        });
         return;
       }
       const response = await deleteRegion(toDelete.documentId, jwt);
       if (response.error) {
-        console.error("Error deleting city:", response.error);
+        setAlerting(false);
+        toast({
+          variant: "destructive",
+          title: "Error deleting country",
+          description: response.error.message || "Failed to delete country.",
+        });
         return;
       }
-      console.log("Country deleted successfully:", response.data);
       setCities((prevCities) =>
         prevCities.filter((city) => city.documentId !== toDelete.documentId)
       );
       setAlerting(false);
       setToDelete(undefined);
+      toast({
+        variant: "success",
+        title: "Country deleted",
+        description: "Country deleted successfully.",
+      });
+      return;
       
     } catch (error) {
-      console.error("Error deleting city:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An error occurred while deleting the country.",
+      });
       return;
     }
   }
@@ -210,7 +231,7 @@ export default function CountryList() {
         onClose={() => toggleEditModal(undefined)}
         className="max-w-[700px] m-4"
       >
-        <NewCountryForm editMode={true} country={edit} />
+        <NewCountryForm editMode={true} country={edit} toggleEditModal={() => toggleEditModal(undefined)} />
       </Modal>
       <Modal
         isOpen={alerting}
@@ -242,7 +263,7 @@ export default function CountryList() {
         onClose={newCountryWindow}
         className="max-w-[700px] m-4"
       >
-        <NewCountryForm editMode={false} />
+        <NewCountryForm editMode={false} toggleEditModal={newCountryWindow} />
       </Modal>
     </div>
   );

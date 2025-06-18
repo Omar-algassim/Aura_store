@@ -13,6 +13,7 @@ import { getBrands } from "@/utils/services/products-services";
 import cookie from "js-cookie";
 import NewBrandForm from "../../(forms)/new-brand/page";
 import { deleteBrand } from "@/utils/services/dashboard/brand";
+import { useToast } from "@/hooks/use-toast";
 
 interface Brand {
   id: string;
@@ -25,8 +26,9 @@ export default function BrandList() {
   const [toDelete, setToDelete] = React.useState<Brand | undefined>(undefined);
   const [edit, setEdit] = React.useState<Brand | undefined>(undefined);
   const [isOpen, setIsOpen] = React.useState(false);
-  const [alerting, setAlerting] = React.useState(false)
-  const [openNewBrand, setOpenNewBrand] = React.useState(false)
+  const [alerting, setAlerting] = React.useState(false);
+  const [openNewBrand, setOpenNewBrand] = React.useState(false);
+  const { toast } = useToast();
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -77,17 +79,31 @@ export default function BrandList() {
       }
       const response = await deleteBrand(toDelete.documentId, jwt);
       if (response.error) {
-        console.error("Error deleting brand:", response.error);
+        setAlerting(false);
+        setToDelete(undefined);
+        toast({
+          variant: "destructive",
+          title: "Error deleting brand",
+          description: response.error || "Failed to delete brand",
+      });
         return;
       }
-      console.log("Brand deleted successfully:", response.data);
       setBrands((prevBrands) =>
         prevBrands.filter((brand) => brand.documentId !== toDelete.documentId)
       );
       setAlerting(false);
       setToDelete(undefined);
+      toast({
+        variant: "success",
+        title: "Brand deleted",
+        description: "Brand has been deleted successfully.",
+      });
     } catch (error) {
-      console.error("Error deleting brand:", error);
+      toast({
+        variant: "destructive",
+        title: "Error deleting brand",
+        description: "Failed to delete brand",
+      });
       return;
     }
   }
@@ -200,6 +216,7 @@ export default function BrandList() {
         <NewBrandForm
         editMode={true}
         brand={edit}
+        toggleEditModal={toggleEditModal}
         />
         </Modal>
             <Modal isOpen={alerting} onClose={() => alertingToggle(undefined)} className="max-w-[400px] m-4">
@@ -226,6 +243,7 @@ export default function BrandList() {
             <Modal isOpen={openNewBrand} onClose={newBrandWindow} className="max-w-[700px] m-4">
               <NewBrandForm
               editMode={false}
+              toggleEditModal={newBrandWindow}
                 />
             </Modal>
     </div>

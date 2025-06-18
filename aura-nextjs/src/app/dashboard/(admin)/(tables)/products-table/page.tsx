@@ -45,7 +45,6 @@ export default function ProductTable() {
   const [edit, setEdit] = React.useState<Product>();
   const [toDelete, setToDelete] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
-
   const { toast } = useToast();
 
   React.useEffect(() => {
@@ -90,22 +89,27 @@ export default function ProductTable() {
       setIsLoading(true);
       const response = await deleteProduct(toDelete, jwt);
       if (response.error) {
-        console.error("Error deleting product:", response.error);
-       const {id, dismiss, update} = toast({title: "OK", variant: 'default', type: "foreground", content:"Error Deleting Product"});
-       //update();
         setIsDelete(false);
         setIsLoading(false);
+        toast({
+          variant: "destructive",
+          title: "Error deleting",
+          description: response.error || "Error deleting product"
+        })
       } else {
         setProducts((prevProducts) =>
           prevProducts.filter((product) => product.id !== toDelete)
-        );
-        setToDelete("");
-        setIsDelete(false);
-        setIsLoading(false);
-        console.log("Product deleted successfully:", response);
-        const {id, dismiss, update} = toast({title: "OK", variant: 'default', type: "foreground", content:"Error Deleting Product"});
-       //update();
-        
+      );
+      setToDelete("");
+      setIsDelete(false);
+      setIsLoading(false);
+      
+      toast({
+        variant: "success",
+        title: "delete success",
+        description: "product deleted successfully"
+       });       
+        window.location.reload();
       }
     }
   }
@@ -297,12 +301,12 @@ export default function ProductTable() {
         )}
       </div>
       <Modal isOpen={isOpen} onClose={toggleForm} className="max-w-[700px] m-4">
-        <ProductForm data={edit} editMode={true} />
+        <ProductForm data={edit} editMode={true} toggleEditMode={toggleForm} />
       </Modal>
       <Modal
         isOpen={isDelete}
         onClose={() => toggleDelete("")}
-        className="max-w-[700px] m-4"
+        className="max-w-[400px] m-4"
       >
         <div className="no-scrollbar flex flex-col items-center justify-center justify-items-center w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">

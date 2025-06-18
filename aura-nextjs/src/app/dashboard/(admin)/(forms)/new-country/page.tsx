@@ -17,6 +17,7 @@ import cookie from "js-cookie";
 import React from "react";
 import { Modal } from "@/components/ui/dashboard/ui/modal";
 import { Edit } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface City {
   id: string;
@@ -35,12 +36,14 @@ interface Country {
 interface RegionFormProps {
   editMode?: boolean;
   country?: Country;
+  toggleEditModal?: () => void;
 }
 
 export default function NewRegionForm(props: RegionFormProps) {
   const [state, action, isPending] = React.useActionState(handleSave, null);
-  const [ available, setAvailable ] = React.useState<boolean>(false);
+  const [available, setAvailable] = React.useState<boolean>(false);
   const { isOpen, openModal, closeModal } = useModal();
+  const { toast } = useToast();
 
   const nameError = getFieldError(state?.error, "name");
 
@@ -53,9 +56,15 @@ export default function NewRegionForm(props: RegionFormProps) {
     data: any | null;
     error?: any;
   }> {
+    console.log("handleSave called with formData:", formData);
     const jwt = cookie.get("jwt");
     if (!jwt) {
-      console.error("JWT token is missing");
+      props.toggleEditModal?.();
+      toast({
+        variant: "destructive",
+        title: "Authentication failed",
+        description: "Please login to continue.",
+      });
       return {
         message: "JWT token is missing",
         type: "error",
@@ -66,7 +75,6 @@ export default function NewRegionForm(props: RegionFormProps) {
     formData.set("available", available ? "true" : "false");
     const validation = newRegionAction(prev, formData);
     if (validation.error) {
-      console.error("Validation error", validation.error);
       return {
         message: "Please check the data",
         type: "validation",
@@ -76,7 +84,6 @@ export default function NewRegionForm(props: RegionFormProps) {
     }
     const data = validation.data;
     if (!data) {
-      console.error("No data returned from validation");
       return {
         message: "No data returned from validation",
         type: "error",
@@ -85,10 +92,14 @@ export default function NewRegionForm(props: RegionFormProps) {
       };
     }
     if (props.editMode && props.country) {
-      console.log("send data to update", data);
       const response = await updateRegion(props.country.documentId, jwt, data);
       if (response.error) {
-        console.error("Error updating city", response.error);
+        props.toggleEditModal?.();
+        toast({
+          variant: "destructive",
+          title: "Error updating region",
+          description: response.error.message || "Failed to update region.",
+        });
         return {
           message: response.error.message || "Failed to update city",
           type: "error",
@@ -97,7 +108,12 @@ export default function NewRegionForm(props: RegionFormProps) {
         };
       }
       if (response.data) {
-        console.log("Region updated successfully", response.data);
+        toast({
+          variant: "success",
+          title: "Region updated",
+          description: "Region updated successfully.",
+        });
+        window.location.reload();
         return {
           message: "Region updated successfully",
           type: "success",
@@ -108,7 +124,12 @@ export default function NewRegionForm(props: RegionFormProps) {
     }
     const response = await createRegion(jwt, data);
     if (response.error) {
-      console.error("Error creating city", response);
+      props.toggleEditModal?.();
+      toast({
+        variant: "destructive",
+        title: "Error creating region",
+        description: response.error.message || "Failed to create region.",
+      });
       return {
         message: response.error.message || "Failed to create city",
         type: "error",
@@ -117,7 +138,13 @@ export default function NewRegionForm(props: RegionFormProps) {
       };
     }
     if (response.data) {
-      console.log("Region created successfully", response.data);
+      props.toggleEditModal?.();
+      toast({
+        variant: "success",
+        title: "Region created",
+        description: "Region created successfully.",
+      });
+      window.location.reload();
       return {
         message: "Region created successfully",
         type: "success",
@@ -125,6 +152,12 @@ export default function NewRegionForm(props: RegionFormProps) {
         error: null,
       };
     }
+    props.toggleEditModal?.();
+    toast({
+      variant: "destructive",
+      title: "No city created",
+      description: "No city was created, please check the data.",
+    });
     return {
       message: "No city created",
       type: "info",
@@ -156,7 +189,7 @@ export default function NewRegionForm(props: RegionFormProps) {
                 <Label>Name *</Label>
                 <Input
                   name="name"
-                  defaultValue={ props.country?.name }
+                  defaultValue={props.country?.name}
                   placeholder="the name of Country"
                   type="text"
                 />
@@ -175,29 +208,43 @@ export default function NewRegionForm(props: RegionFormProps) {
               )}
               <div>
                 <Label>Country Availability</Label>
-                <Switch defaultChecked={props.country?.available} label="Available" onChange={setAvailable} />
+                <Switch
+                  defaultChecked={props.country?.available}
+                  label="Available"
+                  onChange={setAvailable}
+                />
               </div>
             </div>
             {props.editMode && (
-            <div className="mt-10">
-            <Label>Cities</Label>
-            <div className="border border-primary p-2 rounded-xl w-full flex flex-col items-center justify-center overflow-scroll h-full" >
-                {props.country?.available_cities.map((city) =>
-                <CitiesControl key={city.id} city={city} />
-                )}
-                <div onClick={openModal} className="cursor-pointer p-3 rounded-full bg-blue_shade">
+              <div className="mt-10">
+                <Label>Cities</Label>
+                <div className="border border-primary p-2 rounded-xl w-full flex flex-col items-center justify-center overflow-scroll h-full">
+                  {props.country?.available_cities.map((city) => (
+                    <CitiesControl key={city.id} city={city} />
+                  ))}
+                  <div
+                    onClick={openModal}
+                    className="cursor-pointer p-3 rounded-full bg-blue_shade"
+                  >
                     <PlusIcon />
+                  </div>
                 </div>
-            </div>
-            </div>)}
+              </div>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-          <Button size="sm">{props.editMode ? "Save Changes" : "Submit"}</Button>
+          <Button size="sm">
+            {props.editMode ? "Save Changes" : "Submit"}
+          </Button>
         </div>
       </form>
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px]">
-        <NewCityForm countryId={props.country?.documentId} editMode={false} />
+        <NewCityForm
+          countryId={props.country?.documentId}
+          editMode={false}
+          toggleEditModal={closeModal}
+        />
       </Modal>
     </div>
   );
