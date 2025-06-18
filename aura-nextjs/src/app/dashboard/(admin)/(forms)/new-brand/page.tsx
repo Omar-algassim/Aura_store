@@ -3,10 +3,11 @@ import Input from "@/components/ui/dashboard/form/input/InputField";
 import Label from "@/components/ui/dashboard/form/Label";
 import Button from "@/components/ui/dashboard/ui/button/Button";
 import { getFieldError } from "@/components/ui/forms/handleError";
+import { useToast } from "@/hooks/use-toast";
 import { createBrand, newBrandAction, updateBrand } from "@/utils/services/dashboard/brand";
-import { create } from "domain";
 import cookie from "js-cookie";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 interface Brand {
   id: string;
@@ -16,13 +17,15 @@ interface Brand {
 interface BrandFormProps {
   editMode?: boolean;
   brand?: Brand;
+  toggleEditModal?: (brand?: Brand) => void;
 }
 
 export default function NewBrandForm(props: BrandFormProps) {
-  const [state, action, isPending] = React.useActionState(handleSave,null);
+  const [state, action, isPending] = React.useActionState(handleSave, null);
+  const { toast } = useToast();
+  const router = useRouter();
 
   const nameError = getFieldError(state?.error, "name");
-
 
   async function handleSave(
     prev: any,
@@ -66,7 +69,12 @@ export default function NewBrandForm(props: BrandFormProps) {
       console.log("send data to update",data);
       const response = await updateBrand(props.brand.documentId, data, jwt);
       if (response.error) {
-        console.error("Error updating brand", response.error);
+        props.toggleEditModal?.();
+        toast({
+          variant: "destructive",
+          title: "Error updating brand",
+          description: response.error.message || "Failed to update brand",
+      });
         return {
           message: response.error.message || "Failed to update brand",
           type: "error",
@@ -74,7 +82,14 @@ export default function NewBrandForm(props: BrandFormProps) {
           error: response.error,
         };
       } if (response.data) {
-
+        props.toggleEditModal?.();
+        toast({
+          variant: "success",
+          title: "brand updated",
+          description: "Brand has been updated successfully.",
+      });
+      console.log("refreshing router after brand update");
+      window.location.reload();
         return {
           message: "Brand updated successfully",
           type: "success",
@@ -85,7 +100,12 @@ export default function NewBrandForm(props: BrandFormProps) {
     }
     const response = await createBrand(jwt, data);
     if (response.error) {
-      console.error("Error creating brand", response.error);
+       props.toggleEditModal?.();
+        toast({
+          variant: "destructive",
+          title: "Error creating brand",
+          description: response.error,
+      });
       return {
         message: response.error.message || "Failed to create brand",
         type: "error",
@@ -93,7 +113,13 @@ export default function NewBrandForm(props: BrandFormProps) {
         error: response.error,
       };
     } if (response.data) {
-      console.log("Brand created successfully", response.data);
+       props.toggleEditModal?.();
+        toast({
+          variant: "success",
+          title: "brand created",
+          description: "Brand has been created successfully.",
+      });
+      window.location.reload();
       return {
         message: "Brand created successfully",
         type: "success",
