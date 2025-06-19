@@ -52,7 +52,7 @@ export default function ProductForm(props: ProductForm) {
     props.data?.categories.map((category) => category.documentId) || []
   );
   const [selectedBrand, setSelectedBrand] = React.useState<string | undefined>(
-    props.data?.brand?.name || undefined
+    props.data?.brand?.documentId || undefined
   );
   const [Categories, setCategories] = React.useState<any[]>([]);
   const [brands, setBrands] = React.useState<any[]>([]);
