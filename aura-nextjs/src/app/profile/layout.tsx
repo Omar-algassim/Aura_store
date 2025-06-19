@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Footer, Header } from '@/components/ui';
+import { Toaster } from '@/components/ui/shadcn/toaster';
 
 function ProfileLayout({ children }: { children: React.ReactNode }) {
   // const router = useRouter();
@@ -20,6 +21,7 @@ function ProfileLayout({ children }: { children: React.ReactNode }) {
       <div className='w-full max-w-[1480px] min-h-svh flex flex-col items-center px-[17px] mt-10 laptop:px-0 bg-white rounded-2xl gap-[60px]'>
         {children}
       </div>
+      <Toaster />
       <Footer />
     </>
   );

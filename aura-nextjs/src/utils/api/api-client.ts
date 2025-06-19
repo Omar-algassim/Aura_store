@@ -249,7 +249,7 @@ class APIClient {
   async requestEmailConfirmationCode(email: string) {
     try {
       const result = await this.api.post('/auth/send-email-confirmation', {
-        indicator: email,
+        email,
       });
       if (result.status === 200 || result.status === 201) {
         return { data: result.data };

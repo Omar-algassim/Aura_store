@@ -3,14 +3,13 @@
 // handle the user authentication process
 // it make use of the api-client.ts to run those processes in the server side
 
-import { User } from "@/entities/user-entity";
-import { apiClient } from "@/utils/api/api-client";
-import { AxiosError } from "axios";
+import { User } from '@/entities/user-entity';
+import { apiClient } from '@/utils/api/api-client';
+import { AxiosError } from 'axios';
 
 export const getUsers = async (jwt: string) => {
   return await apiClient.getUsers(jwt);
 };
-
 
 export const getUserMe = async (jwt: string | undefined) => {
   if (!jwt) {
@@ -21,7 +20,7 @@ export const getUserMe = async (jwt: string | undefined) => {
 };
 
 export const requestResetPwdCode = async (
-  indicatorType: "email" | "phone_number",
+  indicatorType: 'email' | 'phone_number',
   indicator: string
 ) => {
   console.log(
@@ -40,7 +39,10 @@ export const resetPassword = async (
 };
 
 export const requestEmailConfirmationCode = async (email: string) => {
-  // /console.log(`request email confirm code with email: ${email}`);
+  console.log(`request email confirm code with email: ${email}`);
+  if (!email) {
+    return { error: 'البريد اﻹلكتروني مطلوب' };
+  }
   return await apiClient.requestEmailConfirmationCode(email);
 };
 
@@ -49,11 +51,11 @@ export const requestPhoneConfirmCode = async (phone: string) => {
   const { error, data } = await apiClient.requestPhoneConfirmCode(phone);
   // /console.log(`Error ===> ${error}`);
   if (error === AxiosError.ERR_NETWORK) {
-    return { error: "خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا" };
+    return { error: 'خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا' };
   } else if (error === AxiosError.ERR_BAD_REQUEST) {
-    return { error: "رقم الهاتف غير صحيح, او تم تخطي الحد من إعادة الإرسال" };
+    return { error: 'رقم الهاتف غير صحيح, او تم تخطي الحد من إعادة الإرسال' };
   } else if (error) {
-    return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
   }
   return { error, data };
 };
@@ -62,13 +64,13 @@ export const sendPhoneConfirmationCode = async (code: string) => {
   // /console.log(`send phone confirm code with code: ${code}`);
   const { error, data } = await apiClient.sendPhoneConfirmationCode(code);
   if (error === AxiosError.ERR_NETWORK) {
-    return { error: "خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا" };
+    return { error: 'خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا' };
   } else if (error === AxiosError.ERR_BAD_REQUEST) {
     return {
-      error: "الرقم السري غير صحيح, الرجاء التأكد ثم المحاولة مرة أخرى",
+      error: 'الرقم السري غير صحيح, الرجاء التأكد ثم المحاولة مرة أخرى',
     };
   } else if (error) {
-    return { error: "حدث خطأ ما, الرجاء المحاوله مره اخرى" };
+    return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
   }
   return { error, data };
 };
@@ -83,7 +85,7 @@ export const updateUser = async (
 
 export const blockUser = async (jwt: string, id: number) => {
   return await apiClient.blockUser(jwt, id);
-}
+};
 export const unblockUser = async (jwt: string, id: number) => {
   return await apiClient.unblockUser(jwt, id);
-}
+};

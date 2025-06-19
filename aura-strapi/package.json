@@ -13,6 +13,7 @@
   "dependencies": {
     "@strapi/plugin-cloud": "5.2.0",
     "@strapi/plugin-users-permissions": "5.2.0",
+    "@strapi/provider-email-nodemailer": "^5.16.0",
     "@strapi/strapi": "5.2.0",
     "@strapi/utils": "^5.14.0",
     "axios": "^1.9.0",
