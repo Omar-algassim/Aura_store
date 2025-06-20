@@ -4,7 +4,7 @@
 // export a class instance of the api client, which contains all the api calls
 import { User } from '@/entities/user-entity';
 import { OrderDTO, OrderItem, SignupDTO } from '@/interfaces/dto';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { string } from 'zod';
 class APIClient {
   private baseUrl =
@@ -66,6 +66,18 @@ class APIClient {
       return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
     } catch (error: any) {
       //console.error(error);
+      if (error instanceof AxiosError) {
+        switch (error.code) {
+          case AxiosError.ERR_BAD_REQUEST:
+            return { error: 'البيانات المدخلة غير صحيحة' };
+          case AxiosError.ERR_NETWORK:
+            return {
+              error: 'خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا',
+            };
+          default:
+            return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
+        }
+      }
       return { error: error.message };
     }
   }
