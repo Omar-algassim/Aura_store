@@ -59,7 +59,7 @@ function ProfileInfo() {
       user.phone_number = phone;
       user.country_code = countryKey; // update the country code
       user.confirmed = false; // set confirmed to false
-      user.phoneConfirmed = false;
+      user.phoneNumberConfirmed = false;
     }
     if (email && email !== user.email) {
       // set the user confirmation to false

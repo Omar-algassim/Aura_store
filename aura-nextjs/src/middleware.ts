@@ -52,7 +52,10 @@ export async function middleware(request: NextRequest) {
       // console.log('user is logged in but not verified');
       // if the user has a phone number and is not verified
       // redirect to confirm phone page
-      if (userFromCookie.phone_number && !userFromCookie.phoneConfirmed) {
+      if (
+        userFromCookie.phone_number &&
+        !userFromCookie.phoneNumberConfirmed
+      ) {
         // redirect to confirm phone page
         return NextResponse.redirect(
           new URL(`/confirm-phone?msg=${message.phone_number}`, request.url)

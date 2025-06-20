@@ -23,7 +23,7 @@ export class User {
   blocked?: boolean;
   confirmed?: boolean;
   emailConfirmed?: boolean;
-  phoneConfirmed?: boolean;
+  phoneNumberConfirmed?: boolean;
   createdAt?: string;
   id?: number;
   provider?: null;
