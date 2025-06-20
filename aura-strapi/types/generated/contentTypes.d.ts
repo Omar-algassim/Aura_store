@@ -1377,6 +1377,8 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    emailConfirmed: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     likedReviews: Schema.Attribute.Relation<'manyToMany', 'api::review.review'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -1396,6 +1398,8 @@ export interface PluginUsersPermissionsUser
         maxLength: 14;
         minLength: 10;
       }>;
+    phoneNumberConfirmed: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;

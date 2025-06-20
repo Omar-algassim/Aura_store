@@ -1,6 +1,7 @@
-import { getUserMe } from '@/utils/services/user-services';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+
+import { getUserMe } from '@/utils/services/user-services';
 import { User } from './entities/user-entity';
 
 const protectedRoutes = ['/cart/checkout', '/profile', '/dashboard'];
@@ -40,26 +41,29 @@ export async function middleware(request: NextRequest) {
     email: 'الرجاء تأكيد البريد الالكتروني للمتابعة',
   };
 
+  // there are no jwt
   if (isProtectedRoute(currentPath) && user.ok === false) {
+    // console.log('there is no jwt');
     // update the last visited page cookie
     cookieStore.set('nextPage', currentPath);
+    // if the user is logged in but not verified
+    // redirect to confirm page
     if (userFromCookie?.documentId?.length) {
-      // redirect to confirm page
-      if (userFromCookie.phone_number) {
+      // console.log('user is logged in but not verified');
+      // if the user has a phone number and is not verified
+      // redirect to confirm phone page
+      if (userFromCookie.phone_number && !userFromCookie.phoneConfirmed) {
         // redirect to confirm phone page
         return NextResponse.redirect(
-          new URL(
-            `/confirm-phone?message=${message.phone_number}`,
-            request.url
-          )
+          new URL(`/confirm-phone?msg=${message.phone_number}`, request.url)
         );
-      } else {
+      } else if (userFromCookie.email && !userFromCookie.emailConfirmed) {
         return NextResponse.redirect(
-          new URL(`/confirm-email?message=${message.email}`, request.url)
+          new URL(`/confirm-email?msg=${message.email}`, request.url)
         );
       }
     }
-    // /console.log("redirecting to login, next page", currentPath);
+    // console.log('user not logged in, redirecting to login');
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
@@ -73,6 +77,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/profile', request.url));
     } else if (
       userFromCookie?.documentId?.length &&
+      // when redirecting from confirm email or phone
       !searchParams.has('msg', 'account-confirmed')
     ) {
       if (userFromCookie.phone_number) {

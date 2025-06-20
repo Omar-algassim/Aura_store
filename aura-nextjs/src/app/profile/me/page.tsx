@@ -1,9 +1,12 @@
 'use client';
+import { Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { CheckSquare, Edit, InfoIcon } from 'lucide-react';
 import Cookies from 'js-cookie';
+
+import { useToast } from '@/hooks/use-toast';
 
 import {
   requestEmailConfirmationCode,
@@ -15,14 +18,13 @@ import { useUser, useUserDispatch } from '@/components/context';
 import InputComponent from '@/components/common/Input';
 import { ButtonPrimary } from '@/components/common/Buttons';
 import { CountriesDropdown } from '@/components/ui/CountriesDropdown';
-import { useToast } from '@/hooks/use-toast';
 import { Preloader } from '@/components/ui/Preloader';
-import { useRouter } from 'next/navigation';
 
 function ProfileInfo() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const user = useUser() as User;
   const userDispatcher = useUserDispatch();
-  const router = useRouter();
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
   const [phone, setPhone] = useState(user.phone_number);
@@ -34,18 +36,6 @@ function ProfileInfo() {
   const { toast } = useToast();
 
   const jwt = Cookies.get('jwt');
-
-  useEffect(() => {
-    setUsername(user.username);
-    setEmail(user.email);
-    setCountryKey(user.country_code || '+249');
-    const countryKeyPattern = new RegExp(`^${'\\' + user.country_code}`, 'g');
-    const phoneWithOutcountryKey = user.phone_number?.replace(
-      countryKeyPattern,
-      ''
-    );
-    setPhone(phoneWithOutcountryKey);
-  }, [user]);
 
   const saveChanges = async () => {
     // console.log(
@@ -64,24 +54,26 @@ function ProfileInfo() {
       // send otp to the new phone number
       // prompt the user to enter the otp
       // if otp is correct, update the phone number and set the confirmation to true
-      console.log('phone number changed');
+      // console.log('phone number changed');
       phoneChanged = true;
       user.phone_number = phone;
       user.country_code = countryKey; // update the country code
       user.confirmed = false; // set confirmed to false
+      user.phoneConfirmed = false;
     }
     if (email && email !== user.email) {
       // set the user confirmation to false
       // send email confirmation
       // prompt the user with message to check the email
-      console.log('email changing');
+      // console.log('email changing');
       emailChanged = true;
       user.email = email;
       user.confirmed = false; // set confirmed to false
+      user.emailConfirmed = false;
     }
     if (username && username !== user.username) {
       // update the username
-      console.log('username changing');
+      // console.log('username changing');
       usernameChanged = true;
       user.username = username;
     }
@@ -123,6 +115,33 @@ function ProfileInfo() {
       variant: 'success',
     });
   };
+
+  useEffect(() => {
+    const message = searchParams.get('msg');
+    if (message) {
+      toast({
+        title: 'تنبيه',
+        description: message,
+        variant: 'success',
+      });
+      // clear the message from the url
+      const url = new URL(window.location.href);
+      url.searchParams.delete('msg');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, []);
+
+  useEffect(() => {
+    setUsername(user.username);
+    setEmail(user.email);
+    setCountryKey(user.country_code || '+249');
+    const countryKeyPattern = new RegExp(`^${'\\' + user.country_code}`, 'g');
+    const phoneWithOutCountryKey = user.phone_number?.replace(
+      countryKeyPattern,
+      ''
+    );
+    setPhone(phoneWithOutCountryKey);
+  }, [user]);
 
   useEffect(() => {
     if (error) {
@@ -374,4 +393,12 @@ function ProfileInfo() {
   );
 }
 
-export default ProfileInfo;
+function ProfileInfoPage() {
+  return (
+    <Suspense fallback={<Preloader />}>
+      <ProfileInfo />
+    </Suspense>
+  );
+}
+
+export default ProfileInfoPage;
