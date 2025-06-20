@@ -5,6 +5,7 @@ import { Modal } from "../../ui/modal";
 import { useModal } from "@/hooks/useModal";
 import cookie from "js-cookie"
 import { deleteCity, updateCity } from "@/utils/services/dashboard/available-city";
+import { useToast } from "@/hooks/use-toast";
 
 interface CitiesControlProps {
   city: {
@@ -19,6 +20,7 @@ export default function CitiesControl(props: CitiesControlProps) {
   const { city } = props;
   const {isOpen, openModal, closeModal} = useModal();
   const [ changed, setChanged ] = React.useState(true);
+  const { toast } = useToast();
 
   function onChange(checked: boolean) {
     setChanged(!changed);
@@ -28,35 +30,64 @@ export default function CitiesControl(props: CitiesControlProps) {
     setChanged(true);
     const jwt = cookie.get("jwt");
     if (!jwt) {
-      console.error("JWT token is missing");
+      toast({
+        variant: "destructive",
+        title: "Authentication failed",
+        description: "Please login to continue.",
+      });
       return;
     }
     const response = await updateCity(city.documentId, jwt, { available: !city.available })
         if (response.error) {
-          console.error("Error updating city:", response.error);
+          toast({
+            variant: "destructive",
+            title: "Error updating city",
+            description: response.error.message || "Failed to update city.",
+          });
           setChanged(false);
           return;
         }
-      console.log("City updated successfully:", response.data);
-      console.log("City availability changed to:", !city.available);
+    toast({
+      variant: "success",
+      title: "City updated",
+      description: "City availability updated successfully.",
+    });
+    setChanged(false);
       }
 
   async function handleDeleteCity() {
       try {
         const jwt = cookie.get("jwt");
         if (!jwt) {
-          console.error("JWT token is missing");
+          toast({
+            variant: "destructive",
+            title: "Authentication failed",
+            description: "Please login to continue.",
+          });
+          closeModal()
           return;
         }
         const response = await deleteCity(city.documentId, jwt);
         if (response.error) {
-          console.error("Error deleting city:", response.error);
+          toast({
+            variant: "destructive",
+            title: "Error deleting city",
+            description: response.error.message || "Failed to delete city.",
+          });
           return;
         }
-        console.log("Country deleted successfully:", response.data);
+        toast({
+          variant: "success",
+          title: "City deleted",
+          description: "City deleted successfully.",
+        });
         closeModal()
       } catch (error) {
-        console.error("Error deleting city:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "An error occurred while deleting the city.",
+        });
         return;
       }
     }
@@ -84,6 +115,7 @@ export default function CitiesControl(props: CitiesControlProps) {
       <div>
         <button
           onClick={openModal}
+          type="button"
           className="flex items-center justify-center gap-2 rounded-full border border-red-900 bg-red-800 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-red-950 hover:text-white dark:border-red-950 dark:bg-red-800 dark:text-white dark:hover:bg-red-950 dark:hover:text-white lg:inline-flex lg:w-auto"
         >
           <TrashBinIcon width={20} />
@@ -101,6 +133,7 @@ export default function CitiesControl(props: CitiesControlProps) {
                 Delete
               </button>
               <button
+                type="button"
                 onClick={closeModal}
                 className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
               >

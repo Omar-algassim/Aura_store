@@ -10,18 +10,20 @@ export class User {
     city: string;
     address: string;
   };
-role: {
-      id: number,
-      documentId: string,
-      name: string,
-      description: string,
-      type: string,
-      createdAt: string,
-      updatedAt: string,
-      publishedAt: string
-    };
+  role: {
+    id: number;
+    documentId: string;
+    name: string;
+    description: string;
+    type: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+  };
   blocked?: boolean;
   confirmed?: boolean;
+  emailConfirmed?: boolean;
+  phoneNumberConfirmed?: boolean;
   createdAt?: string;
   id?: number;
   provider?: null;
@@ -29,19 +31,19 @@ role: {
   updatedAt?: string;
 
   constructor(userParams: User | null = null) {
-    this.documentId = userParams?.documentId || "";
-    this.username = userParams?.username || "anonymous";
+    this.documentId = userParams?.documentId || '';
+    this.username = userParams?.username || 'anonymous';
     this.role = userParams?.role || {
       id: 0,
-      documentId: "",
-      name: "public",
-      description: "",
-      type: "",
-      createdAt: "",
-      updatedAt: "",
-      publishedAt: ""
+      documentId: '',
+      name: 'public',
+      description: '',
+      type: '',
+      createdAt: '',
+      updatedAt: '',
+      publishedAt: '',
     };
-    this.avatar = userParams?.avatar || "/images/default-avatar.png";
+    this.avatar = userParams?.avatar || '/images/default-avatar.png';
     this.email = userParams?.email;
     this.phone_number = userParams?.phone_number;
     this.country_code = userParams?.country_code;

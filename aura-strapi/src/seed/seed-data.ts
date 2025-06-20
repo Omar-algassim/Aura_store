@@ -1,17 +1,17 @@
-import { Core } from "@strapi/strapi";
-import { v4 as uuidv4 } from "uuid";
-import { generateProducts } from "./seedProducts";
+import { Core } from '@strapi/strapi';
+import { v4 as uuidv4 } from 'uuid';
+import { generateProducts } from './seedProducts';
 
 const generateCategories = (count: number) => {
   const categoryNames = [
-    "Skincare",
-    "Makeup",
-    "Fragrances",
-    "Hair Care",
-    "Nail Care",
-    "Beauty Tools",
-    "Bath & Body",
-    "Accessories",
+    'Skincare',
+    'Makeup',
+    'Fragrances',
+    'Hair Care',
+    'Nail Care',
+    'Beauty Tools',
+    'Bath & Body',
+    'Accessories',
   ];
 
   return Array.from({ length: count }, (_, i) => ({
@@ -23,20 +23,20 @@ const generateCategories = (count: number) => {
 
 const generateBrands = (count: number) => {
   const brandNames = [
-    "LuxeSkin",
-    "Glamorous",
-    "Pure Essence",
-    "BeautyBloom",
-    "RadiantCharm",
-    "VelvetTouch",
-    "GlowGenics",
-    "ElegancePro",
-    "CharmCouture",
-    "SilkenHaven",
+    'LuxeSkin',
+    'Glamorous',
+    'Pure Essence',
+    'BeautyBloom',
+    'RadiantCharm',
+    'VelvetTouch',
+    'GlowGenics',
+    'ElegancePro',
+    'CharmCouture',
+    'SilkenHaven',
   ];
 
   return Array.from({ length: count }, (_, i) => ({
-    documentId: "api::brand.brand",
+    documentId: 'api::brand.brand',
     name: brandNames[i % brandNames.length],
   }));
 };
@@ -117,18 +117,58 @@ export const seedData = async (strapi: Core.Strapi) => {
   // /console.log("Seeding data...");
 
   const images = [
-    { url: "/uploads/product_placeholder_image_5_da374e12fb.jpg" },
-    { url: "/uploads/product_placeholder_image_2_3f78f8b5d3.jpg" },
-    { url: "/uploads/product_placeholder_image_3_5830479cf5.jpg" },
-    { url: "/uploads/product_placeholder_image_1_7568010c06.jpg" },
-    { url: "/uploads/product_placeholder_image_6_b899e26b24.jpg" },
-    { url: "/uploads/product_placeholder_image_4_65891e7883.jpg" },
-    { url: "/uploads/product_placeholder_image_8_d68b615abf.jpg" },
-    { url: "/uploads/product_placeholder_image_9_cc7d3e486d.jpg" },
-    { url: "/uploads/product_placeholder_image_7_d187fb9d0e.jpg" },
-    { url: "/uploads/product_placeholder_image_12_90c6e78887.jpg" },
-    { url: "/uploads/product_placeholder_image_11_258fea6183.jpg" },
-    { url: "/uploads/product_placeholder_image_10_0719c807a0.jpg" },
+    {
+      url: '/uploads/curology_X1s_Ir53_Dhz_A_unsplash_69a69045a8.jpg',
+      imageId: 'r2wvz1s9lztywhahdrmnprn5',
+    },
+    {
+      url: '/uploads/ashley_piszek_y_Vcxnd_Medak_unsplash_8b5ea0d4b7.jpg',
+      imageId: 'njpm0en14laqvorwua6l0n92',
+    },
+    {
+      url: '/uploads/jocelyn_morales_R3_Mi_Y1_JQ_4_unsplash_d708b39b3c.jpg',
+      imageId: 'efuvdjmg9323vs1jvvzvbld6',
+    },
+    {
+      url: '/uploads/alexandra_tran_ie_Sbbgr3_I_unsplash_dd3e35a023.jpg',
+      imageId: 'omo0pngfn8p73wup3a53gbjb',
+    },
+    {
+      url: '/uploads/lina_verovaya_Bib_Jj_O4s_Yr_I_unsplash_cd386c984b.jpg',
+      imageId: 'u9c6utp55goe2l1uwhpqibom',
+    },
+    {
+      url: '/uploads/curology_Z_Iih_Tgf5u_Gg_unsplash_d168a7f3d2.jpg',
+      imageId: 'px62umtyl12cxn86t43ynsjc',
+    },
+    {
+      url: '/uploads/lina_verovaya_Bib_Jj_O4s_Yr_I_unsplash_1_bb7d1afada.jpg',
+      imageId: 'm11grgtc4uxxfh3ql66vhhlv',
+    },
+    {
+      url: '/uploads/reuben_mansell_Zii_Mj_Tnwoh_E_unsplash_08831a083d.jpg',
+      imageId: 'u43ehjjbvr95zic21rzqw2mz',
+    },
+    {
+      url: '/uploads/lina_verovaya_F39_Yk_FM_fg_unsplash_87cf5a7fd6.jpg',
+      imageId: 'bxvy4nhr2lr50l37aow1vsld',
+    },
+    {
+      url: '/uploads/sincerely_media_55u9s_VVJ_4p8_unsplash_07dcb03aee.jpg',
+      imageId: 'epnyhro7cf2cwi9nx44z0et0',
+    },
+    {
+      url: '/uploads/sincerely_media_Gte_R27txma_M_unsplash_8fcb587986.jpg',
+      imageId: 'sxorhavag61ef50f1xofjm4r',
+    },
+    {
+      url: '/uploads/valeriia_miller_42_NKYROG_7g_unsplash_90f51cf133.jpg',
+      imageId: 'rb5uhahrpb6ocs6l7n2hhlm5',
+    },
+    {
+      url: '/uploads/taisiia_stupak_KP_97dx0_G_Ov8_unsplash_0e821dcea9.jpg',
+      imageId: 'ehkdywlp949bnrli302m9hgt',
+    },
   ];
   // Generate data
   const categories = generateCategories(8);
@@ -156,34 +196,34 @@ export const seedData = async (strapi: Core.Strapi) => {
   //   "04764e06-062f-4ca8-aafd-2c279dc36f31",
   // ];
   const categoryNames = [
-    "Skincare",
-    "Makeup",
-    "Fragrances",
-    "Hair Care",
-    "Nail Care",
-    "Beauty Tools",
-    "Bath & Body",
-    "Accessories",
+    'Skincare',
+    'Makeup',
+    'Fragrances',
+    'Hair Care',
+    'Nail Care',
+    'Beauty Tools',
+    'Bath & Body',
+    'Accessories',
   ];
   const brandNames = [
-    "LuxeSkin",
-    "Glamorous",
-    "Pure Essence",
-    "BeautyBloom",
-    "RadiantCharm",
-    "VelvetTouch",
-    "GlowGenics",
-    "ElegancePro",
-    "CharmCouture",
-    "SilkenHaven",
+    'LuxeSkin',
+    'Glamorous',
+    'Pure Essence',
+    'BeautyBloom',
+    'RadiantCharm',
+    'VelvetTouch',
+    'GlowGenics',
+    'ElegancePro',
+    'CharmCouture',
+    'SilkenHaven',
   ];
   // const products = generateProducts(20, categoryNames, brandNames, images);
   const categoryIDs = [];
   // Insert categories
   for (const category of categories) {
-    const cate = await strapi.documents("api::category.category").create({
+    const cate = await strapi.documents('api::category.category').create({
       data: { title: category.title, priority: category.priority },
-      status: "published",
+      status: 'published',
     });
     categoryIDs.push(cate.documentId);
     // /console.log(cate.documentId === category.documentId);
@@ -193,9 +233,9 @@ export const seedData = async (strapi: Core.Strapi) => {
   const brandsIDs = [];
   // Insert brands
   for (const brand of brands) {
-    const br = await strapi.documents("api::brand.brand").create({
+    const br = await strapi.documents('api::brand.brand').create({
       data: { name: brand.name },
-      status: "published",
+      status: 'published',
     });
     brandsIDs.push(br.documentId);
     // /console.log(br.documentId === brand.documentId);
@@ -224,8 +264,8 @@ export const seedData = async (strapi: Core.Strapi) => {
       createdAt: product.data.createdAt,
     };
     await strapi
-      .documents("api::product.product")
-      .create({ data: productData });
+      .documents('api::product.product')
+      .create({ data: productData, status: 'published' });
     console.log(`Product ${product.data.name} created`);
   });
 };

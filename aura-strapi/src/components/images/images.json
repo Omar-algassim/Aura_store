@@ -11,8 +11,8 @@
       "required": true
     },
     "imageId": {
-      "unique": true,
-      "type": "biginteger"
+      "type": "string",
+      "required": true
     }
   }
 }

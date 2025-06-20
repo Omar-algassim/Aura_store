@@ -130,7 +130,18 @@ function ProductPageComponent(params: { product: Product }) {
           {/* product images */}
           <div className="flex flex-col gap-y-2 w-full p-0 m-0">
             {/* hero */}
-            <div className="w-full flex items-center justify-center bg-surface tablet:rounded-xl">
+            <div className="relative w-full flex items-center justify-center bg-surface tablet:rounded-xl overflow-hidden">
+              {/* out of stock */}
+              {product.stock <= 0 && (
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden bg-[#03030325] backdrop-blur-sm">
+                  <div className="z-40 bg-primary-dark w-[600px] h-[20px] opacity-70 rotate-45" />
+                  <div className="absolute inset-0 z-50 flex items-center justify-center">
+                    <div className="text-white text-[13px] tablet:text-[18px] laptop:text-[22px] font-[600] p-1 rounded-bl-xl rounded-tr-xl">
+                      نفذ من المخزون
+                    </div>
+                  </div>
+                </div>
+              )}
               <Image
                 className="w-full max-w-[392px] max-h-[236px] tablet:max-w-[1140px] tablet:max-h-[400px] laptop:w-full laptop:max-h-[560px] laptop:max-w-[1400px] tablet:rounded-xl object-contain object-center animate-out "
                 src={`${BaseUrl}/${hero}`}
@@ -164,11 +175,22 @@ function ProductPageComponent(params: { product: Product }) {
               {images.map((img, index) => (
                 <div
                   key={index}
-                  className="w-[71px] h-[71px] tablet:w-[100px] tablet:h-[100px]  bg-surface rounded-lg"
+                  className="relative w-[71px] h-[71px] tablet:w-[100px] tablet:h-[100px]  bg-surface rounded-lg overflow-hidden"
                   onClick={() => swapHero(img)}
                   onMouseEnter={() => swapHero(img)}
                   // onMouseLeave={() => swapHero(img, index)}
                 >
+                  {/* out of stock */}
+                  {product.stock <= 0 && (
+                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden bg-[#03030325] backdrop-blur-sm">
+                      <div className="z-40 bg-primary-dark w-[600px] h-[10px] opacity-70 rotate-45" />
+                      <div className="absolute inset-0 z-50 flex items-center justify-center">
+                        <div className="text-white text-center text-[13px]  font-[600] p-1 rounded-bl-xl rounded-tr-xl">
+                          نفذ من المخزون
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <Image
                     className="w-[71px] h-[71px] tablet:w-[100px] tablet:h-[100px] object-cover object-center rounded-lg animate-in cursor-pointer hover:scale-105 hover:ring-1 hover:ring-primary transition-transform duration-50"
                     src={`${BaseUrl}/${img}`}
@@ -213,52 +235,74 @@ function ProductPageComponent(params: { product: Product }) {
           {/* add to cart */}
           <div className="w-full flex flex-col gap-12 items-center justify-center px-[16px]">
             {/* quantity buttons */}
-            <div className="w-full flex flex-col gap-2">
+            <div
+              className={`w-full flex flex-col gap-2 ${
+                product.stock <= 0 && "opacity-65 pointer-events-none"
+              }`}
+            >
               <div className="flex-1 flex">
                 <h2 className="w-full text-lg font-[700] text-right">الكمية</h2>
               </div>
               <div className="w-full flex">
-                {/* decrease */}
-                <div
-                  className={`flex w-[70px] h-[58px] items-center justify-center border-2 rounded-lg ${
-                    quantity >= product.stock && "opacity-50"
+                {/* increase */}
+                <button
+                  onClick={increaseQuantity}
+                  disabled={quantity >= product.stock}
+                  className={`flex w-[70px] h-[58px] items-center justify-center border-2 rounded-lg cursor-pointer disabled:cursor-not-allowed bg-white hover:bg-primary-dark hover:text-white transition-colors duration-300 ease-in-out group ${
+                    quantity >= product.stock
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
                   }"`}
                 >
-                  <button
-                    onClick={increaseQuantity}
-                    disabled={quantity >= product.stock}
-                  >
-                    <Plus size={30} fontWeight={700} color="#202020" />
-                  </button>
-                </div>
+                  <Plus
+                    size={30}
+                    fontWeight={700}
+                    className="group-hover:animate-ping"
+                    style={{ animationDuration: "0.5s" }}
+                  />
+                </button>
 
                 {/* amount */}
                 <div className="flex w-[70px] h-[58px] items-center justify-center border-0 rounded-lg">
                   <p className="text-[18px] font-[500]">{quantity}</p>
                 </div>
 
-                {/* increase  */}
-                <div
-                  className={`flex w-[70px] h-[58px] items-center justify-center border-2 rounded-lg ${
-                    quantity <= 1 && "opacity-50"
+                {/* decrease  */}
+                <button
+                  onClick={decreaseQuantity}
+                  disabled={quantity <= 1}
+                  className={`flex w-[70px] h-[58px] items-center justify-center border-2 rounded-lg cursor-pointer disabled:cursor-not-allowed bg-white hover:bg-primary-dark hover:text-white transition-colors duration-300 ease-in-out group ${
+                    quantity <= 1
+                      ? "opacity-50 cursor-not-allowed pointer-events-none"
+                      : "cursor-pointer"
                   }`}
                 >
-                  <button onClick={decreaseQuantity} disabled={quantity <= 1}>
-                    <Minus size={30} fontWeight={700} color="#202020" />
-                  </button>
-                </div>
+                  <Minus
+                    size={30}
+                    fontWeight={700}
+                    className="group-hover:animate-ping"
+                    style={{ animationDuration: "0.5s" }}
+                  />
+                </button>
               </div>
             </div>
 
             {/* add to cart */}
             <div className="relative w-full flex flex-col tablet:flex-row justify-start items-center">
-              <ButtonPrimary
-                className=" h-[56px] text-[13px] tablet:text-[18px] tablet:w-[168px] font-[600]"
-                preloader
-                handleClick={addToCart}
-              >
-                أضف للسلة
-              </ButtonPrimary>
+              {product.stock > 0 ? (
+                <ButtonPrimary
+                  className=" h-[56px] text-[13px] tablet:text-[18px] tablet:w-[168px] font-[600]"
+                  preloader
+                  handleClick={addToCart}
+                >
+                  أضف للسلة
+                </ButtonPrimary>
+              ) : (
+                <div className="w-full max-w-[230px] text-primary-dark bg-surface text-[14px] tablet:text-[16px] laptop:text-[20px] text-center font-[600] p-1 rounded-tl-xl rounded-br-xl border-2 border-primary-dark py-3 px-4">
+                  غير متوفر
+                </div>
+              )}
+
               {addedToCart ? (
                 <div className="w-[200px] bg-transparent rounded-lg p-2 flex items-center justify-center gap-2 animate-enterFromRightAndExitToLeft">
                   <CheckCircle size={24} color="#02C3F9" />
@@ -395,11 +439,14 @@ function ProductPageComponent(params: { product: Product }) {
         </section>
 
         {/* related products */}
-        <section className="w-full max-w-[1400px] flex flex-col gap-4 px-4 mb-8 tablet:mb-12 laptop:mb-20 overflow-visible">
-          <h2 className="w-full text-right text-lg font-[700] tablet:text-2xl">
+        <section className="w-full flex flex-col items-center justify-center gap-4 mb-8 tablet:mb-12 laptop:mb-20 overflow-auto">
+          <h2 className="w-full  px-3  text-right text-lg font-[700] tablet:text-2xl">
             منتجات ذات صلة
           </h2>
-          <div className="w-full min-h-[408px] tablet:min-h-[526px] flex items-center laptop:px-[36px] justify-center gap-4 mt-6 tablet:mt-10">
+          <div
+            className="w-full relative min-h-[408px] tablet:min-h-[526px] flex laptop:px-[36px] gap-4 mt-6 tablet:mt-10 overflow-hidden"
+            dir="ltr"
+          >
             <ProductsCarousel
               productsType="similar"
               productId={product.documentId}
@@ -409,7 +456,11 @@ function ProductPageComponent(params: { product: Product }) {
           </div>
         </section>
       </div>
-      {error && <AlertDialogElement header="خطأ" body={error}><div></div></AlertDialogElement>}
+      {error && (
+        <AlertDialogElement header="خطأ" body={error}>
+          <div></div>
+        </AlertDialogElement>
+      )}
     </>
   );
 }

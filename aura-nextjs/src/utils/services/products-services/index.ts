@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { newProductSchema } from "@/components/ui/forms/schemas";
 import { ProductQueryFilters } from "@/interfaces";
@@ -13,7 +12,7 @@ import qs from "qs";
  */
 const fetchProducts = async (
   query: string
-): Promise<{ error?: any; products?: any , pagination?: any}> => {
+): Promise<{ error?: any; products?: any; pagination?: any }> => {
   const { error, data, meta } = await apiClient.fetchProducts(query);
   if (error) {
     return { error };
@@ -191,8 +190,8 @@ export const getProducts = async (
     queryFilters.$and.push({
       categories: {
         documentId: {
-        $eq: category,
-        }
+          $eq: category,
+        },
       },
     });
   }
@@ -203,11 +202,11 @@ export const getProducts = async (
       brand: {
         documentId: {
           $eq: brand,
-          }
+        },
       },
     });
   }
- //applying search filter  
+  //applying search filter
   if (search) {
     queryFilters.$and.push({
       title: {
@@ -311,6 +310,9 @@ export const getProduct = async (id: string) => {
       reviews: {
         populate: {
           user: {
+            fields: ["username", "documentId", "email"],
+          },
+          likes: {
             fields: ["username", "documentId", "email"],
           },
           sort: ["updatedAt:desc"],
@@ -463,6 +465,11 @@ export const createProductReview = async (
         connect: [{ documentId: productId }],
       },
       user: userId,
+      likes: [
+        ...(review.likes?.map((like) => ({
+          documentId: like,
+        })) || []),
+      ],
     },
   };
   const query = qs.stringify({
@@ -473,6 +480,28 @@ export const createProductReview = async (
     },
   });
   return await apiClient.createProductReview(data, jwt, query);
+};
+
+export const updateProductReview = async (
+  reviewId: string,
+  review: Partial<Omit<Review, "likes"> & { likes: string[] }>,
+  jwt: string
+) => {
+  const data = {
+    data: {
+      rate: review.rate,
+      text: review.text,
+      likes: {
+        connect: [
+          ...(review.likes?.map((like) => ({
+            documentId: like,
+          })) || []),
+        ],
+      },
+    },
+  };
+
+  return await apiClient.updateProductReview(reviewId, data, jwt);
 };
 
 export const getTotalRate = (reviews: Review[]) => {

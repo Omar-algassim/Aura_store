@@ -7,7 +7,7 @@ export interface ImagesImages extends Struct.ComponentSchema {
     displayName: 'images';
   };
   attributes: {
-    imageId: Schema.Attribute.BigInteger & Schema.Attribute.Unique;
+    imageId: Schema.Attribute.String & Schema.Attribute.Required;
     url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }

@@ -1,28 +1,72 @@
 import { Review } from "@/interfaces/dto";
+import cookie from "js-cookie";
 import React from "react";
 import ProductRate from "./ProductRate";
 import { useUser } from "@/components/context";
 import Image from "next/image";
 import { likeFilled, likeOutline } from "@/constants/app-constants";
+import { updateProductReview } from "@/utils/services/products-services";
 
 function ProductReview({ review }: { review: Review }) {
   const user = useUser();
-  const [likes, setLikes] = React.useState<string[]>(review.likes || []);
+  const [likes, setLikes] = React.useState<string[]>(
+    review.likes?.map((like) => like.documentId) || []
+  );
 
   // const isOwner = user?.documentId === review.user.documentId;
 
   const likeReview = async () => {
     // if user is not logged in
-    // ask them to login first
-    setLikes([...likes, user.documentId]);
+    if (!user || !user.documentId) {
+      // ask them to login first
+      return;
+    }
+    const jwt = cookie.get("jwt");
+    if (!jwt) {
+      // ask them to login first
+      return;
+    }
     // add like to the database
+    const { data, error } = await updateProductReview(
+      review.documentId,
+      {
+        likes: [...likes, user.documentId],
+      },
+      jwt
+    );
+
+    if (error || !data) {
+      // handle error
+      return;
+    }
+    setLikes([...likes, user.documentId]);
   };
 
   const unlikeReview = async () => {
     // if user is not logged in
-    // ask them to login first
-    setLikes(likes.filter((like) => like !== user.documentId));
+    if (!user || !user.documentId) {
+      // ask them to login first
+      return;
+    }
     // remove like from the database
+    const jwt = cookie.get("jwt");
+    if (!jwt) {
+      // ask them to login first
+      return;
+    }
+    // NOT WORKING, NEED TO FIX
+    const { data, error } = await updateProductReview(
+      review.documentId,
+      {
+        likes: likes.filter((like) => like !== user.documentId),
+      },
+      jwt
+    );
+    if (error || !data) {
+      // handle error
+      return;
+    }
+    setLikes(likes.filter((like) => like !== user.documentId));
   };
   return (
     <div className="flex flex-col py-8 px-4 w-full bg-surface border-2 border-foreground rounded-xl gap-6">

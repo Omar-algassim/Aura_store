@@ -53,6 +53,16 @@
       "default": false,
       "configurable": false
     },
+    "emailConfirmed": {
+      "type": "boolean",
+      "default": false,
+      "configurable": false
+    },
+    "phoneNumberConfirmed": {
+      "type": "boolean",
+      "default": false,
+      "configurable": false
+    },
     "blocked": {
       "type": "boolean",
       "default": false,
@@ -88,6 +98,12 @@
       "relation": "oneToMany",
       "target": "api::order.order",
       "mappedBy": "user"
+    },
+    "likedReviews": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::review.review",
+      "mappedBy": "likes"
     }
   }
 }

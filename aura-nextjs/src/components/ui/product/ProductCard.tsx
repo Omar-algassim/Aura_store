@@ -44,15 +44,30 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div className="relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full bg-white p-0 m-0 rounded-xl tablet:hover:drop-shadow-xl transition-all duration-150">
+    <div
+      className="relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full bg-white p-0 m-0 rounded-xl tablet:hover:drop-shadow-xl transition-all duration-150"
+      dir="ltr"
+    >
       {/* Sale tag */}
       {product.discount && (
-        <div className="absolute top-0 right-0 bg-primary text-white text-[13px] font-[500] p-1 rounded-bl-xl rounded-tr-xl">
+        <div className="absolute z-30 top-0 right-0 bg-primary text-white text-[13px] font-[500] p-1 rounded-bl-xl rounded-tr-xl">
           {product.discount}% خصم
         </div>
       )}
+
       {/* card image */}
-      <div className="w-full h-[200px] flex items-center justify-center rounded-lg bg-surface overflow-hidden">
+      <div className="relative w-full h-[200px] flex items-center justify-center rounded-lg bg-surface overflow-hidden">
+        {/* out of stock */}
+        {product.stock <= 0 && (
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden bg-[#03030325] backdrop-blur-sm">
+            <div className="z-40 bg-primary-dark w-[600px] h-[20px] opacity-70 rotate-45" />
+            <div className="absolute inset-0 z-50 flex items-center justify-center">
+              <div className="text-white text-[13px] tablet:text-[16px] font-[600] p-1 rounded-bl-xl rounded-tr-xl">
+                نفذ من المخزون
+              </div>
+            </div>
+          </div>
+        )}
         <Image
           src={`${BaseUrl}${product.thumbnail}`}
           width={300}
@@ -67,7 +82,7 @@ function ProductCard({ product }: { product: Product }) {
       <div className="w-full flex flex-col gap-y-2 tablet:gap-y-3 px-2 tablet:px-3">
         <div className="flex items-center justify-between w-full">
           {/* product rating */}
-          <div className="w-full tablet:px-2 tablet:py-3 flex">
+          <div className="tablet:px-2 tablet:py-3 flex">
             <div
               className={`flex items-center justify-center gap-1 w-[64px] h-[24px] tablet:w-[68px] tablet:h-[30px] bg-surface rounded-xl`}
               dir="rtl"
@@ -91,45 +106,51 @@ function ProductCard({ product }: { product: Product }) {
             </div>
           </div>
           {/* add to cart */}
-          <div className="flex flex-1 justify-end items-end gap-4">
-            {addedToCart ? (
-              <>
-                <div className="w-full bg-white rounded-lg p-2 flex items-center justify-center gap-2 absolute top-1/3 left-0 tablet:relative tablet:top-auto tablet:left-auto animate-enterFromRightAndExitToLeft">
-                  <CheckCircle size={24} color="#02C3F9" />
-                  <span className="text-center text-[12px] tablet:text-[16px] text-primary font-[500] tablet:font-[600]">
-                    تم الإضافة للسلة
-                  </span>
-                </div>
+          <div className="w-full flex flex-1 justify-end items-end gap-4">
+            {product.stock > 0 ? (
+              addedToCart ? (
+                <>
+                  <div className="w-full bg-white rounded-lg py-2 flex items-center justify-center absolute top-1/3 left-0 tablet:relative tablet:top-auto tablet:left-auto animate-enter-from-right-and-exit-to-left">
+                    <CheckCircle color="#02C3F9" className="size-3 mr-1" />
+                    <span className="text-center text-[11px] tablet:text-[12px] text-primary font-[500] tablet:font-[600]">
+                      تم الإضافة للسلة
+                    </span>
+                  </div>
+                  <ButtonSecondary
+                    variant="outline"
+                    className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-center hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
+                    preloader
+                    handleClick={() => handleRemoveFromCart(product)}
+                  >
+                    <Image
+                      src="/icons/cart-empty.svg"
+                      width={24}
+                      height={24}
+                      alt="remove from cart"
+                      className="w-auto h-full max-h-[24px]"
+                    />
+                  </ButtonSecondary>
+                </>
+              ) : (
                 <ButtonSecondary
                   variant="outline"
-                  className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-end hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
+                  className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-center hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
                   preloader
-                  handleClick={() => handleRemoveFromCart(product)}
+                  handleClick={() => handleAddToCart(product)}
                 >
                   <Image
-                    src="/icons/cart-empty.svg"
+                    src="/icons/cart-add.svg"
                     width={24}
                     height={24}
-                    alt="remove from cart"
+                    alt="add to cart"
                     className="w-auto h-full max-h-[24px]"
                   />
                 </ButtonSecondary>
-              </>
+              )
             ) : (
-              <ButtonSecondary
-                variant="outline"
-                className="w-[48px] h-[48px] text-[11px] p-0 border-none rounded-full transition-all duration-300 ease-in flex items-center justify-end hover:bg-transparent focus:outline-none focus:bg-transparent active:bg-transparent"
-                preloader
-                handleClick={() => handleAddToCart(product)}
-              >
-                <Image
-                  src="/icons/cart-add.svg"
-                  width={24}
-                  height={24}
-                  alt="add to cart"
-                  className="w-auto h-full max-h-[24px]"
-                />
-              </ButtonSecondary>
+              <div className="text-primary-dark text-[13px] tablet:text-[16px] font-[600] p-1 rounded-bl-xl rounded-tr-xl">
+                غير متوفر
+              </div>
             )}
           </div>
         </div>
@@ -146,23 +167,34 @@ function ProductCard({ product }: { product: Product }) {
             </Link>
           </ToolTip>
         </div>
-        {/* product price */}
-        <div className="w-full tablet:px-1 tablet:py-2 flex flex-col items-end">
-          <p
-            className={`text-[13px] tablet:text-[18px] font-[700] ${
-              product.discount && "line-through opacity-80"
-            }`}
-          >
-            {product.price} SDG
-          </p>
-          {product.discount && (
-            <p className="text-[13px] tablet:text-[18px] font-[700] text-primary">
-              {Math.round(
-                product.price - (product.price * product.discount) / 100
-              )}{" "}
-              SDG
+        {/* footer */}
+        <div className="w-full flex items-center justify-between gap-4">
+          {/* stock */}
+          <div className="w-fit tablet:px-1 tablet:py-2 flex flex-col items-end">
+            {product.stock > 0 && (
+              <p className="w-full text-[13px] tablet:text-[16px] font-[400] text-primary text-left">
+                {product.stock} متوفر
+              </p>
+            )}
+          </div>
+          {/* product price */}
+          <div className="w-fit tablet:px-1 tablet:py-2 flex flex-col items-end">
+            <p
+              className={`text-[13px] tablet:text-[18px] font-[700] ${
+                product.discount && "line-through opacity-80"
+              }`}
+            >
+              {product.price} SDG
             </p>
-          )}
+            {product.discount && (
+              <p className="text-[13px] tablet:text-[18px] font-[700] text-primary">
+                {Math.round(
+                  product.price - (product.price * product.discount) / 100
+                )}{" "}
+                SDG
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

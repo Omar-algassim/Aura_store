@@ -14,7 +14,6 @@ export function Header() {
   const user = useUser();
   const [cartCount, setCartCount] = React.useState(cart?.total_items);
 
-  console.log(user);
   useEffect(() => {
     setCartCount(cart?.total_items);
   }, [cart?.total_items]);
@@ -24,15 +23,15 @@ export function Header() {
     const handleScroll = () => {
       if (containerRef.current) {
         const scrollTop = window.scrollY;
-        // const containerHeight = containerRef.current.offsetHeight;
+        const headerHeight = containerRef.current.offsetHeight;
 
-        if (scrollTop === 0) {
+        if (scrollTop <= headerHeight) {
           containerRef.current.classList.remove("top-0");
           containerRef.current.classList.add("-top-[200px]");
           return;
         }
 
-        if (scrollTop > prevScrollTop) {
+        if (scrollTop > prevScrollTop && scrollTop > headerHeight) {
           containerRef.current.classList.remove("top-0");
           containerRef.current.classList.add("-top-[200px]");
         } else {
@@ -53,9 +52,9 @@ export function Header() {
   return (
     <>
       {/* static one */}
-      <div className="w-full relative flex flex-col items-center justify-center">
-        <div className="w-full max-w-[1440px] bg-white z-30 sticky top-0 flex flex-col items-center justify-center">
-          <div className="flex items-center justify-between gap-4 w-[95vw] max-w-[1480px] rounded-2xl py-[20px] tablet:py-[60px] tablet:justify-between flex-wrap bg-white z-30 sticky top-0">
+      <div className="w-full relative flex flex-col items-center justify-center bg-white px-3">
+        <div className="w-full max-w-[1440px] z-30 sticky top-0 flex flex-col items-center justify-center">
+          <div className="flex items-center justify-between gap-4 w-[95vw] max-w-[1480px] rounded-2xl py-[20px]  tablet:justify-between flex-wrap z-30 sticky top-0">
             {/* nav bar and create account button */}
             <div className="flex justify-between items-center gap-[56px] gap-y-9 order-1">
               <Navbar />
@@ -121,7 +120,7 @@ export function Header() {
         className="fixed w-full z-50 -top-[200px] transition-all duration-300 ease-in-out flex flex-col items-center justify-center"
       >
         <div className="w-full max-w-[1440px] bg-white z-30 sticky top-0 flex flex-col items-center justify-center">
-          <div className="flex items-center justify-between gap-4 w-[95vw] max-w-[1480px] rounded-2xl py-[20px] tablet:py-[20px] tablet:justify-between flex-wrap bg-white z-30 sticky top-0">
+          <div className="flex items-center justify-between gap-4 w-[95vw] max-w-[1480px] rounded-2xl py-[20px] px-4 tablet:justify-between flex-wrap bg-white z-30 sticky top-0">
             {/* nav bar and create account button */}
             <div className="flex justify-between items-center gap-[56px] gap-y-9 order-1">
               <Navbar />

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import qs from "qs";
-import { apiClient } from "../api/api-client";
-import { OrderDTO } from "@/interfaces/dto";
+import qs from 'qs';
+import { apiClient } from '@/utils/api/api-client';
+import { OrderDTO } from '@/interfaces/dto';
+
 export const getUserOrders = async (
   jwt: string,
   userId: string
@@ -14,10 +15,10 @@ export const getUserOrders = async (
         },
       },
     },
-    sort: ["createdAt:desc"],
+    sort: ['createdAt:desc'],
     populate: {
       order_items: {
-        populate: "*",
+        populate: '*',
       },
     },
   });
@@ -25,7 +26,19 @@ export const getUserOrders = async (
   const { error, data } = await apiClient.getUserOrders(jwt, q);
 
   if (error || !data) {
-    return { error: error || "حدث خطاء, الرجاء المحاولة مرة اخرى" };
+    return { error: error || 'حدث خطاء, الرجاء المحاولة مرة اخرى' };
   }
   return { data };
+};
+
+export const cancelOrder = async (
+  jwt: string,
+  orderId: string
+): Promise<{ error: string | null }> => {
+  const { error, data } = await apiClient.cancelOrder(jwt, orderId);
+
+  if (error || !data) {
+    return { error: error || 'حدث خطاء, الرجاء المحاولة مرة اخرى' };
+  }
+  return { error: null };
 };

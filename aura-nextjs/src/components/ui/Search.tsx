@@ -7,6 +7,7 @@ import Highlighter from "react-highlight-words";
 import { MagnifyingGlass } from "react-loader-spinner";
 import Link from "next/link";
 import { Product } from "@/interfaces/dto";
+import { useRouter } from "next/navigation";
 
 interface ResultProps {
   Result: Product | null;
@@ -79,16 +80,16 @@ export function Search() {
   const [key, setKey] = useState("");
   const [results, setResults] = useState<Product[]>([]);
   const [Typing, setTyping] = useState(false);
-
+  const Router = useRouter();
+  
   useEffect(() => {
     if (!key) {
       setResults([]);
       setTyping(false);
       return;
     } else setTyping(true);
-
+    
     const waitTime = setTimeout(() => {
-      // /console.log("Search component mounted");
       const fetchData = async () => {
         try {
           const { error, data } = await search(key);
@@ -98,14 +99,13 @@ export function Search() {
           setTyping(false);
           setResults(data);
         } catch (error) {
-          // /console.log(error);
         }
       };
       fetchData();
     }, 1000);
     return () => clearTimeout(waitTime);
   }, [key]);
-
+  
   // for hiding the search results when clicked outside
   useEffect(() => {
     const handleClick = (e: any) => {
@@ -113,9 +113,26 @@ export function Search() {
       setResults([]);
       setKey("");
     };
+    const handleEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const searchValue = key.trim();
+        console.log("Enter pressed", searchValue);
+        if (searchValue) {
+          Router.push(`/products?search=${searchValue}`);
+          setResults([]);
+          setKey("");
+        }
+      }
+    }
+    document.addEventListener("keydown", handleEnter);
     document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
-  }, []);
+    return () => {
+      document.removeEventListener("click", handleClick);
+      document.removeEventListener("keydown", handleEnter);
+    };
+  }, [key, Router]);
+
 
   return (
     <>
@@ -123,7 +140,7 @@ export function Search() {
         <div className="flex items-center rounded-lg justify-between p-[24px] w-full max-w-[495px] h-[78px] bg-blue_shade has-focus:ring-2 has-focus:ring-primary">
           <InputComponent
             name="search"
-            type="search"
+            type="text"
             value={key}
             customStyles="peer shadow-none max-w-[423px] max-h-[30px] focus:outline-none bg-blue_shade"
             placeholder="إبحثي عن منتج, علامة تجارية ..."
@@ -133,7 +150,7 @@ export function Search() {
           />
         </div>
         <div
-          className="w-full max-w-[495px] p-0 m-0 mt-2 overflow-x-hidden rounded-xl flex flex-col justify-center peer-focus:animate-scaleIn peer-placeholder-shown:animate-scaleOut"
+          className="w-full max-h-[430px] max-w-[495px] p-0 m-0 mt-2 overflow-x-hidden rounded-xl flex flex-col justify-start backdrop-blur-2xl bg-blue_shade/5 peer-focus:animate-scaleIn peer-placeholder-shown:animate-scaleOut"
           id="result-container"
           onClick={() => {
             setKey("");
@@ -147,12 +164,12 @@ export function Search() {
               {results.map((product: Product) => (
                 <Result Result={product} word={key} key={product.documentId} />
               ))}
-              {/* <div className="w-full flex items-center justify-center absolute bottom-0 left-0 right-0">
+              {/* <div className="w-full flex items-center justify-center sticky bottom-0 left-0 right-0">
                 <ArrowDownCircle
                   size={32}
                   color="#f2f2f2"
                   fill="#00000080"
-                  className="animate-caret-blink ease-in-out"
+                  className=" ease-in-out"
                 />
               </div> */}
             </>

@@ -827,6 +827,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     usage: Schema.Attribute.Text;
+    viewed: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
     weight: Schema.Attribute.Integer;
   };
 }
@@ -846,6 +847,10 @@ export interface ApiReviewReview extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    likes: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1372,6 +1377,9 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    emailConfirmed: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    likedReviews: Schema.Attribute.Relation<'manyToMany', 'api::review.review'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1390,6 +1398,8 @@ export interface PluginUsersPermissionsUser
         maxLength: 14;
         minLength: 10;
       }>;
+    phoneNumberConfirmed: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;

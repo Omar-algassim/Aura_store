@@ -1,27 +1,27 @@
 // src/extensions/users-permissions/strapi-server.ts
 
-import { Context } from "koa";
-import { errors } from "@strapi/utils";
-import sendWhatsappMessage from "./service";
-import crypto from "crypto";
-import _ from "lodash";
+import { Context } from 'koa';
+import { errors } from '@strapi/utils';
+import sendWhatsappMessage from './service';
+import crypto from 'crypto';
+import _ from 'lodash';
 import {
   validateCallbackBody,
   validateSendEmailConfirmationBody,
   validateForgotPasswordBody,
   validateEmailConfirmationBody,
   validateRegistrationData,
-} from "./validation";
+} from './validation';
 
 const { ApplicationError, ForbiddenError, ValidationError } = errors;
 
 const getService = (name: string) => {
-  return strapi.plugin("users-permissions").service(name);
+  return strapi.plugin('users-permissions').service(name);
 };
 
 const sanitizeUser = (user: any, ctx: any) => {
   const { auth } = ctx.state;
-  const userSchema = strapi.getModel("plugin::users-permissions.user");
+  const userSchema = strapi.getModel('plugin::users-permissions.user');
 
   return strapi.contentAPI.sanitize.output(user, userSchema, { auth });
 };
@@ -32,21 +32,21 @@ export default async (plugin: any) => {
   const register = async (ctx: Context) => {
     const { body } = ctx.request;
     const pluginStore = await strapi.store({
-      type: "plugin",
-      name: "users-permissions",
+      type: 'plugin',
+      name: 'users-permissions',
     });
 
-    const settings = (await pluginStore.get({ key: "advanced" })) as any;
+    const settings = (await pluginStore.get({ key: 'advanced' })) as any;
     if (!settings.allow_register) {
-      throw new ApplicationError("Register action is currently disabled");
+      throw new ApplicationError('Register action is currently disabled');
     }
 
     const alwaysAllowedKeys = [
-      "username",
-      "password",
-      "email",
-      "phone_number",
-      "country_code",
+      'username',
+      'password',
+      'email',
+      'phone_number',
+      'country_code',
     ];
     // Validate request body
     try {
@@ -58,19 +58,19 @@ export default async (plugin: any) => {
     // Generate username if not provided
     const username =
       body.username ||
-      (body.email ? body.email.split("@")[0] : `user_${Date.now()}`);
+      (body.email ? body.email.split('@')[0] : `user_${Date.now()}`);
 
     const role = await strapi.db
-      .query("plugin::users-permissions.role")
+      .query('plugin::users-permissions.role')
       .findOne({ where: { type: settings.default_role } });
     //check the role
     if (!role) {
-      throw new ApplicationError("Impossible to find the default role");
+      throw new ApplicationError('Impossible to find the default role');
     }
 
     // Check if user exists
     const userExists = await strapi
-      .query("plugin::users-permissions.user")
+      .query('plugin::users-permissions.user')
       .findOne({
         where: {
           $or: [{ email: body.email }, { phone_number: body.phone_number }],
@@ -79,7 +79,7 @@ export default async (plugin: any) => {
 
     if (userExists) {
       throw new ApplicationError(
-        "Username, email, or phone number already taken",
+        'Username, email, or phone number already taken'
       );
     }
 
@@ -94,7 +94,7 @@ export default async (plugin: any) => {
     };
 
     const user = await strapi
-      .service("plugin::users-permissions.user")
+      .service('plugin::users-permissions.user')
       .add(newUser);
     const sanitizedUser = await sanitizeUser(user, ctx);
 
@@ -110,14 +110,14 @@ export default async (plugin: any) => {
         // }
       } catch (err) {
         return ctx.badRequest([
-          { messages: [{ id: "Auth.error.email.invalid" }] },
+          { messages: [{ id: 'Auth.error.email.invalid' }] },
         ]);
       }
 
       return ctx.send({ user: sanitizedUser });
     }
 
-    const jwt = strapi.service("plugin::users-permissions.jwt").issue({
+    const jwt = strapi.service('plugin::users-permissions.jwt').issue({
       id: user.id,
     });
 
@@ -130,38 +130,43 @@ export default async (plugin: any) => {
   const emailConfirmation = async (
     ctx: Context,
     next: Request,
-    returnUser: boolean,
+    returnUser: boolean
   ) => {
     const { confirmation: confirmationToken } =
       await validateEmailConfirmationBody(ctx.query);
 
-    const userService = getService("user");
-    const jwtService = getService("jwt");
+    const userService = getService('user');
+    const jwtService = getService('jwt');
 
     const [user] = await userService.fetchAll({
       filters: { confirmationToken },
     });
 
     if (!user) {
-      throw new ValidationError("Invalid token");
+      throw new ValidationError('Invalid token');
     }
 
-    await userService.edit(user.id, {
-      confirmed: true,
-      confirmationToken: null,
-    });
-
     if (returnUser || confirmationToken.length === 6) {
+      await userService.edit(user.id, {
+        confirmed: true,
+        phoneNumberConfirmed: true,
+        confirmationToken: null,
+      });
       ctx.send({
         jwt: jwtService.issue({ id: user.id }),
         user: await sanitizeUser(user, ctx),
       });
     } else {
+      await userService.edit(user.id, {
+        confirmed: true,
+        emailConfirmed: true,
+        confirmationToken: null,
+      });
       const settings: any = await strapi
-        .store({ type: "plugin", name: "users-permissions", key: "advanced" })
+        .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
         .get();
 
-      ctx.redirect(settings.email_confirmation_redirection || "/");
+      ctx.redirect(settings.email_confirmation_redirection || '/');
     }
   };
 
@@ -169,56 +174,56 @@ export default async (plugin: any) => {
     const { email } = await validateForgotPasswordBody(ctx.request.body);
 
     const pluginStore = await strapi.store({
-      type: "plugin",
-      name: "users-permissions",
+      type: 'plugin',
+      name: 'users-permissions',
     });
 
-    const emailSettings = await pluginStore.get({ key: "email" });
-    const advancedSettings: any = await pluginStore.get({ key: "advanced" });
+    const emailSettings = await pluginStore.get({ key: 'email' });
+    const advancedSettings: any = await pluginStore.get({ key: 'advanced' });
 
     // Find the user by email or phone number.
     if (email) {
       var user = await strapi.db
-        .query("plugin::users-permissions.user")
+        .query('plugin::users-permissions.user')
         .findOne({ where: { email: email.toLowerCase() } });
     } else {
       const { phone_number } = await validateForgotPasswordBody(
-        ctx.request.body,
+        ctx.request.body
       );
       var user = await strapi.db
-        .query("plugin::users-permissions.user")
+        .query('plugin::users-permissions.user')
         .findOne({ where: { phone_number } });
     }
     if (!user || user.blocked) {
-      return ctx.send({ error: "user Blocked or not found" });
+      return ctx.send({ error: 'user Blocked or not found' });
     }
 
     const userInfo = await sanitizeUser(user, ctx);
 
     // Generate random token.
-    const resetPasswordToken = crypto.randomBytes(3).toString("hex");
+    const resetPasswordToken = crypto.randomBytes(3).toString('hex');
 
     const resetPasswordSettings: any = _.get(
       emailSettings,
-      "reset_password.options",
-      {},
+      'reset_password.options',
+      {}
     );
-    const emailBody = await getService("users-permissions").template(
+    const emailBody = await getService('users-permissions').template(
       resetPasswordSettings.message,
       {
         URL: advancedSettings.email_reset_password,
-        SERVER_URL: strapi.config.get("server.absoluteUrl"),
-        ADMIN_URL: strapi.config.get("admin.absoluteUrl"),
+        SERVER_URL: strapi.config.get('server.absoluteUrl'),
+        ADMIN_URL: strapi.config.get('admin.absoluteUrl'),
         USER: userInfo,
         TOKEN: resetPasswordToken,
-      },
+      }
     );
 
-    const emailObject = await getService("users-permissions").template(
+    const emailObject = await getService('users-permissions').template(
       resetPasswordSettings.object,
       {
         USER: userInfo,
-      },
+      }
     );
 
     const emailToSend = {
@@ -234,14 +239,14 @@ export default async (plugin: any) => {
     };
 
     // NOTE: Update the user before sending the email so an Admin can generate the link if the email fails
-    await getService("user").edit(user.id, { resetPasswordToken });
+    await getService('user').edit(user.id, { resetPasswordToken });
 
     // Send an email to the user or whatsapp message if there use phone number.
     if (email) {
-      await strapi.plugin("email").service("email").send(emailToSend);
+      await strapi.plugin('email').service('email').send(emailToSend);
     } else {
       const data = {
-        template: "reset_password",
+        template: 'reset_password',
         token: resetPasswordToken,
       };
       await sendWhatsappMessage(user, data);
@@ -253,17 +258,17 @@ export default async (plugin: any) => {
 
   const sendEmailConfirmation = async (ctx: Context) => {
     const { email, phone_number } = await validateSendEmailConfirmationBody(
-      ctx.request.body,
+      ctx.request.body
     );
     if (!email) {
       var user = await strapi.db
-        .query("plugin::users-permissions.user")
+        .query('plugin::users-permissions.user')
         .findOne({
           where: { phone_number },
         });
     } else {
       var user = await strapi.db
-        .query("plugin::users-permissions.user")
+        .query('plugin::users-permissions.user')
         .findOne({
           where: { email: email.toLowerCase() },
         });
@@ -274,24 +279,24 @@ export default async (plugin: any) => {
     }
 
     if (user.confirmed) {
-      throw new ApplicationError("Already confirmed");
+      throw new ApplicationError('Already confirmed');
     }
 
     if (user.blocked) {
-      throw new ApplicationError("User blocked");
+      throw new ApplicationError('User blocked');
     }
     if (email) {
-      await getService("user").sendConfirmationEmail(user);
+      await getService('user').sendConfirmationEmail(user);
       ctx.send({
         email: user.email,
         sent: true,
       });
     } else {
-      const confirmationToken = crypto.randomBytes(3).toString("hex");
-      await getService("user").edit(user.id, { confirmationToken });
+      const confirmationToken = crypto.randomBytes(3).toString('hex');
+      await getService('user').edit(user.id, { confirmationToken });
 
       const data = {
-        template: "verify_code",
+        template: 'verify_code',
         token: confirmationToken,
       };
 
@@ -304,26 +309,26 @@ export default async (plugin: any) => {
   };
 
   const callback = async (ctx: Context) => {
-    const provider = ctx.params.provider || "local";
+    const provider = ctx.params.provider || 'local';
     const params = ctx.request.body;
 
-    const store = strapi.store({ type: "plugin", name: "users-permissions" });
-    const grantSettings = await store.get({ key: "grant" });
+    const store = strapi.store({ type: 'plugin', name: 'users-permissions' });
+    const grantSettings = await store.get({ key: 'grant' });
 
-    const grantProvider = provider === "local" ? "email" : provider;
+    const grantProvider = provider === 'local' ? 'email' : provider;
 
-    if (!_.get(grantSettings, [grantProvider, "enabled"])) {
-      throw new ApplicationError("This provider is disabled");
+    if (!_.get(grantSettings, [grantProvider, 'enabled'])) {
+      throw new ApplicationError('This provider is disabled');
     }
 
-    if (provider === "local") {
+    if (provider === 'local') {
       await validateCallbackBody(params);
 
       const { identifier } = params;
 
       // Check if the user exists.
       const user = await strapi.db
-        .query("plugin::users-permissions.user")
+        .query('plugin::users-permissions.user')
         .findOne({
           where: {
             // provider,
@@ -335,56 +340,56 @@ export default async (plugin: any) => {
         });
 
       if (!user) {
-        throw new ValidationError("user not found");
+        throw new ValidationError('user not found');
       }
 
       if (!user.password) {
-        throw new ValidationError("Invalid identifier or password");
+        throw new ValidationError('Invalid identifier or password');
       }
 
-      const validPassword = await getService("user").validatePassword(
+      const validPassword = await getService('user').validatePassword(
         params.password,
-        user.password,
+        user.password
       );
 
       if (!validPassword) {
-        throw new ValidationError("Invalid identifier or password");
+        throw new ValidationError('Invalid identifier or password');
       }
 
-      const advancedSettings = await store.get({ key: "advanced" });
+      const advancedSettings = await store.get({ key: 'advanced' });
       const requiresConfirmation = _.get(
         advancedSettings,
-        "email_confirmation",
+        'email_confirmation'
       );
 
       if (requiresConfirmation && user.confirmed !== true) {
-        throw new ApplicationError("Your account is not confirmed");
+        throw new ApplicationError('Your account is not confirmed');
       }
 
       if (user.blocked === true) {
         throw new ApplicationError(
-          "Your account has been blocked by an administrator",
+          'Your account has been blocked by an administrator'
         );
       }
 
       return ctx.send({
-        jwt: getService("jwt").issue({ id: user.id }),
+        jwt: getService('jwt').issue({ id: user.id }),
         user: await sanitizeUser(user, ctx),
       });
     }
 
     // Connect the user with the third-party provider.
     try {
-      const user = await getService("providers").connect(provider, ctx.query);
+      const user = await getService('providers').connect(provider, ctx.query);
 
       if (user.blocked) {
         throw new ForbiddenError(
-          "Your account has been blocked by an administrator",
+          'Your account has been blocked by an administrator'
         );
       }
 
       return ctx.send({
-        jwt: getService("jwt").issue({ id: user.id }),
+        jwt: getService('jwt').issue({ id: user.id }),
         user: await sanitizeUser(user, ctx),
       });
     } catch (error) {
@@ -407,35 +412,35 @@ export default async (plugin: any) => {
   plugin.controllers.user.updateMe = async (ctx: Context) => {
     const userId = ctx.state.user.documentId;
     // console.
-    const user = await strapi.query("plugin::users-permissions.user").findOne({
+    const user = await strapi.query('plugin::users-permissions.user').findOne({
       where: {
         documentId: userId,
       },
     });
-    console.log("Updating user", userId, user);
-    console.log("With data", ctx.request.body);
+    console.log('Updating user', userId, user);
+    console.log('With data', ctx.request.body);
     if (!user) {
-      return ctx.notFound("User not found");
+      return ctx.notFound('User not found');
     }
     try {
       const { body } = ctx.request;
       const result = await strapi
-        .query("plugin::users-permissions.user")
+        .query('plugin::users-permissions.user')
         .update({
           where: { documentId: userId },
           data: body,
         });
-      console.log("User updated", result);
+      console.log('User updated', result);
       return (ctx.response.status = 201);
     } catch (error) {
       return ctx.badRequest(error.message);
     }
   };
 
-  plugin.routes["content-api"].routes.push({
-    method: "PUT",
-    path: "/users/me",
-    handler: "user.updateMe",
+  plugin.routes['content-api'].routes.push({
+    method: 'PUT',
+    path: '/users/me',
+    handler: 'user.updateMe',
   });
   return plugin;
 };

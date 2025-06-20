@@ -1,4 +1,4 @@
-import { User } from "@/entities/user-entity";
+import { User } from '@/entities/user-entity';
 
 export interface SignupDTO {
   email?: string;
@@ -68,10 +68,11 @@ export interface Product {
   title: string;
   name: string;
   thumbnail: string;
-  images: { id: string; url: string , imageId: string}[];
+  images: { id: string; url: string; imageId: string }[];
   price: number;
   stock: number;
   ordered: number;
+  viewed?: number;
   discount: number;
   weight?: number;
   color_grade?: string;
@@ -91,19 +92,19 @@ export interface Review {
   rate: number;
   user: { documentId: string; username: string; email: string };
   product: Product;
-  likes?: string[];
+  likes?: { documentId: string; username?: string; email?: string }[];
   updatedAt: string;
 }
 
 export type OrderStatus =
-  | "pending"
-  | "confirmed"
-  | "preparing"
-  | "onDelivery"
-  | "delivered"
-  | "cancelled";
+  | 'pending'
+  | 'confirmed'
+  | 'preparing'
+  | 'onDelivery'
+  | 'delivered'
+  | 'cancelled';
 
-export type Regions = "sudan" | "egypt" | "KSA";
+export type Regions = 'sudan' | 'egypt' | 'KSA';
 export interface Region {
   name: string;
   available_cities: City[];
