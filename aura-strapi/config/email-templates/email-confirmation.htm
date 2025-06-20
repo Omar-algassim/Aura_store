@@ -57,8 +57,6 @@
     .confirm-button {
       display: inline-block;
       background: linear-gradient(135deg, #8b0e50 0%, #d5167b 100%);
-      color: #ffeee7;
-      text-decoration: none;
       padding: 15px 40px;
       border-radius: 25px;
       font-weight: bold;
@@ -94,7 +92,8 @@
         Thank you for joining our community. To complete your registration and unlock the full Aura experience, please
         confirm your email address by clicking the button below.
       </p>
-      <a href="<%= URL %>?confirmation=<%= CODE %>" class="confirm-button">Confirm Email</a>
+      <a href="<%= URL %>?confirmation=<%= CODE %>" class="confirm-button"
+        style="color: #fefefe; text-decoration: none;">Confirm Email</a>
       <p class="message" style="margin-top: 30px; font-size: 14px; opacity: 0.8;">
         If you didn't create an account with Aura, please ignore this email.
       </p>
