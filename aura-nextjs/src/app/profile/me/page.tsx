@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 
 import {
   requestEmailConfirmationCode,
+  requestPhoneConfirmCode,
   updateUser,
 } from '@/utils/services/user-services';
 import { User } from '@/entities/user-entity';
@@ -64,7 +65,7 @@ function ProfileInfo() {
       // send otp to the new phone number
       // prompt the user to enter the otp
       // if otp is correct, update the phone number and set the confirmation to true
-      // console.log('phone number changed');
+      console.log('phone number changed', phone);
       phoneChanged = true;
       user.phone_number = phone;
       user.country_code = countryKey; // update the country code
@@ -75,7 +76,7 @@ function ProfileInfo() {
       // set the user confirmation to false
       // send email confirmation
       // prompt the user with message to check the email
-      // console.log('email changing');
+      console.log('email changing');
       emailChanged = true;
       user.email = email;
       user.confirmed = false; // set confirmed to false
@@ -83,7 +84,7 @@ function ProfileInfo() {
     }
     if (username && username !== user.username) {
       // update the username
-      // console.log('username changing');
+      console.log('username changing');
       usernameChanged = true;
       user.username = username;
     }
@@ -92,12 +93,15 @@ function ProfileInfo() {
       setLoading(false);
       return;
     }
+    setLoading(false);
     const { error, data } = await updateUser(jwt, {
       username: user.username,
       email: user.email,
       phone_number: user.phone_number,
       country_code: user.country_code,
       confirmed: user.confirmed,
+      emailConfirmed: user.emailConfirmed,
+      phoneNumberConfirmed: user.phoneNumberConfirmed,
     });
     setLoading(false);
     if (error || !data) {
@@ -126,6 +130,7 @@ function ProfileInfo() {
       // send otp to the new phone number
       // prompt the user to enter the otp
       // if otp is correct, update the phone number and set the confirmation to true
+      await requestPhoneConfirmCode(phone);
       toast({
         title: 'تم إرسال رمز التحقق',
         description: 'يرجى التحقق من رقم الهاتف الجديد',
