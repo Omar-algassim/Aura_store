@@ -19,17 +19,13 @@ function ProductReview({ review }: { review: Review }) {
 
   const likeReview = async () => {
     // if user is not logged in
-    if (!user || !user.documentId) {
+    const jwt = cookie.get('jwt');
+    if (!user || !user.documentId || !jwt) {
       toast({
         title: 'عذراً',
         description: 'يجب عليك تسجيل الدخول أولاً',
         variant: 'destructive',
       });
-      return;
-    }
-    const jwt = cookie.get('jwt');
-    if (!jwt) {
-      // ask them to login first
       return;
     }
     // add like to the database
@@ -43,6 +39,11 @@ function ProductReview({ review }: { review: Review }) {
 
     if (error || !data) {
       // handle error
+      toast({
+        title: 'خطأ',
+        description: 'حدث خطأ أثناء الإعجاب بالمراجعة',
+        variant: 'destructive',
+      });
       return;
     }
     setLikes([...likes, user.documentId]);
@@ -50,17 +51,15 @@ function ProductReview({ review }: { review: Review }) {
 
   const unlikeReview = async () => {
     // if user is not logged in
-    if (!user || !user.documentId) {
-      // ask them to login first
-      return;
-    }
-    // remove like from the database
     const jwt = cookie.get('jwt');
-    if (!jwt) {
-      // ask them to login first
+    if (!user || !user.documentId || !jwt) {
+      toast({
+        title: 'عذراً',
+        description: 'يجب عليك تسجيل الدخول أولاً',
+        variant: 'destructive',
+      });
       return;
     }
-    // NOT WORKING, NEED TO FIX
     const { data, error } = await updateProductReview(
       review.documentId,
       {
@@ -70,6 +69,11 @@ function ProductReview({ review }: { review: Review }) {
     );
     if (error || !data) {
       // handle error
+      toast({
+        title: 'خطأ',
+        description: 'حدث خطأ أثناء إلغاء الإعجاب بالمراجعة',
+        variant: 'destructive',
+      });
       return;
     }
     setLikes(likes.filter((like) => like !== user.documentId));
