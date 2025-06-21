@@ -75,12 +75,8 @@ export const sendPhoneConfirmationCode = async (code: string) => {
   return { error, data };
 };
 
-export const updateUser = async (
-  jwt: string,
-  id: string,
-  user: Partial<User>
-) => {
-  return await apiClient.updateUser(jwt, id, user);
+export const updateUser = async (jwt: string, user: Partial<User>) => {
+  return await apiClient.updateUser(jwt, user);
 };
 
 export const blockUser = async (jwt: string, id: number) => {

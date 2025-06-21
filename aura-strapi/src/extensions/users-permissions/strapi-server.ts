@@ -363,7 +363,8 @@ export default async (plugin: any) => {
       );
 
       if (requiresConfirmation && user.confirmed !== true) {
-        throw new ApplicationError('Your account is not confirmed');
+        // throw new ApplicationError('Your account is not confirmed');
+        return ctx.send({ user: await sanitizeUser(user, ctx) });
       }
 
       if (user.blocked === true) {
@@ -417,10 +418,34 @@ export default async (plugin: any) => {
         documentId: userId,
       },
     });
-    console.log('Updating user', userId, user);
-    console.log('With data', ctx.request.body);
+    // console.log('Updating user', userId, user);
+    // console.log('With data', ctx.request.body);
     if (!user) {
       return ctx.notFound('User not found');
+    }
+    if (user.blocked) {
+      return ctx.forbidden('User is blocked');
+    }
+    const email = ctx.request.body.email;
+    if (email && email !== user.email) {
+      const existingUser = await strapi
+        .query('plugin::users-permissions.user')
+        .findOne({
+          where: { email: email.toLowerCase() },
+        });
+      if (existingUser) {
+        return ctx.badRequest('Email already in use');
+      }
+    }
+    if (ctx.request.body.phone_number) {
+      const existingUser = await strapi
+        .query('plugin::users-permissions.user')
+        .findOne({
+          where: { phone_number: ctx.request.body.phone_number },
+        });
+      if (existingUser && existingUser.documentId !== userId) {
+        return ctx.badRequest('Phone number already in use');
+      }
     }
     try {
       const { body } = ctx.request;
@@ -430,7 +455,7 @@ export default async (plugin: any) => {
           where: { documentId: userId },
           data: body,
         });
-      console.log('User updated', result);
+      // console.log('User updated', result);
       return (ctx.response.status = 201);
     } catch (error) {
       return ctx.badRequest(error.message);
