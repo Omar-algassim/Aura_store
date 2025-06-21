@@ -936,6 +936,16 @@ span.flatpickr-weekday,
   transform: translateY(-2px);
 }
 
+.popover * {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  overflow: auto; /* Enable scrolling */
+}
+
+.popover *::-webkit-scrollbar {
+  display: none;
+}
+
 @layer utilities {
   body {
     scrollbar-width: 0;

@@ -45,7 +45,6 @@ function Home() {
           <div className='w-full flex items-center justify-center  mt-6 tablet:mt-10'>
             {/* pass query params for the products to filter-by (offers) */}
             <ButtonPrimary
-              variant='link'
               handleClick={() => router.push('/products')}
               className='group text-[13px] font-[600] tablet:text-[16px] laptop:text-[18px] tablet:font-[600]'>
               <span className='text-surface group-hover:text-white'>
@@ -87,7 +86,6 @@ function Home() {
           <div className='w-full flex items-center justify-center'>
             {/* pass query params for the products to filter-by (latest) */}
             <ButtonPrimary
-              variant='link'
               handleClick={() => router.push('/products')}
               className='group text-[13px] font-[600] tablet:text-[16px] laptop:text-[18px] tablet:font-[600]'>
               <span className='text-surface group-hover:text-white'>
@@ -129,7 +127,6 @@ function Home() {
           <div className='w-full flex items-center justify-center'>
             {/* pass query params for the products to filter-by (top-selling) */}
             <ButtonPrimary
-              variant='link'
               handleClick={() => router.push('/products')}
               className='group text-[13px] font-[600] tablet:text-[16px] laptop:text-[18px] tablet:font-[600]'>
               <span className='text-surface group-hover:text-white'>
