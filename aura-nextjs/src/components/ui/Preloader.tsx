@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ColorRing, Oval, RotatingLines } from "react-loader-spinner";
+import { ColorRing, Oval } from "react-loader-spinner";
 
 export function Preloader() {
   return (
