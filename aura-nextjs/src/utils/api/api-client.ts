@@ -4,7 +4,7 @@
 // export a class instance of the api client, which contains all the api calls
 import { User } from '@/entities/user-entity';
 import { OrderDTO, OrderItem, SignupDTO } from '@/interfaces/dto';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { string } from 'zod';
 class APIClient {
   private baseUrl =
@@ -48,7 +48,7 @@ class APIClient {
     }
   }
 
-  async updateUser(jwt: string, id: string, data: Partial<User>) {
+  async updateUser(jwt: string, data: Partial<User>) {
     try {
       delete data.id;
       delete data.createdAt;
@@ -66,6 +66,26 @@ class APIClient {
       return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
     } catch (error: any) {
       //console.error(error);
+      if (error instanceof AxiosError) {
+        switch (error.code) {
+          case AxiosError.ERR_BAD_REQUEST:
+            let message = 'البيانات المدخلة غير صحيحة';
+            const errorMessage: string | undefined =
+              error.response?.data.error?.message;
+            if (errorMessage && errorMessage.includes('Email')) {
+              message = `البريد الإلكتروني ${data.email} موجود مسبقاً`;
+            } else if (errorMessage && errorMessage.includes('Phone')) {
+              message = `رقم الهاتف ${data.phone_number} موجود مسبقاً`;
+            }
+            return { error: message };
+          case AxiosError.ERR_NETWORK:
+            return {
+              error: 'خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا',
+            };
+          default:
+            return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
+        }
+      }
       return { error: error.message };
     }
   }
@@ -249,7 +269,7 @@ class APIClient {
   async requestEmailConfirmationCode(email: string) {
     try {
       const result = await this.api.post('/auth/send-email-confirmation', {
-        indicator: email,
+        email,
       });
       if (result.status === 200 || result.status === 201) {
         return { data: result.data };

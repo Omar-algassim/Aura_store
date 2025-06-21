@@ -1,19 +1,19 @@
-"use client";
-import React, { useState } from "react";
-import { ButtonPrimary } from "../common/Buttons";
-import { ButtonSecondary } from "../common/Buttons";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
+'use client';
+import React, { useState } from 'react';
+import { ButtonPrimary } from '../common/Buttons';
+import { ButtonSecondary } from '../common/Buttons';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 import {
   useUser,
   useUserDispatch,
   useCartDispatcher,
   useCart,
-} from "@/components/context";
-import { CartEntity } from "@/entities/cart-entity";
-import AlertDialogElement from "../common/alert-dialog";
-import { whatsappMessage } from "@/constants/app-constants";
+} from '@/components/context';
+import { CartEntity } from '@/entities/cart-entity';
+import AlertDialogElement from '../common/alert-dialog';
+import { whatsappMessage } from '@/constants/app-constants';
 
 interface NavElementProps {
   name: string;
@@ -22,10 +22,10 @@ interface NavElementProps {
 }
 
 const alertProps = {
-  header: "تسجيل خروج",
-  body: "هل تريد تسجيل الخروج؟",
-  action_text: "تأكيد",
-  cancel: "إلغاء",
+  header: 'تسجيل خروج',
+  body: 'هل تريد تسجيل الخروج؟',
+  action_text: 'تأكيد',
+  cancel: 'إلغاء',
 };
 
 /**
@@ -37,19 +37,16 @@ function NavElement(props: NavElementProps) {
   const router = useRouter();
   return (
     <div
-      className="flex items-center justify-center hover:bg-primary-dark hover:text-white active:bg-primary-dark
-          active:text-white focus:outline-none focus:bg-primary-dark w-[345px]
-          focus:text-white rounded-[12px] py-[12px] px-[6px]"
-    >
+      className='flex items-center justify-center hover:bg-primary-dark hover:text-white active:bg-primary-dark
+          active:text-white focus:outline-none focus:bg-primary-dark w-[180px]
+          focus:text-white rounded-[12px] py-[12px] px-[6px] cursor-pointer'>
       {/* the link element navigation to  */}
-      <Link href={props.link} className="w-[345px]">
-        {props.name}
-      </Link>
+      <Link href={props.link}>{props.name}</Link>
       {/*the icon beside the element if exist */}
       {props.icon && (
         <Image
-          className="absolute left-[113px] cursor-whatsapp"
-          onClick={() => router.push("https://wa.me/966531676082")}
+          className='mr-6 cursor-whatsapp'
+          onClick={() => router.push('https://wa.me/966531676082')}
           src={props.icon}
           alt={props.name}
           width={20}
@@ -74,85 +71,91 @@ export function Navbar() {
 
   function logout() {
     if (user.documentId) {
-      console.log("logout");
-      userDispatcher({ type: "LOGOUT", payload: {} });
-      cartDispatcher({ type: "DELETE", payload: { cart } });
-      router.push("/");
+      console.log('logout');
+      userDispatcher({ type: 'LOGOUT', payload: {} });
+      cartDispatcher({ type: 'DELETE', payload: { cart } });
+      router.push('/');
     } else {
-      router.push("/login");
+      router.push('/login');
     }
   }
 
   return (
-    <div className="flex z-40 flex-col items-start">
+    <div className='flex z-40 flex-col items-start'>
       <div>
         {/* humberger  */}
-        <div className="relative z-10 tablet:max-w-[56px] tablet:max-h-[56px] max-w-[32px] max-h-[32px] cursor-pointer hover:rotate-12 focus:outline-none transition-all duration-200 ease-in-out">
+        <div className='relative z-10 tablet:max-w-[56px] tablet:max-h-[56px] max-w-[32px] max-h-[32px] cursor-pointer hover:rotate-12 focus:outline-none transition-all duration-200 ease-in-out'>
           <Image
             width={32}
             height={32}
-            src="/icons/menu.svg"
-            alt="navbar menu"
+            src='/icons/menu.svg'
+            alt='navbar menu'
             onClick={toggleMenu}
           />
         </div>
         <div
           className={`items-center max-w-[393px] max-h-[506px] text-xs rounded-xl absolute ${
-            isOpen ? "flex-col animate-scaleIn" : "hidden animate-scaleOut"
-          } ease-in-out duration-300 bg-white z-10`}
-        >
-          <div className="flex flex-col w-[345px] justify-between py-[64px] px-[24px] items-center text-center relative rounded-xl">
+            isOpen ? 'flex-col animate-scaleIn' : 'hidden animate-scaleOut'
+          } ease-in-out duration-300 bg-white z-10`}>
+          <div className='flex flex-col w-full justify-between py-[64px] px-[24px] items-center text-center relative rounded-xl'>
             <Image
-              src="/icons/close.svg"
-              alt="exit"
+              src='/icons/close.svg'
+              alt='exit'
               onClick={toggleMenu}
-              className="w-[32px] h-[32px] cursor-pointer absolute left-[24px] top-[15px]"
+              className='w-[32px] h-[32px] cursor-pointer absolute left-[24px] top-[15px]'
               width={32}
               height={32}
             />
             <div
-              className={`flex flex-col items-center justify-between w-[158px] text-xs space-y-5`}
-            >
+              className={`flex flex-col items-center justify-between w-[158px] text-xs space-y-5`}>
               {user.documentId ? (
                 <AlertDialogElement
                   onClick={toggleMenu}
                   action={logout}
                   header={alertProps.header}
                   body={alertProps.body}
-                  cancel="إلغاء"
-                  action_text={alertProps.action_text}
-                >
+                  cancel='إلغاء'
+                  action_text={alertProps.action_text}>
                   <button
-                    className="w-full max-w-[320px] h-14 rounded-[12px] flex
+                    className='button-primary w-full max-w-[320px] h-14 rounded-[12px] flex
                     items-center bg-primary text-white
-      justify-center gap-2 hover:bg-primary-dark hover:text-white active:bg-primary-dark active:text-white focus:outline-none focus:bg-primary-dark focus:text-white"
-                  >
+      justify-center gap-2 hover:bg-primary-dark hover:text-white active:bg-primary-dark active:text-white focus:outline-none focus:bg-primary-dark focus:text-white cursor-pointer transition-all duration-300'>
                     تسجيل خروج
                   </button>
                 </AlertDialogElement>
               ) : (
                 <>
                   <ButtonPrimary
-                    handleClick={() => router.push("/register")}
-                    className={`text-xs p-2 tablet:hidden`}
-                  >
+                    handleClick={() => router.push('/register')}
+                    className={`text-xs p-2 tablet:hidden`}>
                     إنشاء حساب
                   </ButtonPrimary>
-                  <ButtonSecondary handleClick={logout} className="text-xs p-2">
+                  <ButtonSecondary
+                    handleClick={logout}
+                    className='text-xs p-2'>
                     تسجيل دخول
                   </ButtonSecondary>
                 </>
               )}
             </div>
-            <div className="flex flex-col justify-between pt-[40px]">
-              <NavElement link="/products" name="جميع المنتجات" />
+            <div className='flex flex-col justify-between pt-[40px] px-6'>
+              <NavElement
+                link='/products'
+                name='جميع المنتجات'
+              />
               <NavElement
                 link={`https://wa.me/201507023464?text=${whatsappMessage}`}
-                name="تواصل معنا"
-                icon="/icons/logos-whatsapp-icon.svg"
+                name='تواصل معنا'
+                icon='/icons/logos-whatsapp-icon.svg'
               />
-              <NavElement link="/about-us" name="نبذة عن Aura" />
-              <NavElement link="/profile" name="الملف الشخصي" />
+              <NavElement
+                link='/about-us'
+                name='نبذة عن Aura'
+              />
+              <NavElement
+                link='/profile'
+                name='الملف الشخصي'
+              />
             </div>
           </div>
         </div>
@@ -160,8 +163,7 @@ export function Navbar() {
       {isOpen && (
         <div
           onClick={toggleMenu}
-          className="fixed inset-0 bg-black/50 z-0 w-full h-full"
-        ></div>
+          className='fixed inset-0 bg-black/50 z-0 w-full h-full'></div>
       )}
     </div>
   );

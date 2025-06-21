@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
 
@@ -38,7 +38,7 @@
 
   --cursor-zoom-in: zoom-in;
   --cursor-zoom-out: zoom-out;
-  --cursor-whatsapp: url("/icons/conversion.svg"), pointer;
+  --cursor-whatsapp: url('/icons/conversion.svg'), pointer;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -473,10 +473,10 @@
 
 @layer utilities {
   /* For Remove Date Icon */
-  input[type="date"]::-webkit-inner-spin-button,
-  input[type="time"]::-webkit-inner-spin-button,
-  input[type="date"]::-webkit-calendar-picker-indicator,
-  input[type="time"]::-webkit-calendar-picker-indicator {
+  input[type='date']::-webkit-inner-spin-button,
+  input[type='time']::-webkit-inner-spin-button,
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-calendar-picker-indicator {
     display: none;
     -webkit-appearance: none;
   }
@@ -927,6 +927,23 @@ span.flatpickr-weekday,
     0 1px 2px 0 rgba(16, 24, 40, 0.06);
   opacity: 0.8;
   cursor: grabbing; /* Changes the cursor to indicate dragging */
+}
+
+.button-primary {
+  background: linear-gradient(135deg, #8b0e50 0%, #d5167b 100%);
+}
+.button-primary:hover {
+  transform: translateY(-2px);
+}
+
+.popover * {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  overflow: auto; /* Enable scrolling */
+}
+
+.popover *::-webkit-scrollbar {
+  display: none;
 }
 
 @layer utilities {
