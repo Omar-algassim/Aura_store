@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ColorRing, Oval } from "react-loader-spinner";
+import { ColorRing, Oval, RotatingLines } from "react-loader-spinner";
 
 export function Preloader() {
   return (
@@ -12,7 +12,7 @@ export function Preloader() {
         ariaLabel="color-ring-loading"
         wrapperStyle={{}}
         wrapperClass="color-ring-wrapper"
-        colors={["#d5167b", "#8b0e50", "#ac93ba", "#ffeee7", ""]}
+        colors={["#8b0e50", "#d5167b", "#d5167b", "#f2f2f2", "#f2f2f2"]}
       />
     </div>
   );
