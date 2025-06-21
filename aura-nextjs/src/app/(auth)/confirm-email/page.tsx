@@ -36,7 +36,8 @@ function ConfirmEmailPage(params: ConfirmEmailPageProps) {
       const nextPage = cookies.get('nextPage') || '/';
       router.replace(`${nextPage}?msg=تم تأكيد الحساب بنجاح`);
     }
-  }, [user]);
+    // console.log('user confirmed:', user.confirmed);
+  }, [user, user.confirmed, router]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {

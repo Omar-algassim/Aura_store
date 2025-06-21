@@ -36,6 +36,15 @@ function ProfileInfo() {
   const { toast } = useToast();
 
   const jwt = Cookies.get('jwt');
+  const oldData = {
+    username: user.username,
+    email: user.email,
+    phone_number: user.phone_number,
+    country_code: user.country_code,
+    confirmed: user.confirmed,
+    emailConfirmed: user.emailConfirmed,
+    phoneNumberConfirmed: user.phoneNumberConfirmed,
+  };
 
   const saveChanges = async () => {
     // console.log(
@@ -44,6 +53,7 @@ function ProfileInfo() {
     let emailChanged = false;
     let phoneChanged = false;
     let usernameChanged = false;
+
     if (!jwt) {
       setError('يرجى تسجيل الدخول أولا');
       return;
@@ -78,7 +88,7 @@ function ProfileInfo() {
       user.username = username;
     }
     if (!emailChanged && !phoneChanged && !usernameChanged) return;
-    const { error, data } = await updateUser(jwt, user.documentId, {
+    const { error, data } = await updateUser(jwt, {
       username: user.username,
       email: user.email,
       phone_number: user.phone_number,
@@ -89,6 +99,20 @@ function ProfileInfo() {
     if (error || !data) {
       // if (error)
       setError(error || 'حدث خطأ ما, الرجاء المحاوله مره اخرى');
+      // reset the user data to the old data
+      user.username = oldData.username;
+      user.email = oldData.email;
+      user.phone_number = oldData.phone_number;
+      user.country_code = oldData.country_code;
+      user.confirmed = oldData.confirmed;
+      user.emailConfirmed = oldData.emailConfirmed;
+      user.phoneNumberConfirmed = oldData.phoneNumberConfirmed;
+
+      setEditing('');
+      setUsername(user.username);
+      setEmail(user.email);
+      setPhone(user.phone_number);
+      setCountryKey(user.country_code || '+249');
       return;
     }
     if (email && emailChanged) {
@@ -323,22 +347,6 @@ function ProfileInfo() {
                 small
                 triggerStyle='absolute left-[3.2rem] items-center gap-[2px] w-[56px] shadow-none'
               />
-              {/* </div>
-              <CountriesDropdown
-                setCountryKey={setCountryKey}
-                className='w-[56px] shadow-none'
-                triggerStyle='absolute left-[3.2rem] items-center gap-[2px] w-[56px] shadow-none'
-                defaultValue={countryKey}
-                small
-              />
-              <InputComponent
-                name='phone'
-                value={(phone && `0${phone}`) || ''}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder='رقم الهاتف'
-                type='tel'
-                customStyles='bg-transparent border-[3px] border-primary'
-              /> */}
             </div>
           ) : (
             <div className='w-full flex flex-row-reverse justify-between items-center gap-4'>
@@ -353,7 +361,7 @@ function ProfileInfo() {
                 dir='ltr'
                 className={`w-full max-width-[320px] h-14 flex items-center justify-end pr-4 rounded-[12px] text-[16px] text-right text-[#0f0f0f] font-[400] bg-surface border-[3px] border-surface
               }`}>
-                {(phone && countryKey.concat(phone)) || (
+                {phone || (
                   <span
                     className='text-secondary'
                     dir='rtl'>
