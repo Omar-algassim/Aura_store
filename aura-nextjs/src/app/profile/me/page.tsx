@@ -87,8 +87,12 @@ function ProfileInfo() {
       usernameChanged = true;
       user.username = username;
     }
-    if (!emailChanged && !phoneChanged && !usernameChanged) return;
-    const { error, data } = await updateUser(jwt, {
+    if (!emailChanged && !phoneChanged && !usernameChanged) {
+      setError('لا توجد تغييرات لحفظها');
+      setLoading(false);
+      return;
+    }
+    const { error, data } = await updateUser(jwt, user.documentId, {
       username: user.username,
       email: user.email,
       phone_number: user.phone_number,
