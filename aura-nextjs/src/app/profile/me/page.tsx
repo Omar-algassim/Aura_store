@@ -92,7 +92,7 @@ function ProfileInfo() {
       setLoading(false);
       return;
     }
-    const { error, data } = await updateUser(jwt, user.documentId, {
+    const { error, data } = await updateUser(jwt, {
       username: user.username,
       email: user.email,
       phone_number: user.phone_number,
