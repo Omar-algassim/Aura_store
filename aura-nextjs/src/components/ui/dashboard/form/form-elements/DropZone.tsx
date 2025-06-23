@@ -3,13 +3,16 @@ import React from "react";
 import Image from "next/image";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
-import { deleteProductImage, uploadProductImage } from "@/utils/services/products-services";
+import {
+  deleteProductImage,
+  updateProduct,
+} from "@/utils/services/products-services";
 import cookie from "js-cookie";
 import { BaseUrl } from "@/constants/api-constants";
 import { Trash, TrashIcon } from "lucide-react";
 import { Modal } from "../../ui/modal";
 import { useModal } from "@/hooks/useModal";
-import { Button } from "@/components/ui/shadcn/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface image {
   id: string;
@@ -18,6 +21,7 @@ interface image {
 }
 interface DropzoneProps {
   images?: image[];
+  productId: string;
   onDrop?: (files: File[]) => void;
   onDelete?: (id: string) => void;
 }
@@ -31,33 +35,66 @@ function DropzoneComponent(props: DropzoneProps) {
     imageId: "",
   });
   const [acceptedFiles, setAcceptedFiles] = React.useState<File[]>([]);
-  const [uploadedFiles, setUploadedFiles] = React.useState<image[]>(props.images || []);
-  const {isOpen, openModal, closeModal} = useModal();
+  const [uploadedFiles, setUploadedFiles] = React.useState<image[]>(
+    props.images || []
+  );
+  const { toast } = useToast();
+  const { isOpen, openModal, closeModal } = useModal();
 
   function onDrop(acceptedFiles: File[]) {
     // Handle file uploads here
     props.onDrop?.(acceptedFiles);
     setAcceptedFiles(acceptedFiles);
-    };
+  }
 
-  function deleteUploadedImage(id: string) {
+  async function deleteUploadedImage(id: string) {
     const jwt = cookie.get("jwt");
-    console.log("Deleting image with id:", id);
+
     if (jwt) {
-      deleteProductImage(id, jwt)
-        .then((response) => {
-          console.log("File deleted successfully:", response);
-          setUploadedFiles((prevFiles) =>
-            prevFiles.filter((file) => file.imageId !== id)
-          );
-        }
-        ).catch((error) => {
-          setError(error.message);
-          console.error("Error deleting file:", error);
-        }
+      const response = await deleteProductImage(id, jwt);
+      if (response.error) {
+        setError("Failed to delete image");
+        toast({
+          title: "Error",
+          description: "Failed to delete image",
+          variant: "destructive",
+        });
+        return;
+      } else {
+        setUploadedFiles((prevFiles) =>
+          prevFiles.filter((file) => file.imageId !== id)
         );
+        const filteredFiles = uploadedFiles.filter((file) => file.imageId !== id);
+        const updatedImages = filteredFiles.map((file) => ({
+          url: file.url,
+          imageId: file.imageId,
+        }));
+        const editProduct = await updateProduct(
+            props.productId,
+            { images:  updatedImages},
+            jwt
+          );
+        if (editProduct.error) {
+          setError("Failed to update product images");
+          toast({
+            title: "Error",
+            description: "Failed to update product images",
+            variant: "destructive",
+          });
+          return;
+        } else {
+          setError(null);
+          setToDelete({ id: "", url: "", imageId: "" });
+          closeModal();
+        toast({
+          title: "Success",
+          description: "Image deleted successfully",
+          variant: "success",
+        });
+      }
     }
   }
+}
 
   function deleteSelectedImage(file: File) {
     setAcceptedFiles((prevFiles) =>
@@ -141,76 +178,92 @@ function DropzoneComponent(props: DropzoneProps) {
                 </svg>
               </div>
             )}
-            {error && (
-              <div className="text-red-500 text-sm">{error}</div>
-            )}
+            {error && <div className="text-red-500 text-sm">{error}</div>}
           </div>
         </form>
       </div>
-              {(uploadedFiles.length > 0 || acceptedFiles.length > 0) &&
-              (<div className="grid grid-cols-4 gap-6 justify-between p-2 border rounded-md border-primary">
-                {uploadedFiles.map((image) => (
-                 <div key={image.id} className="flex flex-col items-center justify-center gap-2">
-                  <button
-                  type='button'
-                    onClick={() => { setToDelete(image);
-                      openModal()}}
-                    className="relative right-5 top-4 z-999 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700"
-                    >
-                    <TrashIcon className="h-4 w-4" />
-                  </button>
-                  <Image
-                    src={`${BaseUrl}${image.url}`}
-                    alt={image.id}
-                    width={50}
-                    height={50}
-                    className="rounded-md"
-                  />
-                </div>))}
-                {acceptedFiles.map((file, index) => (
-                  <div key={index} className="flex flex-col items-center justify-center gap-2">
-                  <button
-                  type='button'
-                    onClick={(e) => {e.stopPropagation
-                       deleteSelectedImage(file)}}
-                    className="relative right-5 top-4 z-999 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700"
-                    >
-                    <TrashIcon className="h-4 w-4" />
-                  </button>
-                    <Image
-                      src={URL.createObjectURL(file)}
-                      alt={file.name}
-                      width={50}
-                      height={50}
-                      className="rounded-md"
-                    />
-
-                  </div>
-                ))}
-              </div>)
-                }
-    <Modal isOpen={isOpen} onClose={closeModal} className="flex flex-col justify-center items-center w-full h-[300px] max-w-lg">
-      <div className="flex flex-col items-center justify-center gap-10">
-        <h2 className="text-lg p-y-10">Are you sure to delete this Images from Database</h2>
-        <div className="grid grid-cols-2 gap-6 mt-10 justify-between items-center">
-          <Button
-          onClick={() => {
-            deleteUploadedImage(ToDelete.imageId);
-            closeModal();
-          }} 
-          >
-            Delete
-            <TrashIcon className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" onClick={closeModal}>
-            No
-            </Button>      
+      {(uploadedFiles.length > 0 || acceptedFiles.length > 0) && (
+        <div className="grid grid-cols-4 gap-6 justify-between p-2 border rounded-md border-primary">
+          {uploadedFiles.map((image) => (
+            <div
+              key={image.id}
+              className="flex flex-col items-center justify-center gap-2"
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setToDelete(image);
+                  openModal();
+                }}
+                className="relative right-5 top-4 z-999 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </button>
+              <Image
+                src={`${BaseUrl}${image.url}`}
+                alt={image.id}
+                width={50}
+                height={50}
+                className="rounded-md"
+              />
+            </div>
+          ))}
+          {acceptedFiles.map((file, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center justify-center gap-2"
+            >
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation;
+                  deleteSelectedImage(file);
+                }}
+                className="relative right-5 top-4 z-999 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </button>
+              <Image
+                src={URL.createObjectURL(file)}
+                alt={file.name}
+                width={50}
+                height={50}
+                className="rounded-md"
+              />
+            </div>
+          ))}
         </div>
-      </div>
-    </Modal>
+      )}
+      <Modal
+        isOpen={isOpen}
+        onClose={closeModal}
+        className="flex flex-col justify-center items-center w-[400px] h-[280px] max-w-lg"
+      >
+        <div className="flex flex-col items-center justify-center gap-10">
+          <h2 className="text-lg p-y-10">
+            Are you sure to delete this Images from Database
+          </h2>
+          <div className="grid grid-cols-2 gap-6 mt-10 justify-between items-center">
+            <button
+             className="flex w-full items-center justify-center gap-2 rounded-full border border-red-900 bg-red-800 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-red-950 hover:text-white dark:border-red-950 dark:bg-red-800 dark:text-white dark:hover:bg-red-950 dark:hover:text-white lg:inline-flex lg:w-auto"
+              onClick={() => {
+                deleteUploadedImage(ToDelete.imageId);
+                closeModal();
+              }}
+            >
+              Delete
+              <TrashIcon className="h-4 w-4" />
+            </button>
+            <button
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto" 
+             onClick={closeModal}>
+              No
+            </button>
+          </div>
+        </div>
+      </Modal>
     </ComponentCard>
-    
   );
-};
+}
 
 export default DropzoneComponent;
