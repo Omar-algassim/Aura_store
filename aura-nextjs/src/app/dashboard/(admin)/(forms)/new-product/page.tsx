@@ -238,8 +238,14 @@ export default function ProductForm(props: ProductForm) {
     if (uploadedImages.length !== newImages.length) {
       return await backtraceStorage(uploadedThumbnail, uploadedImages, jwt);
     }
+
     // add the images and the thumbnail urls to the product data
-    validation.data.images =  uploadedImages;
+    const updatedImages = images.map((img) => ({
+      url: img.url,
+      imageId: img.imageId,
+    }));
+    validation.data.images = [...updatedImages, ...uploadedImages];
+
     // create the product
     if (props.editMode) {
       const productId = props.data?.documentId;
@@ -399,7 +405,7 @@ export default function ProductForm(props: ProductForm) {
                 <Input
                   error={titleError.length > 0}
                   name="title"
-                  defaultValue={props.data?.name}
+                  defaultValue={props.data?.title}
                   placeholder="the title of product"
                   type="text"
                 />
@@ -706,6 +712,7 @@ export default function ProductForm(props: ProductForm) {
                 <div className="col-span-2">
                   <Label>Product Image *</Label>
                   <DropzoneComponent
+                   productId={props.data?.documentId || ""}
                     images={images}
                     onDrop={(acceptedFiles) => {
                       setNewImages([...newImages, ...acceptedFiles]);
