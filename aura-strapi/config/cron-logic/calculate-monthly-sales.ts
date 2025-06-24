@@ -29,7 +29,7 @@ export async function calculateMonthlySales(db: knex.Knex) {
       0
     );
     const currentMonthSales = await db('saleses')
-      .where('month', today.getMonth())
+      .where('month', today.getMonth() + 1) // getMonth() is zero-based, so we add 1
       .andWhere('year', today.getFullYear())
       .first();
 

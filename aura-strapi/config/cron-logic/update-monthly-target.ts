@@ -6,7 +6,7 @@ export async function updateMonthlyTarget(db: knex.Knex) {
     const previousMonth = new Date();
     previousMonth.setMonth(previousMonth.getMonth() - 1);
     let target = await db('monthly_targets')
-      .where('month', previousMonth.getMonth())
+      .where('month', previousMonth.getMonth() + 1)
       .andWhere('year', previousMonth.getFullYear())
       .first();
     if (!target) {
@@ -15,7 +15,7 @@ export async function updateMonthlyTarget(db: knex.Knex) {
       );
       // if no target found for the previous month, use a default target
       const defaultTarget = {
-        month: previousMonth.getMonth(),
+        month: previousMonth.getMonth() + 1,
         year: previousMonth.getFullYear(),
         target: 100000, // default target value
       };
@@ -25,7 +25,7 @@ export async function updateMonthlyTarget(db: knex.Knex) {
     const currentMonth = new Date();
     currentMonth.setMonth(currentMonth.getMonth());
     const updatedTarget = {
-      month: currentMonth.getMonth(),
+      month: currentMonth.getMonth() + 1,
       year: currentMonth.getFullYear(),
       target: target.target,
     };
