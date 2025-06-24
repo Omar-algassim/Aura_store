@@ -42,7 +42,7 @@ export async function calculateMonthlySales(db: knex.Knex) {
       return;
     }
     await db('saleses').insert({
-      month: today.getMonth(),
+      month: today.getMonth() + 1,
       year: today.getFullYear(),
       sale: totalSales,
       orders: totalOrders.length,
