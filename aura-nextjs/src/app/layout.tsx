@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Alexandria } from 'next/font/google';
 import { Outfit } from 'next/font/google';
 import './globals.css';
+
 import UserContextProvider from '@/components/context/UserContext';
 import CartContextProvider from '@/components/context/CartContext';
 import { Toaster } from '@/components/ui/shadcn/toaster';
@@ -42,7 +43,10 @@ export const metadata: Metadata = {
   ],
   category: 'Personal Care E-commerce',
   applicationName: 'Aura-Store',
-  authors: [{ name: 'Dongol-La agency', url: 'https://dongolla.com' }],
+  authors: [
+    { name: 'Omar AL-Gassim', url: 'https://github.com/omaralgassim' },
+    { name: 'Mojtaba Mohammad', url: 'https://mojtaba-dev.vercel.app' },
+  ],
 };
 
 export default function RootLayout({
