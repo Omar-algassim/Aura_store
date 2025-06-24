@@ -135,7 +135,7 @@ export default {
       await updateMonthlyTarget(db);
     },
     options: {
-      rule: '*/1 * * * *', // runs on the first day of every month at 00:00 EAT
+      rule: '0 0 1 * *', // runs on the first day of every month at 00:00 EAT
       tz: 'Africa/Cairo', // East Africa Time
     },
   },
