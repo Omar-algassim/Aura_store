@@ -14,6 +14,9 @@ importers:
       '@strapi/plugin-users-permissions':
         specifier: 5.2.0
         version: 5.2.0(a311d03350dbf9d229b7d71728ac38a9)
+      '@strapi/provider-email-nodemailer':
+        specifier: ^5.16.0
+        version: 5.16.0
       '@strapi/strapi':
         specifier: 5.2.0
         version: 5.2.0(@babel/runtime@7.26.0)(@codemirror/autocomplete@6.18.4)(@codemirror/language@6.10.8)(@codemirror/lint@6.8.4)(@codemirror/search@6.5.8)(@codemirror/state@6.5.0)(@codemirror/theme-one-dark@6.1.2)(@codemirror/view@6.36.1)(@swc/helpers@0.5.15)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.11)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(better-sqlite3@11.7.0)(codemirror@5.65.18)(koa@3.0.0)(mysql2@3.9.8)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.28.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(redux@4.2.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.37.0)(type-fest@4.31.0)
@@ -1595,6 +1598,10 @@ packages:
       react-dom: ^17.0.0 || ^18.0.0
       react-router-dom: ^6.0.0
       styled-components: ^6.0.0
+
+  '@strapi/provider-email-nodemailer@5.16.0':
+    resolution: {integrity: sha512-bFXehniLUQkvfDTxsvM4Yq2FzcR7ZqcuKb+NzRHoImlMf4rq9GvfJGXHzGxucJ2dX1EURlPw9RYjFvE5T1W3Ug==}
+    engines: {node: '>=18.0.0 <=22.x.x', npm: '>=6.0.0'}
 
   '@strapi/provider-email-sendmail@5.2.0':
     resolution: {integrity: sha512-FYQkqvteLnN2jlgf11ND/9UXrbH0jJPFMGfg9TNx5TlzclbEOWb1PkTNG3luHFtaxlXv3fHyDOFvRt+sPMjmZg==}
@@ -4465,6 +4472,10 @@ packages:
   nodemailer-shared@1.1.0:
     resolution: {integrity: sha512-68xW5LSyPWv8R0GLm6veAvm7E+XFXkVgvE3FW0FGxNMMZqMkPFeGDVALfR1DPdSfcoO36PnW7q5AAOgFImEZGg==}
 
+  nodemailer@6.10.1:
+    resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
+    engines: {node: '>=6.0.0'}
+
   nodemon@3.0.2:
     resolution: {integrity: sha512-9qIN2LNTrEzpOPBaWHTm4Asy1LxXLSickZStAQ4IZe7zsoIpD/A7LWxhZV3t4Zu352uBcqVnRsDXSMR2Sc3lTA==}
     engines: {node: '>=10'}
@@ -6708,18 +6719,6 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@formatjs/intl@2.10.0(typescript@5.3.2)':
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.18.2
-      '@formatjs/fast-memoize': 2.2.0
-      '@formatjs/icu-messageformat-parser': 2.7.6
-      '@formatjs/intl-displaynames': 6.6.6
-      '@formatjs/intl-listformat': 7.5.5
-      intl-messageformat: 10.5.11
-      tslib: 2.8.1
-    optionalDependencies:
-      typescript: 5.3.2
-
   '@formatjs/intl@2.10.0(typescript@5.7.2)':
     dependencies:
       '@formatjs/ecma402-abstract': 1.18.2
@@ -8234,6 +8233,11 @@ snapshots:
       - sequelize
       - supports-color
       - typescript
+
+  '@strapi/provider-email-nodemailer@5.16.0':
+    dependencies:
+      lodash: 4.17.21
+      nodemailer: 6.10.1
 
   '@strapi/provider-email-sendmail@5.2.0':
     dependencies:
@@ -11668,6 +11672,8 @@ snapshots:
     dependencies:
       nodemailer-fetch: 1.6.0
 
+  nodemailer@6.10.1: {}
+
   nodemon@3.0.2:
     dependencies:
       chokidar: 3.6.0
@@ -12186,7 +12192,7 @@ snapshots:
     dependencies:
       '@formatjs/ecma402-abstract': 1.18.2
       '@formatjs/icu-messageformat-parser': 2.7.6
-      '@formatjs/intl': 2.10.0(typescript@5.3.2)
+      '@formatjs/intl': 2.10.0(typescript@5.7.2)
       '@formatjs/intl-displaynames': 6.6.6
       '@formatjs/intl-listformat': 7.5.5
       '@types/hoist-non-react-statics': 3.3.6

@@ -370,7 +370,7 @@ export const createProduct = async (
 
 export const updateProduct = async (
   id: string,
-  formData: Product,
+  formData: Partial<Product>,
   jwt: string
 ): Promise<{
   message: string;
