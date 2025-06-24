@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { newProductSchema } from "@/components/ui/forms/schemas";
-import { ProductQueryFilters } from "@/interfaces";
-import { Product, Review } from "@/interfaces/dto";
-import { apiClient } from "@/utils/api/api-client";
-import qs from "qs";
+import { newProductSchema } from '@/components/ui/forms/schemas';
+import { ProductQueryFilters } from '@/interfaces';
+import { Product, Review } from '@/interfaces/dto';
+import { apiClient } from '@/utils/api/api-client';
+import qs from 'qs';
 
 /**
  * Base function to fetch products from the api using the query string
@@ -26,19 +26,19 @@ const fetchProducts = async (
  */
 export const getOffers = async () => {
   const query = qs.stringify({
-    sort: ["discount:desc"],
+    sort: ['discount:desc'],
     populate: {
-      images: "*",
+      images: '*',
       categories: {
-        fields: ["title"],
+        fields: ['title'],
       },
       brand: {
-        fields: ["name"],
+        fields: ['name'],
       },
       reviews: {
         populate: {
           user: {
-            fields: ["username", "documentId", "email"],
+            fields: ['username', 'documentId', 'email'],
           },
         },
       },
@@ -72,19 +72,19 @@ export const getOffers = async () => {
  */
 export const getRecentProducts = async () => {
   const query = qs.stringify({
-    sort: ["createdAt:desc"],
+    sort: ['createdAt:desc'],
     populate: {
-      images: "*",
+      images: '*',
       categories: {
-        fields: ["title"],
+        fields: ['title'],
       },
       brand: {
-        fields: ["name"],
+        fields: ['name'],
       },
       reviews: {
         populate: {
           user: {
-            fields: ["username", "documentId", "email"],
+            fields: ['username', 'documentId', 'email'],
           },
         },
       },
@@ -103,19 +103,19 @@ export const getRecentProducts = async () => {
  */
 export const getTopSellingProducts = async () => {
   const query = qs.stringify({
-    sort: ["ordered:desc"],
+    sort: ['ordered:desc'],
     populate: {
-      images: "*",
+      images: '*',
       categories: {
-        fields: ["title"],
+        fields: ['title'],
       },
       brand: {
-        fields: ["name"],
+        fields: ['name'],
       },
       reviews: {
         populate: {
           user: {
-            fields: ["username", "documentId", "email"],
+            fields: ['username', 'documentId', 'email'],
           },
         },
       },
@@ -153,17 +153,17 @@ export const getProducts = async (
   };
   const queryObject = {
     populate: {
-      images: "*",
+      images: '*',
       categories: {
-        fields: ["title"],
+        fields: ['title'],
       },
       brand: {
-        fields: ["name"],
+        fields: ['name'],
       },
       reviews: {
         populate: {
           user: {
-            fields: ["username", "documentId", "email"],
+            fields: ['username', 'documentId', 'email'],
           },
         },
       },
@@ -239,22 +239,22 @@ export const getSimilarProducts = async (
   categories?: string[]
 ) => {
   if (!categories && !brand) {
-    return { error: "لا يوجد منتجات" };
+    return { error: 'لا يوجد منتجات' };
   }
 
   const query = qs.stringify({
     populate: {
-      images: "*",
+      images: '*',
       categories: {
-        fields: ["title"],
+        fields: ['title'],
       },
       brand: {
-        fields: ["name"],
+        fields: ['name'],
       },
       reviews: {
         populate: {
           user: {
-            fields: ["username", "documentId", "email"],
+            fields: ['username', 'documentId', 'email'],
           },
         },
       },
@@ -267,7 +267,7 @@ export const getSimilarProducts = async (
       $or: [
         {
           brand: {
-            $eqi: brand || "",
+            $eqi: brand || '',
           },
         },
         {
@@ -300,23 +300,23 @@ export const getSimilarProducts = async (
 export const getProduct = async (id: string) => {
   const query = qs.stringify({
     populate: {
-      images: "*",
+      images: '*',
       categories: {
-        fields: ["title"],
+        fields: ['title'],
       },
       brand: {
-        fields: ["name"],
+        fields: ['name'],
       },
       reviews: {
         populate: {
           user: {
-            fields: ["username", "documentId", "email"],
+            fields: ['username', 'documentId', 'email'],
           },
           likes: {
-            fields: ["username", "documentId", "email"],
+            fields: ['username', 'documentId', 'email'],
           },
-          sort: ["updatedAt:desc"],
         },
+        sort: ['updatedAt:asc'],
       },
     },
   });
@@ -340,21 +340,25 @@ export const createProduct = async (
   error?: any;
 }> => {
   // console.log("data", data);
-  const { error, data: product } = await apiClient.createProduct(formData, jwt);
+  const { error, data: product } = await apiClient.createProduct(
+    formData,
+    jwt
+  );
   if (error) {
     return {
-       message: "error creating product",
-       type: "server Error",
+      message: 'error creating product',
+      type: 'server Error',
       data: null,
       error: error,
     };
-  } return {
-    message: "product created successfully",
-    type: "success",
+  }
+  return {
+    message: 'product created successfully',
+    type: 'success',
     data: product,
     error: null,
   };
-}
+};
 
 /**
  * update product
@@ -374,22 +378,26 @@ export const updateProduct = async (
   data: any | null;
   error?: any;
 }> => {
-  const { error, data: product } = await apiClient.updateProduct(id, formData, jwt);
+  const { error, data: product } = await apiClient.updateProduct(
+    id,
+    formData,
+    jwt
+  );
   if (error) {
     return {
-      message: "error updating product",
-      type: "server Error",
+      message: 'error updating product',
+      type: 'server Error',
       data: null,
       error: error,
     };
   }
   return {
-    message: "product updated successfully",
-    type: "success",
+    message: 'product updated successfully',
+    type: 'success',
     data: product,
     error: null,
   };
-}
+};
 
 /**
  * delete product
@@ -410,20 +418,19 @@ export const deleteProduct = async (
   const { error, data: product } = await apiClient.deleteProduct(id, jwt);
   if (error) {
     return {
-      message: "error deleting product",
-      type: "server Error",
+      message: 'error deleting product',
+      type: 'server Error',
       data: null,
       error: error,
     };
   }
   return {
-    message: "product deleted successfully",
-    type: "success",
+    message: 'product deleted successfully',
+    type: 'success',
     data: product,
     error: null,
   };
 };
-
 
 /**
  * Fetch categories from the api
@@ -449,8 +456,6 @@ export const getBrands = async () => {
   return { brands };
 };
 
-
-
 export const createProductReview = async (
   productId: string,
   userId: string,
@@ -475,7 +480,7 @@ export const createProductReview = async (
   const query = qs.stringify({
     populate: {
       user: {
-        fields: ["username", "documentId"],
+        fields: ['username', 'documentId'],
       },
     },
   });
@@ -484,7 +489,7 @@ export const createProductReview = async (
 
 export const updateProductReview = async (
   reviewId: string,
-  review: Partial<Omit<Review, "likes"> & { likes: string[] }>,
+  review: Partial<Omit<Review, 'likes'> & { likes: string[] }>,
   jwt: string
 ) => {
   const data = {
@@ -513,18 +518,15 @@ export const getTotalRate = (reviews: Review[]) => {
   return Math.round(totalRate / totalReviews);
 };
 
-export const uploadProductImage = async (
-  file: File,
-  jwt: string,
-) => {
+export const uploadProductImage = async (file: File, jwt: string) => {
   const formData = new FormData();
-  formData.append("files", file);
+  formData.append('files', file);
   const { error, data } = await apiClient.uploadImage(formData, jwt);
   if (error) {
     return { error };
   }
   return { data };
-}
+};
 
 export const deleteProductImage = async (id: string, jwt: string) => {
   const { error, data } = await apiClient.deleteImage(id, jwt);

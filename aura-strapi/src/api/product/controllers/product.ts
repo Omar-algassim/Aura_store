@@ -11,10 +11,14 @@ export default factories.createCoreController(
       const { id } = ctx.params;
       try {
         const { data, meta } = await super.findOne(ctx);
+        let viewed = parseInt(data.viewed, 10) || 0; // Ensure viewed is a number
+        if (viewed < 11111111) {
+          viewed += 1; // Increment viewed count only if it's less than 11,111,111
+        }
         await strapi.documents('api::product.product').update({
           documentId: id,
           data: {
-            viewed: data.viewed + 1, // Increment the viewed count
+            viewed: viewed, // Increment the viewed count
           },
         });
         await strapi

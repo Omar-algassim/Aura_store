@@ -50,6 +50,8 @@ export class User {
     this.location = userParams?.location;
     this.blocked = userParams?.blocked;
     this.confirmed = userParams?.confirmed;
+    this.emailConfirmed = userParams?.emailConfirmed;
+    this.phoneNumberConfirmed = userParams?.phoneNumberConfirmed;
     this.createdAt = userParams?.createdAt;
     this.id = userParams?.id;
     this.provider = userParams?.provider;
