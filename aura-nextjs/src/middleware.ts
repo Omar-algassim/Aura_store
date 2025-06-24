@@ -67,7 +67,7 @@ export async function middleware(request: NextRequest) {
       }
     }
     // console.log('user not logged in, redirecting to login');
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/login?msg="الرجاء تسجيل الدخول"', request.url));
   }
 
   if (['/login', '/register'].includes(currentPath)) {

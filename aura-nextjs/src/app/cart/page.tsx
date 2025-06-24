@@ -100,7 +100,6 @@ export default function CartPage() {
   const user = useUser();
   const cartDispatcher = useCartDispatcher();
   const router = useRouter();
-  const [loggedIn, setLoggedIn] = React.useState(false);
   const [cartProducts, setCartProducts] = React.useState(cart.products);
 
   React.useEffect(() => {
@@ -115,11 +114,6 @@ export default function CartPage() {
   }
 
   function checkout() {
-    if (!user.documentId) {
-      console.log("you have to login first");
-      setLoggedIn(true);
-    }
-    // Cookie.set('nextPage', '/cart/checkout')
     router.push("/cart/checkout");
   }
 
@@ -209,7 +203,7 @@ export default function CartPage() {
               توسيع خدماتنا قريبا
             </p>
             <ButtonPrimary handleClick={checkout}>متابعة الشراء</ButtonPrimary>
-            {loggedIn && (
+            {/* {loggedIn && (
               <AlertDialogElement
                 open={true}
                 action_text="تسجيل الدخول"
@@ -219,7 +213,7 @@ export default function CartPage() {
               >
                 <></>
               </AlertDialogElement>
-            )}
+            )} */}
           </div>
         </div>
       </div>
