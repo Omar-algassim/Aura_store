@@ -57,7 +57,7 @@ function AddressBook() {
       router.replace("/login");
       return;
     }
-    const { error, data } = await updateUser(jwt, user.documentId, {
+    const { error, data } = await updateUser(jwt,  {
       location: { region, city, address },
     });
     if (error || !data) {
