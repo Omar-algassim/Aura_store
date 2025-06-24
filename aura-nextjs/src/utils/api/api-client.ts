@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 // hold all the api calls, and base logic
 // uses axios for http requests
 // export a class instance of the api client, which contains all the api calls
 import { User } from '@/entities/user-entity';
 import { OrderDTO, OrderItem, SignupDTO } from '@/interfaces/dto';
 import axios, { AxiosError } from 'axios';
-import { string } from 'zod';
 class APIClient {
   private baseUrl =
     process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api';
@@ -968,6 +967,7 @@ class APIClient {
     id: string,
     orderData: Omit<OrderDTO, 'user'>
   ) {
+    // eslint-disable-next-line
     const { order_items, ...data } = orderData;
     try {
       const response = await this.api.put(

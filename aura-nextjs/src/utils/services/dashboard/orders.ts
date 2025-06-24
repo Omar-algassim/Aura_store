@@ -1,7 +1,6 @@
 'use server';
 import { apiClient } from '@/utils/api/api-client';
 import axios from 'axios';
-import { use } from 'react';
 
 export async function getOrders(jwt: string): Promise<{
   message: string;

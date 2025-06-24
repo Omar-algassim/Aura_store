@@ -7,20 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/dashboard/ui/table';
-import DropzoneComponent from '@/components/ui/dashboard/form/form-elements/DropZone';
 import Image from 'next/image';
-import Button from '@/components/ui/dashboard/ui/button/Button';
 import { Modal } from '@/components/ui/dashboard/ui/modal';
-import Label from '@/components/ui/dashboard/form/Label';
 import Pagination from '@/components/ui/dashboard/tables/Pagination';
-import Input from '@/components/ui/dashboard/form/input/InputField';
-import TextArea from '@/components/ui/dashboard/form/input/TextArea';
 import { BaseUrl } from '@/constants/api-constants';
-import SelectInputs from '@/components/ui/dashboard/form/form-elements/SelectInputs';
-import MultiSelect from '@/components/ui/dashboard/form/MultiSelect';
-import Select from '@/components/ui/dashboard/form/Select';
-import { ChevronDownIcon, TrashBinIcon } from '@/icons';
-import FileInput from '@/components/ui/dashboard/form/input/FileInput';
+import { TrashBinIcon } from '@/icons';
 import { Product } from '@/interfaces/dto';
 import {
   deleteProduct,
@@ -30,18 +21,22 @@ import ProductForm from '../../(forms)/new-product/page';
 import { Loader } from '@/components/common/loader';
 import cookie from 'js-cookie';
 import { useToast } from '@/hooks/use-toast';
-import { Alert } from '@/components/ui/shadcn/alert';
 
 export default function ProductTable() {
   const [page, setPage] = React.useState<number>(1);
   const [pageCount, setPageCount] = React.useState<number>(0);
   const [Products, setProducts] = React.useState<Product[] | []>([]);
+   // eslint-disable-next-line
   const [description, setDescription] = React.useState<string | undefined>('');
+  // eslint-disable-next-line
   const [specifications, setSpecifications] = React.useState<
-    string | undefined
+  string | undefined
   >('');
+   // eslint-disable-next-line
   const [usage, setUsage] = React.useState<string | undefined>('');
+   // eslint-disable-next-line
   const [Categories, setCategories] = React.useState<string[]>([]);
+   // eslint-disable-next-line
   const [brand, setBrand] = React.useState<string[]>([]);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isDelete, setIsDelete] = React.useState(false);
@@ -81,7 +76,6 @@ export default function ProductTable() {
     setDescription(edit?.description);
     setUsage(edit?.usage);
     setIsOpen(true);
-    console.log('Edit product:', edit);
   }
 
   async function handleDelete() {

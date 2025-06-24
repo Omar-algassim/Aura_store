@@ -38,9 +38,6 @@ interface images {
 
 export default function ProductForm(props: ProductForm) {
   const [thumbnail, setThumbnail] = React.useState<File | undefined>();
-  const [images, setImages] = React.useState<images[]>(
-    props.data?.images || []
-  );
   const [newImages, setNewImages] = React.useState<File[]>([]);
   const [description, setDescription] = React.useState<string>(
     props.data?.description || ""
@@ -57,10 +54,10 @@ export default function ProductForm(props: ProductForm) {
   );
   const [Categories, setCategories] = React.useState<any[]>([]);
   const [brands, setBrands] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
   const [state, action, isPending] = React.useActionState(handleSave, null);
   const { toast } = useToast();
+  const images: images[] = props.data?.images || [];
 
   const nameError = getFieldError(state?.error, "name");
   const titleError = getFieldError(state?.error, "title");
@@ -82,20 +79,16 @@ export default function ProductForm(props: ProductForm) {
       getCategories()
         .then((data) => {
           setCategories(data.categories.data);
-          setLoading(false);
         })
         .catch((error) => {
           setError(error.message);
-          setLoading(false);
         });
       getBrands()
         .then((data) => {
           setBrands(data.brands.data);
-          setLoading(false);
         })
         .catch((error) => {
           setError(error.message);
-          setLoading(false);
         });
     };
     getBrandsAndCategories();

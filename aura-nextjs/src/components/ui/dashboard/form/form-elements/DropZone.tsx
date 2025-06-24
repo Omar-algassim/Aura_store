@@ -9,7 +9,7 @@ import {
 } from "@/utils/services/products-services";
 import cookie from "js-cookie";
 import { BaseUrl } from "@/constants/api-constants";
-import { Trash, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { Modal } from "../../ui/modal";
 import { useModal } from "@/hooks/useModal";
 import { useToast } from "@/hooks/use-toast";
@@ -49,10 +49,11 @@ function DropzoneComponent(props: DropzoneProps) {
 
   async function deleteUploadedImage(id: string) {
     const jwt = cookie.get("jwt");
-
+    setIsLoading(true);
     if (jwt) {
       const response = await deleteProductImage(id, jwt);
       if (response.error) {
+        setIsLoading(false);
         setError("Failed to delete image");
         toast({
           title: "Error",
@@ -63,18 +64,19 @@ function DropzoneComponent(props: DropzoneProps) {
       } else {
         setUploadedFiles((prevFiles) =>
           prevFiles.filter((file) => file.imageId !== id)
-        );
-        const filteredFiles = uploadedFiles.filter((file) => file.imageId !== id);
-        const updatedImages = filteredFiles.map((file) => ({
-          url: file.url,
-          imageId: file.imageId,
-        }));
-        const editProduct = await updateProduct(
-            props.productId,
-            { images:  updatedImages},
-            jwt
-          );
-        if (editProduct.error) {
+      );
+      const filteredFiles = uploadedFiles.filter((file) => file.imageId !== id);
+      const updatedImages = filteredFiles.map((file) => ({
+        url: file.url,
+        imageId: file.imageId,
+      }));
+      const editProduct = await updateProduct(
+        props.productId,
+        { images:  updatedImages},
+        jwt
+      );
+      if (editProduct.error) {
+          setIsLoading(false);
           setError("Failed to update product images");
           toast({
             title: "Error",
@@ -84,6 +86,7 @@ function DropzoneComponent(props: DropzoneProps) {
           return;
         } else {
           setError(null);
+          setIsLoading(false);
           setToDelete({ id: "", url: "", imageId: "" });
           closeModal();
         toast({
@@ -216,7 +219,7 @@ function DropzoneComponent(props: DropzoneProps) {
               <button
                 type="button"
                 onClick={(e) => {
-                  e.stopPropagation;
+                  e.stopPropagation();
                   deleteSelectedImage(file);
                 }}
                 className="relative right-5 top-4 z-999 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700"

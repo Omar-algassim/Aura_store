@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import qs from "qs";
 import { apiClient } from "../api/api-client";
 import miniserach from "minisearch";
@@ -39,12 +39,9 @@ export const search = async (key: string) => {
     }
     miniSearch.addAll(data.data);
     const allData: Product[] = [...data.data];
-    const prefixMatch = miniSearch.search(key, { prefix: true });
-    // /console.log("prefix dATA IS", prefixMatch);
     miniSearch.removeAll();
     return { data: [...allData] };
   } catch (error: any) {
-    // new Error("Error fetching data", error.message);
     return { error: error.message };
   }
 };

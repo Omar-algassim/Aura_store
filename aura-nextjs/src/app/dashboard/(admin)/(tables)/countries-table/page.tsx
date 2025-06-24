@@ -12,10 +12,8 @@ import { PlusIcon, TrashBinIcon } from "@/icons";
 import cookie from "js-cookie";
 import NewCountryForm from "../../(forms)/new-country/page";
 import getAvailableCountries from "@/utils/services/available-region";
-import { deleteCity } from "@/utils/services/dashboard/available-city";
 import { deleteRegion } from "@/utils/services/dashboard/available-region";
 import { toast } from "@/hooks/use-toast";
-import { table } from "console";
 
 interface City {
   id: string;
@@ -112,11 +110,11 @@ export default function CountryList() {
       });
       return;
       
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An error occurred while deleting the country.",
+        description: error.message || "An error occurred while deleting the country.",
       });
       return;
     }

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { User } from '@/entities/user-entity';
 import cookie from 'js-cookie';
 

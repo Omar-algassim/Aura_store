@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 "use client";
 import React, { useEffect, useState } from "react";
 import InputComponent from "../common/Input";
@@ -98,7 +98,9 @@ export function Search() {
           }
           setTyping(false);
           setResults(data);
+        // eslint-disable-next-line
         } catch (error) {
+          return () => clearTimeout(waitTime);
         }
       };
       fetchData();

@@ -1,7 +1,6 @@
 "use client";
 import { ThemeToggleButton } from "@/components/ui/dashboard/common/ThemeToggleButton";
 import NotificationDropdown from "@/components/ui/dashboard/header/NotificationDropdown";
-import UserDropdown from "@/components/ui/dashboard/header/UserDropdown";
 import { useSidebar } from "@/components/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";

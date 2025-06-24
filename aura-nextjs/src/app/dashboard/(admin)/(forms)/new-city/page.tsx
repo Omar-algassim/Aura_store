@@ -4,6 +4,7 @@ import Label from "@/components/ui/dashboard/form/Label";
 import Switch from "@/components/ui/dashboard/form/switch/Switch";
 import Button from "@/components/ui/dashboard/ui/button/Button";
 import { getFieldError } from "@/components/ui/forms/handleError";
+import { Preloader } from "@/components/ui/Preloader";
 import { useToast } from "@/hooks/use-toast";
 import {
   createCity,
@@ -12,7 +13,6 @@ import {
 } from "@/utils/services/dashboard/available-city";
 import {
   connectRegionToCity,
-  updateRegion,
 } from "@/utils/services/dashboard/available-region";
 import cookie from "js-cookie";
 import React from "react";
@@ -243,6 +243,11 @@ export default function NewCityForm(props: CityFormProps) {
 
   return (
     <div className="no-scrollbar relative w-full max-w-screen overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+      {isPending && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-gray-900/50 z-50">
+          <Preloader />
+        </div>
+      )}
       <div className="px-2 pr-14">
         <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
           Fill City Information

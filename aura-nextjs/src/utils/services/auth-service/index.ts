@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { signInSchema, signUpSchema } from "@/components/ui/forms/schemas";
 import { SignupDTO } from "@/interfaces/dto";
 import { apiClient } from "@/utils/api/api-client";

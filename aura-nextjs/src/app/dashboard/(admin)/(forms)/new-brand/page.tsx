@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { createBrand, newBrandAction, updateBrand } from "@/utils/services/dashboard/brand";
 import cookie from "js-cookie";
 import React from "react";
-import { useRouter } from "next/navigation";
+import { Preloader } from "@/components/ui/Preloader";
 
 interface Brand {
   id: string;
@@ -23,7 +23,7 @@ interface BrandFormProps {
 export default function NewBrandForm(props: BrandFormProps) {
   const [state, action, isPending] = React.useActionState(handleSave, null);
   const { toast } = useToast();
-  const router = useRouter();
+
 
   const nameError = getFieldError(state?.error, "name");
 
@@ -137,6 +137,11 @@ export default function NewBrandForm(props: BrandFormProps) {
   
   return (
       <div className="no-scrollbar relative w-full max-w-screen overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+        {isPending && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-gray-900/50">
+            <Preloader />
+          </div>
+        )}
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
             Fill Brand Information

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import qs from 'qs';
 import { apiClient } from '@/utils/api/api-client';
 import { OrderDTO } from '@/interfaces/dto';

@@ -48,12 +48,6 @@ export default function OrderItems(props: OrderItemProps) {
       setIsOpen(false);
     }
 
-    function handleSave(): void {
-      // Implement the save logic here
-      console.log("Save changes clicked");
-      setChanged(true);
-    }
-
     if (!props.product) {
         return <div className="text-gray-500">No product available</div>;
     }

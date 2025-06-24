@@ -17,7 +17,6 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/shadcn/input-otp';
-import { AlertError } from '@/components/common/Alerts';
 import { BadgeAlert } from 'lucide-react';
 import { Preloader } from '@/components/ui/Preloader';
 import { useToast } from '@/hooks/use-toast';

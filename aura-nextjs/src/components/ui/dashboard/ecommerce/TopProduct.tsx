@@ -2,8 +2,6 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Router from 'next/navigation';
-
-import { filters } from '@/constants/app-constants';
 import { BaseUrl } from '@/constants/api-constants';
 import { getProducts } from '@/utils/services/products-services';
 import {

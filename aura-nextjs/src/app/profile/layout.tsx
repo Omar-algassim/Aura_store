@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { Footer, Header } from '@/components/ui';
-import { Toaster } from '@/components/ui/shadcn/toaster';
 
 function ProfileLayout({ children }: { children: React.ReactNode }) {
   // const router = useRouter();

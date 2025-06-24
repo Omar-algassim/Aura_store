@@ -2,9 +2,7 @@ import React, { useEffect } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/popover';
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
-  CommandItem,
   CommandList,
 } from './shadcn/command';
 import { Checkbox } from '@/components/ui/shadcn/checkbox';

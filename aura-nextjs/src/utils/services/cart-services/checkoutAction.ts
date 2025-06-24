@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { checkoutSchema } from "@/components/ui/forms/schemas";
 
 type Data = {
