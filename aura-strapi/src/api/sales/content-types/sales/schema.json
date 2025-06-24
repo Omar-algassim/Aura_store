@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "saleses",
+  "info": {
+    "singularName": "sales",
+    "pluralName": "saleses",
+    "displayName": "Sales",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "month": {
+      "type": "integer",
+      "required": true,
+      "max": 12,
+      "min": 1
+    },
+    "year": {
+      "type": "integer",
+      "required": true,
+      "min": 2025
+    },
+    "orders": {
+      "type": "biginteger",
+      "required": true,
+      "default": "0"
+    },
+    "sale": {
+      "type": "decimal",
+      "required": true,
+      "default": 0
+    }
+  }
+}

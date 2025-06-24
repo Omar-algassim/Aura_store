@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "monthly_targets",
+  "info": {
+    "singularName": "monthly-target",
+    "pluralName": "monthly-targets",
+    "displayName": "Monthly Target",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "target": {
+      "type": "decimal",
+      "required": true
+    },
+    "month": {
+      "type": "integer",
+      "required": true,
+      "max": 12,
+      "min": 1
+    },
+    "year": {
+      "type": "integer",
+      "required": true,
+      "min": 2025
+    }
+  }
+}
