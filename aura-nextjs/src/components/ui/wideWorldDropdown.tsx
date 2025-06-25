@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { getAvailableCities } from "@/utils/services/available-region";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/shadcn/button";
 import {
@@ -20,7 +19,7 @@ import {
 } from "@/components/ui/shadcn/popover";
 import { countriesCode } from "@/constants/app-constants";
 
-export default function worldWideDropdown(props: {
+export default function WorldWideDropdown(props: {
   className?: string;
   setCountryKey: (code: string) => void;
   defaultValue?: string;

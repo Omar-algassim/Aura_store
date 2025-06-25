@@ -16,6 +16,7 @@ function AddressBook() {
   const user = useUser();
   const userDispatcher = useUserDispatch();
   const [loading, setLoading] = React.useState(true);
+   // eslint-disable-next-line
   const [error, setError] = React.useState("");
   const [availableCities, setAvailableCities] = React.useState<string[]>([]);
   const [region, setRegion] = React.useState(user.location?.region || "");
@@ -23,7 +24,7 @@ function AddressBook() {
   const [address, setAddress] = React.useState(user.location?.address || "");
 
   React.useEffect(() => {
-    if (!region) { 
+    if (!region) {
       setAvailableCities([]) 
       return;
     }
@@ -56,16 +57,10 @@ function AddressBook() {
       router.replace("/login");
       return;
     }
-    console.log(`Updating user ${user.documentId} with new location`, {
-      region,
-      city,
-      address,
-    });
-    const { error, data } = await updateUser(jwt, user.documentId, {
+    const { error, data } = await updateUser(jwt,  {
       location: { region, city, address },
     });
     if (error || !data) {
-      console.error("Error updating user", error);
       setError(error);
       return;
     }

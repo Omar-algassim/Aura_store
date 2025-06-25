@@ -26,7 +26,7 @@ import { getFieldError } from './handleError';
 
 type Props = {
   //   orderId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   onError: (error: any) => void;
   children?: React.ReactNode;
 };

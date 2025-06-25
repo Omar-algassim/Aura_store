@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 function CheckoutPage() {
   const cart = useCart() as CartEntity;
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const [error, setError] = useState<any>(null);
   const [copied, setCopied] = useState(false);
 

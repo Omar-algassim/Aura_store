@@ -131,7 +131,7 @@ export class CartEntity {
     delivery_address: DeliveryAddress,
     checkout_image: File,
     order_status: OrderStatus = "pending"
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
   ): Promise<{ error?: any; data?: any }> {
     // upload the checkout image to the server
     // if (!this.products || Object.keys(this.products).length === 0) {

@@ -71,12 +71,12 @@ export default function BrandList() {
 
   async function handleDeleteBrand() {
     if (!toDelete) return;
+    const jwt = cookie.get("jwt");
+    if (!jwt) {
+      console.error("JWT token is missing");
+      return;
+    }
     try {
-      const jwt = cookie.get("jwt");
-      if (!jwt) {
-        console.error("JWT token is missing");
-        return;
-      }
       const response = await deleteBrand(toDelete.documentId, jwt);
       if (response.error) {
         setAlerting(false);
@@ -98,11 +98,11 @@ export default function BrandList() {
         title: "Brand deleted",
         description: "Brand has been deleted successfully.",
       });
-    } catch (error) {
+    } catch (error : any) {
       toast({
         variant: "destructive",
         title: "Error deleting brand",
-        description: "Failed to delete brand",
+        description: error.message || "Failed to delete brand",
       });
       return;
     }

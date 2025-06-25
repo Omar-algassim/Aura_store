@@ -1,5 +1,5 @@
 'use client';
-import React, { Suspense, use, useEffect, useRef } from 'react';
+import React, { Suspense, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   getCategories,
