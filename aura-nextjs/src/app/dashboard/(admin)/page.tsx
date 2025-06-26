@@ -34,13 +34,13 @@ export default async function Ecommerce() {
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
   // fetch monthly target data
-  const { error, data: monthlyTargetData } = await getMonthlyTargets(jwt);
-  if (error || !monthlyTargetData) {
+  const { error, data: monthlyTargetsData } = await getMonthlyTargets(jwt);
+  if (error || !monthlyTargetsData) {
     console.error('Error fetching monthly target:', error);
     redirect('/404?msg=حدث خطأ, الرجاء المحاولة مرة اخرى');
   }
 
-  const currentMonthTarget = monthlyTargetData.find(
+  const currentMonthTarget = monthlyTargetsData.find(
     (target) => target.year === year && target.month === month
   );
 
@@ -122,12 +122,16 @@ export default async function Ecommerce() {
       </div>
 
       <div className='col-span-12'>
-        <StatisticsChart />
+        <StatisticsChart
+          monthlySalesData={monthlySalesData}
+          monthlyTargetsData={monthlyTargetsData}
+          todaySales={todayOrderSales.total_sales}
+        />
       </div>
 
-      <div className='col-span-12 xl:col-span-5'>
+      {/* <div className='col-span-12 xl:col-span-5'>
         <DemographicCard />
-      </div>
+      </div> */}
 
       <div className='col-span-12 xl:col-span-7'>
         <TopProduct />
