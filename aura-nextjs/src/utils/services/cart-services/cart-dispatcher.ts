@@ -1,7 +1,7 @@
 import { CartEntity } from "@/entities/cart-entity";
 import cookie from "js-cookie";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 export const initialCart = new CartEntity({
   documentId: "",
   user_id: "",

@@ -22,7 +22,7 @@ interface Category {
   priority: number;
 }
 
-export default function categoryList() {
+export default function CategoryList() {
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [isOpen, setIsOpen] = React.useState(false);
   const [edit, setEdit] = React.useState<Category | undefined>(undefined);
@@ -78,11 +78,11 @@ export default function categoryList() {
         title: "Category deleted",
         description: "Category has been deleted successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An unexpected error occurred while deleting the category.",
+        description: error.message || "An unexpected error occurred while deleting the category.",
       });
       setAlerting(false);
     }

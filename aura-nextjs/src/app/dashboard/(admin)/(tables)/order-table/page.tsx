@@ -15,7 +15,7 @@ import Label from "@/components/ui/dashboard/form/Label";
 import Image from "next/image";
 import { ChevronDownIcon } from "@/icons";
 import Select from "@/components/ui/dashboard/form/Select";
-import { OrderDTO, OrderItem, OrderStatus, Product } from "@/interfaces/dto";
+import { OrderDTO, OrderStatus } from "@/interfaces/dto";
 import {
   getOrders,
   updateOrderStatus,
@@ -29,7 +29,6 @@ export default function OrderTable() {
   const [edit, setEdit] = React.useState<OrderDTO | undefined>();
   const [orders, setOrders] = React.useState<OrderDTO[]>([]);
   const [status, setStatus] = React.useState<OrderStatus>("pending");
-  const [amount, setAmount] = React.useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -108,7 +107,6 @@ export default function OrderTable() {
     }
     setEdit(undefined);
     setStatus("pending"); // Reset status to default
-    setAmount(0); // Reset amount to default
   }
 
   function toggleEditModal(order: OrderDTO | undefined): void {

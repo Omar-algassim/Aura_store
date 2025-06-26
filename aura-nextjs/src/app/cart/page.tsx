@@ -1,7 +1,7 @@
 "use client";
 
 import React, { JSX } from "react";
-import { useCart, useCartDispatcher, useUser } from "@/components/context";
+import { useCart, useCartDispatcher } from "@/components/context";
 import { BaseUrl } from "@/constants/api-constants";
 import Image from "next/image";
 import { ButtonPrimary } from "@/components/common/Buttons";
@@ -97,7 +97,6 @@ function CartProduct(props: CartProductProps) {
 
 export default function CartPage() {
   const cart = useCart() as CartEntity;
-  const user = useUser();
   const cartDispatcher = useCartDispatcher();
   const router = useRouter();
   const [cartProducts, setCartProducts] = React.useState(cart.products);

@@ -68,7 +68,7 @@ export interface Product {
   title: string;
   name: string;
   thumbnail: string;
-  images: { id: string; url: string; imageId: string }[];
+  images: { id?: string; url: string; imageId: string }[];
   price: number;
   stock: number;
   ordered: number;

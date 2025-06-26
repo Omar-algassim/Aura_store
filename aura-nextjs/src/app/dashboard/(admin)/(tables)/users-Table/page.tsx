@@ -1,20 +1,15 @@
 "use client";
 import ComponentCard from "@/components/ui/dashboard/common/ComponentCard";
 import PageBreadcrumb from "@/components/ui/dashboard/common/PageBreadCrumb";
-import BasicTableOne from "@/components/ui/dashboard/tables/BasicTableOne";
 import Badge from "@/components/ui/dashboard/ui/badge/Badge";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/dashboard/ui/table";
-import { Metadata } from "next";
 import React from "react";
 import Image from "next/image";
 import { User } from "@/entities/user-entity";
 import { getUsers, unblockUser, blockUser } from "@/utils/services/user-services/user-services";
 import cookie from "js-cookie";
 import { Modal } from "@/components/ui/dashboard/ui/modal";
-import { useModal } from "@/hooks/useModal";
-import { set } from "zod";
 import { useUser } from "@/components/context";
-
 
 
 export default function UserTable() {

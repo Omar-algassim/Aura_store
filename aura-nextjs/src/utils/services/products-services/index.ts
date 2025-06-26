@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { newProductSchema } from '@/components/ui/forms/schemas';
+ 
 import { ProductQueryFilters } from '@/interfaces';
 import { Product, Review } from '@/interfaces/dto';
 import { apiClient } from '@/utils/api/api-client';

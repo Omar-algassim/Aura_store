@@ -22,7 +22,7 @@ export default function CitiesControl(props: CitiesControlProps) {
   const [ changed, setChanged ] = React.useState(true);
   const { toast } = useToast();
 
-  function onChange(checked: boolean) {
+  function onChange() {
     setChanged(!changed);
   }
 
@@ -82,11 +82,11 @@ export default function CitiesControl(props: CitiesControlProps) {
           description: "City deleted successfully.",
         });
         closeModal()
-      } catch (error) {
+      } catch (error: any) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "An error occurred while deleting the city.",
+          description: error.message || "An error occurred while deleting the city.",
         });
         return;
       }
