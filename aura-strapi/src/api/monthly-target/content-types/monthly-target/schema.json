@@ -19,6 +19,7 @@
     "month": {
       "type": "integer",
       "required": true,
+      "unique": true,
       "max": 12,
       "min": 1
     },

@@ -1,53 +1,98 @@
-// this is a corn job that calculates the aggregated monthly sales
+// this is a cron job that calculates the aggregated monthly sales
 // runs each day at 00:00 EAT
-// query database orders table for the current month
+// query orders for the current month
 // and calculate the total order sales and add it to the monthly_sales table for the current month
 
-import knex from 'knex';
-
-export async function calculateMonthlySales(db: knex.Knex) {
+export async function calculateMonthlySales() {
   try {
     const today = new Date();
-    const totalOrders = await db('orders')
-      .where(
-        'updated_at',
-        '>=',
-        new Date(today.getFullYear(), today.getMonth(), 1)
-      )
-      .andWhere(
-        'updated_at',
-        '<',
-        new Date(today.getFullYear(), today.getMonth() + 1, 1)
-      )
-      .andWhere('order_status', '=', 'delivered');
-    console.log(
-      `Total orders for the month: ${totalOrders.length}`,
-      JSON.stringify(totalOrders, null, 2)
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+
+    // Fetch delivered orders for the current month
+    const totalOrders = await strapi.documents('api::order.order').findMany({
+      filters: {
+        $and: [
+          {
+            updatedAt: {
+              $gte: startOfMonth.toISOString(),
+            },
+          },
+          {
+            updatedAt: {
+              $lt: endOfMonth.toISOString(),
+            },
+          },
+          {
+            order_status: {
+              $eq: 'delivered',
+            },
+          },
+        ],
+      },
+      fields: ['total_pay'],
+    });
+
+    strapi.log.info(
+      `Total delivered orders for the month: ${totalOrders.length}`
     );
+
     const totalSales = totalOrders.reduce(
-      (acc, order) => acc + parseFloat(order.total_pay),
+      (acc, order) => acc + (order.total_pay || 0),
       0
     );
-    const currentMonthSales = await db('saleses')
-      .where('month', today.getMonth() + 1) // getMonth() is zero-based, so we add 1
-      .andWhere('year', today.getFullYear())
-      .first();
 
-    if (currentMonthSales) {
-      // If there is already an entry for this month, update it
-      await db('saleses').where('id', currentMonthSales.id).update({
-        sale: totalSales,
-        orders: totalOrders.length,
+    // Check if there's already an entry for this month
+    const existingSales = await strapi
+      .documents('api::sales.sales')
+      .findFirst({
+        filters: {
+          $and: [
+            {
+              month: {
+                $eq: today.getMonth() + 1, // getMonth() is zero-based, so we add 1
+              },
+            },
+            {
+              year: {
+                $eq: today.getFullYear(),
+              },
+            },
+          ],
+        },
+        fields: ['sale'], // we only need the documentId which it will be retrieved automatically, so we will add the sales field just to reduce the data size
       });
-      return;
-    }
-    await db('saleses').insert({
+
+    const salesData = {
       month: today.getMonth() + 1,
       year: today.getFullYear(),
       sale: totalSales,
       orders: totalOrders.length,
-    });
+    };
+
+    if (existingSales) {
+      // If there is already an entry for this month, update it
+      await strapi.documents('api::sales.sales').update({
+        documentId: existingSales.documentId,
+        data: {
+          sale: totalSales,
+          orders: totalOrders.length,
+        },
+      });
+      strapi.log.info(
+        `Updated monthly sales for ${today.getMonth() + 1}/${today.getFullYear()}: Sales: ${totalSales}, Orders: ${totalOrders.length}`
+      );
+    } else {
+      // Create new entry for this month
+      await strapi.documents('api::sales.sales').create({
+        data: salesData,
+        status: 'published',
+      });
+      strapi.log.info(
+        `Created monthly sales for ${today.getMonth() + 1}/${today.getFullYear()}: Sales: ${totalSales}, Orders: ${totalOrders.length}`
+      );
+    }
   } catch (error) {
-    console.error('Error calculating monthly sales:', error);
+    strapi.log.error('Error calculating monthly sales:', error);
   }
 }

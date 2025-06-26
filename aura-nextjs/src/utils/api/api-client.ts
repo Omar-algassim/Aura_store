@@ -1,4 +1,3 @@
- 
 // hold all the api calls, and base logic
 // uses axios for http requests
 // export a class instance of the api client, which contains all the api calls
@@ -15,9 +14,9 @@ class APIClient {
     },
   });
 
-  async getUsers(jwt: string) {
+  async getUsers(jwt: string, query: string = '?populate=*') {
     try {
-      const result = await this.api.get('/users?populate=*', {
+      const result = await this.api.get(`/users${query}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
@@ -1052,19 +1051,20 @@ class APIClient {
     }
   }
 
-  async fetchOrder(jwt: string) {
+  async fetchOrder(
+    jwt: string,
+    query: string = '?populate[order_items][populate]=*&populate=user&sort=createdAt:asc'
+  ) {
     try {
-      const response = await this.api.get(
-        `/orders?populate[order_items][populate]=*&populate=user&sort=createdAt:asc`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      );
+      const response = await this.api.get(`/orders${query}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
       if (response.status === 200 || response.status === 201) {
         return { data: response.data.data };
       } else {
+        console.error('Error fetching order', query);
         return {
           error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
           code: response.status,
@@ -1072,7 +1072,10 @@ class APIClient {
       }
     } catch (error: any) {
       // console.log(error);
-      return { error: error.response?.data || error.message };
+      console.error('Error fetching order', query, error);
+      return {
+        error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+      };
     }
   }
 
@@ -1166,6 +1169,126 @@ class APIClient {
         error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
         code: response.status,
       };
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  // dashboard stats
+  async getMonthlyTargets(jwt: string, query: string) {
+    try {
+      const response = await this.api.get(`/monthly-targets${query}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        console.log('getMonthlyTargets response', response.data);
+        return { data: response.data.data };
+      } else {
+        return {
+          error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  async updateMonthlyTarget(jwt: string, query: string, value: number) {
+    try {
+      const response = await this.api.get(`/monthly-targets${query}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+
+      if (response.status === 404) {
+        // create new one
+        const today = new Date();
+        const data = {
+          year: today.getFullYear(),
+          month: today.getMonth() + 1,
+          target: value,
+        };
+        const d = await this.api.post(
+          `/monthly-targets`,
+          { data },
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        );
+
+        if (d.status !== 201) {
+          console.log('Error creating month target', d.data);
+          throw new Error('Error creating Monthly target');
+        }
+        return {
+          data: 'Monthly target Updated',
+          error: null,
+        };
+      }
+
+      console.log(response.data);
+      const monthlyTarget = response.data.data[0];
+
+      // update its value
+      const updateResponse = await this.api.put(
+        `/monthly-targets/${monthlyTarget.documentId}`,
+        {
+          data: {
+            target: value,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+
+      if (updateResponse.status === 201 || updateResponse.status === 200) {
+        return {
+          data: 'Monthly target updated',
+          error: null,
+        };
+      }
+
+      return {
+        error: 'Error updating monthly target',
+        data: null,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('Error update Monthly target', error.response?.data);
+      }
+      console.log('Error update Monthly target', error);
+      return {
+        error: 'Error update Monthly target',
+        data: null,
+      };
+    }
+  }
+
+  async getMonthlySales(jwt: string, query: string) {
+    try {
+      const response = await this.api.get(`/saleses${query}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      if (response.status === 200 || response.status === 201) {
+        console.log('getMonthlySales response', response.data);
+        return { data: response.data.data };
+      } else {
+        return {
+          error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+          code: response.status,
+        };
+      }
     } catch (error: any) {
       return { error: error.response?.data || error.message };
     }
