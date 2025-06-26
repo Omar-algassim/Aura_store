@@ -6,7 +6,6 @@ import cookies from 'js-cookie';
 import { Edit } from 'lucide-react';
 import { ApexOptions } from 'apexcharts';
 
-import { getSalesByDate } from '@/utils/services/dashboard/monthly-sales';
 import { updateCurrentMonthTarget } from '@/utils/services/dashboard/monthly-targets';
 
 import { MoreDotIcon } from '@/icons';
@@ -24,12 +23,16 @@ type MonthlyTargetProps = {
   currentMonthTarget?: number;
   currentMonthSales?: number;
   pastMonthSales?: number;
+  todayOrderSales: number;
+  yesterdayOrderSales: number;
 };
 
 export default function MonthlyTarget({
   currentMonthTarget = 0,
   currentMonthSales = 0,
   pastMonthSales = 0,
+  todayOrderSales = 0,
+  yesterdayOrderSales = 0,
 }: MonthlyTargetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,9 +44,11 @@ export default function MonthlyTarget({
   const [targetIncrease, setTargetIncrease] = useState(0);
   const [newTarget, setNewTarget] = useState(currentMonthTarget);
 
-  const [sales, setSales] = useState(currentMonthSales);
-  const [todaySales, setTodaySales] = useState(0);
-  const [todaySalesIncrease, setTodaySalesIncrease] = useState(false);
+  const [sales, setSales] = useState(currentMonthSales + todayOrderSales);
+  const [todaySales, setTodaySales] = useState(todayOrderSales);
+  const [todaySalesIncrease, setTodaySalesIncrease] = useState(
+    todayOrderSales > yesterdayOrderSales
+  );
 
   const { toast } = useToast();
 
@@ -142,47 +147,6 @@ export default function MonthlyTarget({
   function closeDropdown() {
     setIsOpen(false);
   }
-
-  // get today and yesterday sales for current year
-  useEffect(() => {
-    const fetchTodaySales = async () => {
-      if (!jwt) {
-        setError('Session expired, please login again');
-        return;
-      }
-      const currentDay = new Date();
-      const currentDayPastMonth = new Date(
-        currentDay.getFullYear(),
-        currentDay.getMonth(),
-        currentDay.getDate() - 1
-      );
-
-      const { error: todayOrderSalesError, data: todayOrderSales } =
-        await getSalesByDate(jwt, currentDay);
-      if (todayOrderSalesError || todayOrderSales === null) {
-        setError(
-          todayOrderSalesError || 'Error getting sales for current date'
-        );
-        return;
-      }
-      setTodaySales(todayOrderSales);
-      setSales((prev) => prev + todayOrderSales);
-
-      const {
-        error: todayPastMonthSalesError,
-        data: todayPastMonthOrderSales,
-      } = await getSalesByDate(jwt, currentDayPastMonth);
-      if (todayPastMonthSalesError || todayPastMonthOrderSales === null) {
-        setError(
-          todayPastMonthSalesError ||
-            'Error getting sales for the selected Date'
-        );
-        return;
-      }
-      setTodaySalesIncrease(todayOrderSales > todayPastMonthOrderSales);
-    };
-    fetchTodaySales();
-  }, []);
 
   // calculate target Reached
   useEffect(() => {

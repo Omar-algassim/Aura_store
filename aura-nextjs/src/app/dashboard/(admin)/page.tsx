@@ -10,7 +10,10 @@ import DemographicCard from '@/components/ui/dashboard/ecommerce/DemographicCard
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getMonthlyTargets } from '@/utils/services/dashboard/monthly-targets';
-import { getMonthlySales } from '@/utils/services/dashboard/monthly-sales';
+import {
+  getMonthlySales,
+  getSalesByDate,
+} from '@/utils/services/dashboard/monthly-sales';
 
 export const metadata: Metadata = {
   title: 'Aura-Admin',
@@ -57,6 +60,28 @@ export default async function Ecommerce() {
     (sale) => sale.year === year && sale.month === month - 1
   );
 
+  // fetch today sales
+  const currentDay = new Date();
+  const yesterday = new Date(
+    currentDay.getFullYear(),
+    currentDay.getMonth(),
+    currentDay.getDate() - 1
+  );
+
+  const { error: todayOrderSalesError, data: todayOrderSales } =
+    await getSalesByDate(jwt, currentDay);
+  if (todayOrderSalesError || todayOrderSales === null) {
+    console.error('Error fetching monthly sales:', salesError);
+    redirect('/404?msg=حدث خطأ, الرجاء المحاولة مرة اخرى');
+  }
+
+  const { error: yesterdayOrderSalesError, data: yesterdayOrderSales } =
+    await getSalesByDate(jwt, yesterday);
+  if (yesterdayOrderSalesError || yesterdayOrderSales === null) {
+    console.error('Error fetching monthly sales:', yesterdayOrderSalesError);
+    redirect('/404?msg=حدث خطأ, الرجاء المحاولة مرة اخرى');
+  }
+
   // console.log('Current Month Target:', currentMonthTarget);
   // console.log('Current Month Sales:', currentMonthSales);
 
@@ -73,6 +98,8 @@ export default async function Ecommerce() {
           currentMonthTarget={currentMonthTarget?.target}
           currentMonthSales={currentMonthSales?.sale}
           pastMonthSales={pastMonthSales?.sale}
+          todayOrderSales={todayOrderSales}
+          yesterdayOrderSales={yesterdayOrderSales}
         />
       </div>
 
