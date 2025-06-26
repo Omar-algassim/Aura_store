@@ -1,20 +1,20 @@
 "use server';";
-
-import type { Metadata } from 'next';
-import { EcommerceMetrics } from '@/components/ui/dashboard/ecommerce/EcommerceMetrics';
-import MonthlyTarget from '@/components/ui/dashboard/ecommerce/MonthlyTarget';
-import MonthlySalesChart from '@/components/ui/dashboard/ecommerce/MonthlySalesChart';
-import StatisticsChart from '@/components/ui/dashboard/ecommerce/StatisticsChart';
-import TopProduct from '@/components/ui/dashboard/ecommerce/TopProduct';
-import DemographicCard from '@/components/ui/dashboard/ecommerce/DemographicCard';
 import { cookies } from 'next/headers';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+
+import { getOrders } from '@/utils/services/dashboard/orders';
 import { getMonthlyTargets } from '@/utils/services/dashboard/monthly-targets';
 import {
   getMonthlySales,
   getSalesByDate,
 } from '@/utils/services/dashboard/monthly-sales';
-import { getOrders } from '@/utils/services/dashboard/orders';
+
+import { EcommerceMetrics } from '@/components/ui/dashboard/ecommerce/EcommerceMetrics';
+import MonthlyTarget from '@/components/ui/dashboard/ecommerce/MonthlyTarget';
+import MonthlySalesChart from '@/components/ui/dashboard/ecommerce/MonthlySalesChart';
+import StatisticsChart from '@/components/ui/dashboard/ecommerce/StatisticsChart';
+import TopProduct from '@/components/ui/dashboard/ecommerce/TopProduct';
 
 export const metadata: Metadata = {
   title: 'Aura-Admin',

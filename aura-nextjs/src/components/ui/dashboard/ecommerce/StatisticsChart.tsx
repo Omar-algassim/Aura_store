@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
+import dynamic from 'next/dynamic';
 // import Chart from "react-apexcharts";
 import { ApexOptions } from 'apexcharts';
-import ChartTab from '../common/ChartTab';
-import dynamic from 'next/dynamic';
+
 import { numberShortener } from '@/utils/services/dashboard/helper';
 
 // Dynamically import the ReactApexChart component

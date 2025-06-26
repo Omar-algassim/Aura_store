@@ -45,11 +45,9 @@ export default function MonthlyTarget({
   const [targetIncrease, setTargetIncrease] = useState(0);
   const [newTarget, setNewTarget] = useState(currentMonthTarget);
 
-  const [sales, setSales] = useState(currentMonthSales + todayOrderSales);
-  const [todaySales, setTodaySales] = useState(todayOrderSales);
-  const [todaySalesIncrease, setTodaySalesIncrease] = useState(
-    todayOrderSales > yesterdayOrderSales
-  );
+  const [sales] = useState(currentMonthSales + todayOrderSales);
+  const [todaySales] = useState(todayOrderSales);
+  const [todaySalesIncrease] = useState(todayOrderSales > yesterdayOrderSales);
 
   const { toast } = useToast();
 
