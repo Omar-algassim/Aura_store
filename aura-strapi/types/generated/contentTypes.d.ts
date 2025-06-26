@@ -676,6 +676,7 @@ export interface ApiMonthlyTargetMonthlyTarget
       Schema.Attribute.Private;
     month: Schema.Attribute.Integer &
       Schema.Attribute.Required &
+      Schema.Attribute.Unique &
       Schema.Attribute.SetMinMax<
         {
           max: 12;
