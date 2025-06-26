@@ -2,13 +2,26 @@
 // it handle all the processes that operated on or by the user (loged-in/annonymous) like login, logout, register, update user info, get user info, and delete user.
 // handle the user authentication process
 // it make use of the api-client.ts to run those processes in the server side
+import { AxiosError } from 'axios';
+import qs from 'qs';
 
 import { User } from '@/entities/user-entity';
 import { apiClient } from '@/utils/api/api-client';
-import { AxiosError } from 'axios';
 
 export const getUsers = async (jwt: string) => {
-  return await apiClient.getUsers(jwt);
+  const q = qs.stringify(
+    {
+      fields: ['id'],
+    },
+    {
+      addQueryPrefix: true,
+    }
+  );
+  const { error, data } = await apiClient.getUsers(jwt, q);
+  if (error || !data) {
+    return { error: 'حدث خطأ ما, الرجاء المحاولة مرة اخرى' };
+  }
+  return { error: null, data };
 };
 
 export const getUserMe = async (jwt: string | undefined) => {

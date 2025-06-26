@@ -66,7 +66,7 @@ export async function getMonthlySales(
 type SalesByDateResponse = {
   message: string;
   type: 'success' | 'error';
-  data: number | null;
+  data: { total_sales: number; total_orders: number } | null;
   error: string | null;
 };
 
@@ -135,7 +135,7 @@ export async function getSalesByDate(
   return {
     message: 'تم جلب المبيعات الشهرية بنجاح',
     type: 'success',
-    data: sales,
+    data: { total_sales: sales, total_orders: data.length },
     error: null,
   };
 }

@@ -14,9 +14,9 @@ class APIClient {
     },
   });
 
-  async getUsers(jwt: string) {
+  async getUsers(jwt: string, query: string = '?populate=*') {
     try {
-      const result = await this.api.get('/users?populate=*', {
+      const result = await this.api.get(`/users${query}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },

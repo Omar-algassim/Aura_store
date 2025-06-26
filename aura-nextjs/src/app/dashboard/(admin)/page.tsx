@@ -14,6 +14,7 @@ import {
   getMonthlySales,
   getSalesByDate,
 } from '@/utils/services/dashboard/monthly-sales';
+import { getOrders } from '@/utils/services/dashboard/orders';
 
 export const metadata: Metadata = {
   title: 'Aura-Admin',
@@ -72,23 +73,37 @@ export default async function Ecommerce() {
     await getSalesByDate(jwt, currentDay);
   if (todayOrderSalesError || todayOrderSales === null) {
     console.error('Error fetching monthly sales:', salesError);
-    redirect('/404?msg=حدث خطأ, الرجاء المحاولة مرة اخرى');
+    redirect('/500?msg=حدث خطأ, الرجاء المحاولة مرة اخرى');
   }
 
   const { error: yesterdayOrderSalesError, data: yesterdayOrderSales } =
     await getSalesByDate(jwt, yesterday);
   if (yesterdayOrderSalesError || yesterdayOrderSales === null) {
     console.error('Error fetching monthly sales:', yesterdayOrderSalesError);
-    redirect('/404?msg=حدث خطأ, الرجاء المحاولة مرة اخرى');
+    redirect('/500?msg=حدث خطأ, الرجاء المحاولة مرة اخرى');
+  }
+
+  const { error: totalOrdersError, data: totalOrders } = await getOrders(jwt);
+  if (totalOrdersError || !totalOrders) {
+    console.error('Error fetching total orders:', totalOrdersError);
+    redirect('/500?msg=حدث خطأ, الرجاء المحاولة مرة اخرى');
   }
 
   // console.log('Current Month Target:', currentMonthTarget);
   // console.log('Current Month Sales:', currentMonthSales);
 
+  // console.log('Today Order Sales:', todayOrderSales);
+  // console.log('Yesterday Order Sales:', yesterdayOrderSales);
+  // console.log('Total Orders:', totalOrders.length);
+
   return (
     <div className='grid grid-cols-12 gap-4 md:gap-6'>
       <div className='col-span-12 space-y-6 xl:col-span-7'>
-        <EcommerceMetrics />
+        <EcommerceMetrics
+          todayOrders={todayOrderSales.total_orders}
+          yesterdayOrders={yesterdayOrderSales.total_orders}
+          totalOrders={totalOrders.length}
+        />
 
         <MonthlySalesChart />
       </div>
@@ -98,8 +113,8 @@ export default async function Ecommerce() {
           currentMonthTarget={currentMonthTarget?.target}
           currentMonthSales={currentMonthSales?.sale}
           pastMonthSales={pastMonthSales?.sale}
-          todayOrderSales={todayOrderSales}
-          yesterdayOrderSales={yesterdayOrderSales}
+          todayOrderSales={todayOrderSales.total_sales}
+          yesterdayOrderSales={yesterdayOrderSales.total_sales}
         />
       </div>
 
