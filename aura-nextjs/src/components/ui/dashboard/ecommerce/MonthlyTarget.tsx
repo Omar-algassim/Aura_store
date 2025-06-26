@@ -13,6 +13,7 @@ import { DropdownItem } from '@/components/ui/dashboard/ui/dropdown/DropdownItem
 import { Dropdown } from '@/components/ui/dashboard/ui/dropdown/Dropdown';
 
 import { useToast } from '@/hooks/use-toast';
+import { numberShortener } from '@/utils/services/dashboard/helper';
 
 // Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
@@ -110,18 +111,6 @@ export default function MonthlyTarget({
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
-  }
-
-  function numberShortener(num: number): string {
-    if (num >= 1e9) {
-      return (num / 1e9).toFixed(1) + 'B';
-    } else if (num >= 1e6) {
-      return (num / 1e6).toFixed(1) + 'M';
-    } else if (num >= 1e3) {
-      return (num / 1e3).toFixed(1) + 'K';
-    } else {
-      return num.toString();
-    }
   }
 
   async function updateTarget() {

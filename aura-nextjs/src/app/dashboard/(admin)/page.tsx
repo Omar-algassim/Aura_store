@@ -105,7 +105,10 @@ export default async function Ecommerce() {
           totalOrders={totalOrders.length}
         />
 
-        <MonthlySalesChart />
+        <MonthlySalesChart
+          todaySales={todayOrderSales.total_sales}
+          monthlySalesData={monthlySalesData}
+        />
       </div>
 
       <div className='col-span-12 xl:col-span-5'>
