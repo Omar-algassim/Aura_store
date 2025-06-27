@@ -3,7 +3,7 @@
 // export a class instance of the api client, which contains all the api calls
 import { User } from '@/entities/user-entity';
 import { OrderDTO, OrderItem, SignupDTO } from '@/interfaces/dto';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, isAxiosError } from 'axios';
 class APIClient {
   private baseUrl =
     process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api';
@@ -176,10 +176,14 @@ class APIClient {
         return { data: result.data };
       }
       return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
-    } catch (error: any) {
+    } catch (error) {
       //console.error(error);
+      // console.log('AxiosError:', error.response?.data);
+      if (isAxiosError(error)) {
+        return { error: error.response?.data };
+      }
       return {
-        error: error.message || 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+        error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
       };
     }
   }
