@@ -23,8 +23,9 @@ export function newProductAction(
     brand: formData.get("brand"),
     images: formData.getAll("images[]"),
     stock: formData.get("stock"),
-    colorGrade: formData.get("color_grade"),
+    color_grade: formData.get("color_grade"),
     weight: formData.get("weight"),
+    discount: formData.get("discount"),
   };
 
   console.dir(rowData);
@@ -55,7 +56,7 @@ export function newProductAction(
     price: validation.data.price,
     stock: validation.data.stock,
     color_grade: validation.data.color_grade,
-    weight: validation.data.Weight,
+    weight: validation.data.weight,
     discount: validation.data.discount,
   };
 
