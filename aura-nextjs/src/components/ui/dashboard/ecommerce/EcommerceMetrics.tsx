@@ -110,7 +110,6 @@ export const EcommerceMetrics = ({
             </Badge>
           ) : (
             <Badge color='error'>
-              <ArrowUpIcon />
               <ArrowDownIcon className='text-error-500' />
               {Number.isFinite(ordersPercentage)
                 ? ordersPercentage.toFixed(2)
