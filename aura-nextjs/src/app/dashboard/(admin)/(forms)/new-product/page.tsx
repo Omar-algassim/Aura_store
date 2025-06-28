@@ -31,7 +31,7 @@ interface ProductForm {
 }
 
 interface images {
-  id: string;
+  id?: string;
   url: string;
   imageId: string;
 }

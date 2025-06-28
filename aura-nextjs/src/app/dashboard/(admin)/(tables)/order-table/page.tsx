@@ -23,10 +23,12 @@ import {
 import cookie from 'js-cookie';
 import { BaseUrl } from '@/constants/api-constants';
 import { useToast } from '@/hooks/use-toast';
+import { Loader } from '@/components/common/loader';
 
 export default function OrderTable() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [edit, setEdit] = React.useState<OrderDTO | undefined>();
+  const [loading, setLoading] = React.useState(false);
   const [orders, setOrders] = React.useState<OrderDTO[]>([]);
   const [status, setStatus] = React.useState<OrderStatus>('pending');
   const { toast } = useToast();
@@ -44,12 +46,21 @@ export default function OrderTable() {
         return;
       }
       try {
+        setLoading(true);
         const response = await getOrders(jwt);
         if (response.data) {
           setOrders(response.data);
+          setLoading(false);
         } else if (response.error) {
+          setLoading(false);
+          toast({
+            variant: 'destructive',
+            title: 'Error fetching orders',
+            description: response.error.message || 'Failed to fetch orders.',
+          });
         }
       } catch (error) {
+        setLoading(false);
         console.error('An error occurred while fetching orders:', error);
       }
     };
@@ -119,7 +130,21 @@ export default function OrderTable() {
   return (
     <div className='overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]'>
       <div className='max-w-full overflow-x-auto'>
-        <div className='min-w-full overflow-x-auto'>
+        <div className='min-w-full border rounded-full border-gray-100 overflow-x-auto'>
+          { loading ? (
+            <Loader />
+          ) : orders.length === 0 ? (
+           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+            <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+                  Orders
+                </h3>
+              </div>
+            </div>
+            <p className="text-center text-gray-500">No Order available</p>
+          </div>
+          ) : (
           <Table>
             {/* Table Header */}
             <TableHeader className='border-b border-gray-100 dark:border-white/[0.05]'>
@@ -232,7 +257,7 @@ export default function OrderTable() {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+          </Table>)}
         </div>
       </div>
       <Modal

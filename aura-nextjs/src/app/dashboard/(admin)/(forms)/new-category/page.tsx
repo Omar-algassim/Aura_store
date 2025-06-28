@@ -154,47 +154,49 @@ export default function CategoryForm(props: categoryProps) {
             <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
               Main information
             </h5>
-            <div>
-              <Label>Title *</Label>
-              <Input
-                name="title"
-                defaultValue={category?.title}
-                placeholder="the name of product"
-                type="text"
-              />
-              {titleError.length > 0 ? (
-                titleError.map((error, index) => (
-                  <span
-                    key={index}
-                    className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-                  >
-                    {error.message}
-                  </span>
-                ))
-              ) : (
-                <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
-              )}
-            </div>
-            <div>
-              <Label>Priority *</Label>
-              <Input
-                name="priority"
-                defaultValue={category?.priority}
-                placeholder="Number represent the sort of category in the list"
-                type="number"
-              />
-              {priorityError.length > 0 ? (
-                priorityError.map((error, index) => (
-                  <span
-                    key={index}
-                    className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
-                  >
-                    {error.message}
-                  </span>
-                ))
-              ) : (
-                <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
-              )}
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div>
+                <Label>Title *</Label>
+                <Input
+                  name="title"
+                  defaultValue={category?.title}
+                  placeholder="the name of product"
+                  type="text"
+                />
+                {titleError.length > 0 ? (
+                  titleError.map((error, index) => (
+                    <span
+                      key={index}
+                      className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                    >
+                      {error.message}
+                    </span>
+                  ))
+                ) : (
+                  <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                )}
+              </div>
+              <div>
+                <Label>Priority *</Label>
+                <Input
+                  name="priority"
+                  defaultValue={category?.priority}
+                  placeholder="Number represent the sort of category in the list"
+                  type="number"
+                />
+                {priorityError.length > 0 ? (
+                  priorityError.map((error, index) => (
+                    <span
+                      key={index}
+                      className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] "
+                    >
+                      {error.message}
+                    </span>
+                  ))
+                ) : (
+                  <span className="flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap"></span>
+                )}
+              </div>
             </div>
           </div>
         </div>

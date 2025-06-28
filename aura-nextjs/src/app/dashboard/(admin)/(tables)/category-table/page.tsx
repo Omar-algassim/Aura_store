@@ -109,32 +109,11 @@ export default function CategoryList() {
     setIsOpen(!isOpen);
   }
 
-  if (categories.length === 0) {
-    return (
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
-        <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-              Categories
-            </h3>
-          </div>
-        </div>
-        <p className="text-center text-gray-500">No categories available</p>
-      </div>
-    );
-  }
 
-  // Render the table if there are categorys
-
+  // Render the table if there are categories
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
-      <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Categories
-          </h3>
-        </div>
-
+      <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-end">
         <div className="flex items-center gap-3">
           <button
             onClick={newCategoryWindow}
@@ -146,7 +125,18 @@ export default function CategoryList() {
         </div>
       </div>
       <div className="max-w-full overflow-x-auto">
-        <Table>
+      { categories.length === 0 ? (
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+        <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+              Categories
+            </h3>
+          </div>
+        </div>
+        <p className="text-center text-gray-500">No categories available</p>
+      </div>) : 
+        (<Table>
           {/* Table Header */}
           <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
             <TableRow>
@@ -229,7 +219,7 @@ export default function CategoryList() {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+        </Table>)}
       </div>
       <Modal
         isOpen={isOpen}
