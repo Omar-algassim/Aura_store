@@ -8,8 +8,8 @@ import qs from 'qs';
 import { User } from '@/entities/user-entity';
 import { apiClient } from '@/utils/api/api-client';
 
-export const getUsers = async (jwt: string) => {
-  const q = qs.stringify(
+export const getUsers = async (jwt: string, populate: boolean = false) => {
+  const q = populate ? "?populate=*" : qs.stringify(
     {
       fields: ['id'],
     },
