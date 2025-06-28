@@ -69,14 +69,14 @@ export const newProductSchema = z.object({
     .optional(),
   color_grade: z.string().optional(),
   discount: z
-    .number()
+    .string()
     .optional()
-    .refine((value) => value === undefined || (value >= 0 && value <= 100), {
+    .refine((value) => value === undefined || (Number(value) >= 0 && Number(value) <= 100), {
       message: "Discount must be between 0 and 100",
     }),
   stock: z.string().min(1, "please enter quantity of product in stock"),
-  Weight: z
-    .number()
+  weight: z
+    .string()
     .optional(),
 
   });
@@ -87,7 +87,7 @@ export const newProductSchema = z.object({
 
   export const newCategorySchema = z.object({
     title: z.string().min(2, "please enter a category title"),
-    priority: z.string()
+    priority: z.string().min(1, "please enter a priority number"),
   });
 
 export const newCountrySchema = z.object({
