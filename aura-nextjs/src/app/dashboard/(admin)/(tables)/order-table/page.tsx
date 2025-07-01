@@ -18,13 +18,13 @@ import Select from "@/components/ui/dashboard/form/Select";
 import { OrderDTO, OrderStatus } from "@/interfaces/dto";
 import {
   getOrders,
+  SendConfirmMessage,
   updateOrderStatus,
 } from "@/utils/services/dashboard/orders";
 import cookie from "js-cookie";
 import { BaseUrl } from "@/constants/api-constants";
 import { useToast } from "@/hooks/use-toast";
 import { Loader } from "@/components/common/loader";
-import { Download } from "lucide-react";
 
 export default function OrderTable() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -110,6 +110,13 @@ export default function OrderTable() {
             : order
         )
       );
+      if (status === "confirmed" && edit.user.phone_number) {
+        await SendConfirmMessage(
+        edit.user.phone_number,
+        edit.documentId,
+        edit.user.username
+      );
+    }
       setIsOpen(false);
       toast({
         variant: "success",
@@ -131,7 +138,7 @@ export default function OrderTable() {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
-        <div className="min-w-full border rounded-full border-gray-100 overflow-x-auto">
+        <div className="min-w-full border rounded-2xl border-gray-100 overflow-x-auto">
           {loading ? (
             <Loader />
           ) : orders.length === 0 ? (
