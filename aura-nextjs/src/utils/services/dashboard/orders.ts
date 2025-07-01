@@ -1,7 +1,6 @@
 'use server';
 import { apiClient } from '@/utils/api/api-client';
 import axios from 'axios';
-import { stringify } from 'querystring';
 
 export async function getOrders(jwt: string): Promise<{
   message: string;
@@ -68,6 +67,7 @@ export async function updateOrderStatus(
         error: error,
       };
     }
+    
     return {
       message: 'Order status updated successfully',
       type: 'success',
@@ -182,7 +182,8 @@ export async function ReceiveOrderMessage(
 
 export async function SendConfirmMessage(
   phone: string,
-  orderId: string
+  orderId: string,
+  name: string
 ): Promise<{
   message: string;
   type?: string;
@@ -190,8 +191,9 @@ export async function SendConfirmMessage(
   error?: any;
 }> {
   const body = {
-    template_id: '189995',
-    'templateVariable-orderId-1': orderId,
+    template_id: '195050',
+    'templateVariable-userName-1': name,
+    'templateVariable-orderId-2': orderId,
   };
   return await SendWhatsappMessage(phone, body);
 }
