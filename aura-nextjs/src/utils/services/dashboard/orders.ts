@@ -1,6 +1,7 @@
 'use server';
 import { apiClient } from '@/utils/api/api-client';
 import axios from 'axios';
+import { stringify } from 'querystring';
 
 export async function getOrders(jwt: string): Promise<{
   message: string;
@@ -12,7 +13,7 @@ export async function getOrders(jwt: string): Promise<{
     const { error, data } = await apiClient.fetchOrder(jwt);
     if (error) {
       return {
-        message: error.message,
+        message: error,
         type: 'server error',
         data: null,
         error: error,
@@ -154,7 +155,6 @@ export async function SendWhatsappMessage(
       error: null,
     };
   } catch (error) {
-    console.error('Error sending WhatsApp message:', error);
     return {
       message: 'Failed to send WhatsApp message',
       type: 'error',
@@ -175,7 +175,6 @@ export async function ReceiveOrderMessage(
 }> {
   const body = {
     template_id: '189995',
-    template_header_media_url: '123456',
     'templateVariable-orderId-1': orderId,
   };
   return await SendWhatsappMessage(phone, body);
@@ -192,7 +191,6 @@ export async function SendConfirmMessage(
 }> {
   const body = {
     template_id: '189995',
-    template_header_media_url: '123456',
     'templateVariable-orderId-1': orderId,
   };
   return await SendWhatsappMessage(phone, body);
