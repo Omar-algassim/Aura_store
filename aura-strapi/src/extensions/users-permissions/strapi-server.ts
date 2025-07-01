@@ -394,7 +394,15 @@ export default async (plugin: any) => {
         user: await sanitizeUser(user, ctx),
       });
     } catch (error) {
-      throw new ApplicationError(error.message);
+      if (error.message === 'Email is already taken.') {
+        return ctx.badRequest('email_taken');
+      }
+      // throw new ApplicationError(error.message);
+      if (error.code === 'ETIMEDOUT') {
+        return ctx.badRequest('timeout');
+      }
+      strapi.log.error('ApplicationError:', error.message);
+      return ctx.badRequest('server');
     }
   };
 
