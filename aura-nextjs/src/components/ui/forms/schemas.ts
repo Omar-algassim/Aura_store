@@ -69,7 +69,7 @@ export const newProductSchema = z.object({
     .optional(),
   color_grade: z.string().optional(),
   discount: z
-    .string()
+    .number()
     .optional()
     .refine((value) => value === undefined || (Number(value) >= 0 && Number(value) <= 100), {
       message: "Discount must be between 0 and 100",
