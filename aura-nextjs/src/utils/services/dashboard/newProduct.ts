@@ -25,7 +25,7 @@ export function newProductAction(
     stock: formData.get("stock"),
     color_grade: formData.get("color_grade"),
     weight: formData.get("weight"),
-    discount: formData.get("discount"),
+    discount: Number(formData.get("discount")),
   };
 
   console.dir(rowData);
@@ -57,9 +57,10 @@ export function newProductAction(
     stock: validation.data.stock,
     color_grade: validation.data.color_grade,
     weight: validation.data.weight,
-    discount: validation.data.discount,
+    discount: Number(validation.data.discount) || undefined, // ensure discount is a number or undefined
   };
 
+  console.log("Validated data:", data);
   return {
     message: "product validation successfully",
     type: "success",
