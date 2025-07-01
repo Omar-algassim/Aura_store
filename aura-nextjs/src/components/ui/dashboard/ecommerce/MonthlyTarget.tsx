@@ -42,6 +42,7 @@ export default function MonthlyTarget({
   const [editTarget, setEditTarget] = useState(false);
   const [targetReachedValue, setTargetReachedValue] = useState(0);
   const [isTargetReached, setIsTargetReached] = useState(false);
+  // eslint-disable-next-line
   const [targetIncrease, setTargetIncrease] = useState(0);
   const [newTarget, setNewTarget] = useState(currentMonthTarget);
 
