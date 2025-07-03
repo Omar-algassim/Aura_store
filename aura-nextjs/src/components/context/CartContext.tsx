@@ -1,11 +1,16 @@
-"use client";
-import { CartEntity } from "@/entities/cart-entity";
+'use client';
+import { CartEntity } from '@/entities/cart-entity';
 import {
   CartReducer,
   CartReducerAction,
   initialCart,
-} from "@/utils/services/cart-services/cart-dispatcher";
-import React, { createContext, useContext, useEffect, useReducer } from "react";
+} from '@/utils/services/cart-services/cart-dispatcher';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+} from 'react';
 
 const CartContext = createContext<CartEntity | undefined>(initialCart);
 const CartDispatcher = createContext<React.Dispatch<CartReducerAction> | null>(
@@ -16,10 +21,11 @@ function CartContextProvider({ children }: { children: React.ReactNode }) {
   const [cart, dispatch] = useReducer(CartReducer, initialCart);
 
   useEffect(() => {
-    dispatch({ type: "CREATE", payload: { cart: initialCart } });
+    dispatch({ type: 'CREATE', payload: { cart: initialCart } });
   }, []);
   return (
-    <CartContext.Provider value={cart}>
+    // stupid solution to avoid typescript error: it's working fine
+    <CartContext.Provider value={cart || undefined}>
       <CartDispatcher.Provider value={dispatch}>
         {children}
       </CartDispatcher.Provider>

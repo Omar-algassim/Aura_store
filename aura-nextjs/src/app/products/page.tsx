@@ -431,7 +431,7 @@ function ShoppingPage() {
   );
 }
 
-export function Category(props: categoryProps) {
+function Category(props: categoryProps) {
   const [categories, setCategories] = React.useState<any[]>([]);
   const [SelectedCategories, setSelectedCAtegory] = React.useState<
     string[] | undefined
