@@ -126,11 +126,11 @@ function ConfirmEmailPage(params: ConfirmEmailPageProps) {
   );
 }
 
-function Page(params: ConfirmEmailPageProps) {
+function EmailConfirmationPage(params: ConfirmEmailPageProps) {
   return (
     <Suspense fallback={<Preloader />}>
       <ConfirmEmailPage {...params} />
     </Suspense>
   );
 }
-export default Page;
+export default EmailConfirmationPage;

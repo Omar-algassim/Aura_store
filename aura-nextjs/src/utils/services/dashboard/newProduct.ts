@@ -23,8 +23,9 @@ export function newProductAction(
     brand: formData.get("brand"),
     images: formData.getAll("images[]"),
     stock: formData.get("stock"),
-    colorGrade: formData.get("color_grade"),
+    color_grade: formData.get("color_grade"),
     weight: formData.get("weight"),
+    discount: Number(formData.get("discount")),
   };
 
   console.dir(rowData);
@@ -55,10 +56,11 @@ export function newProductAction(
     price: validation.data.price,
     stock: validation.data.stock,
     color_grade: validation.data.color_grade,
-    weight: validation.data.Weight,
-    discount: validation.data.discount,
+    weight: validation.data.weight,
+    discount: Number(validation.data.discount) || undefined, // ensure discount is a number or undefined
   };
 
+  console.log("Validated data:", data);
   return {
     message: "product validation successfully",
     type: "success",

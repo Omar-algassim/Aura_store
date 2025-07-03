@@ -42,6 +42,7 @@ export default function MonthlyTarget({
   const [editTarget, setEditTarget] = useState(false);
   const [targetReachedValue, setTargetReachedValue] = useState(0);
   const [isTargetReached, setIsTargetReached] = useState(false);
+  // eslint-disable-next-line
   const [targetIncrease, setTargetIncrease] = useState(0);
   const [newTarget, setNewTarget] = useState(currentMonthTarget);
 
@@ -204,17 +205,17 @@ export default function MonthlyTarget({
             <ReactApexChart
               key={targetReachedValue}
               options={options}
-              series={[targetReachedValue]}
+              series={[isNaN(targetReachedValue) ? 0 : targetReachedValue]}
               type='radialBar'
               height={330}
             />
             <span className='sr-only'>
-              {targetReachedValue.toFixed(2)}% of your target reached
+              {isNaN(targetReachedValue) ? 0 : targetReachedValue.toFixed(2)}% of your target reached
             </span>
           </div>
 
           <span className='absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500'>
-            +{targetIncrease.toFixed(2)}%
+            +{isNaN(targetReachedValue) ? 0 : targetReachedValue.toFixed(2)}%
           </span>
         </div>
         <p className='mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base'>

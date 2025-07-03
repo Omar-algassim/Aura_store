@@ -12,7 +12,7 @@ export async function getOrders(jwt: string): Promise<{
     const { error, data } = await apiClient.fetchOrder(jwt);
     if (error) {
       return {
-        message: error.message,
+        message: error,
         type: 'server error',
         data: null,
         error: error,
@@ -67,6 +67,7 @@ export async function updateOrderStatus(
         error: error,
       };
     }
+    
     return {
       message: 'Order status updated successfully',
       type: 'success',
@@ -154,7 +155,6 @@ export async function SendWhatsappMessage(
       error: null,
     };
   } catch (error) {
-    console.error('Error sending WhatsApp message:', error);
     return {
       message: 'Failed to send WhatsApp message',
       type: 'error',
@@ -175,7 +175,6 @@ export async function ReceiveOrderMessage(
 }> {
   const body = {
     template_id: '189995',
-    template_header_media_url: '123456',
     'templateVariable-orderId-1': orderId,
   };
   return await SendWhatsappMessage(phone, body);
@@ -183,7 +182,8 @@ export async function ReceiveOrderMessage(
 
 export async function SendConfirmMessage(
   phone: string,
-  orderId: string
+  orderId: string,
+  name: string
 ): Promise<{
   message: string;
   type?: string;
@@ -191,9 +191,9 @@ export async function SendConfirmMessage(
   error?: any;
 }> {
   const body = {
-    template_id: '189995',
-    template_header_media_url: '123456',
-    'templateVariable-orderId-1': orderId,
+    template_id: '195050',
+    'templateVariable-userName-1': name,
+    'templateVariable-orderId-2': orderId,
   };
   return await SendWhatsappMessage(phone, body);
 }

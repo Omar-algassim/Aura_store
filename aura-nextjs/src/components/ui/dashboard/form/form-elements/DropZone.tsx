@@ -15,7 +15,7 @@ import { useModal } from "@/hooks/useModal";
 import { useToast } from "@/hooks/use-toast";
 
 interface image {
-  id: string;
+  id?: string;
   url: string;
   imageId: string;
 }
@@ -189,7 +189,7 @@ function DropzoneComponent(props: DropzoneProps) {
         <div className="grid grid-cols-4 gap-6 justify-between p-2 border rounded-md border-primary">
           {uploadedFiles.map((image) => (
             <div
-              key={image.id}
+              key={image.imageId}
               className="flex flex-col items-center justify-center gap-2"
             >
               <button
@@ -204,7 +204,7 @@ function DropzoneComponent(props: DropzoneProps) {
               </button>
               <Image
                 src={`${BaseUrl}${image.url}`}
-                alt={image.id}
+                alt={image.imageId}
                 width={50}
                 height={50}
                 className="rounded-md"

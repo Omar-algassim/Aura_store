@@ -82,6 +82,7 @@ export default function CitiesControl(props: CitiesControlProps) {
           description: "City deleted successfully.",
         });
         closeModal()
+        window.location.reload();
       } catch (error: any) {
         toast({
           variant: "destructive",
@@ -127,6 +128,7 @@ export default function CitiesControl(props: CitiesControlProps) {
           <div className="flex p-4">
             <div className="flex gap-6">
               <button
+              type="button"
                 onClick={handleDeleteCity}
                 className="flex w-4 items-center justify-center gap-2 rounded-full border border-red-900 bg-red-800 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-red-950 hover:text-white dark:border-red-950 dark:bg-red-800 dark:text-white dark:hover:bg-red-950 dark:hover:text-white lg:inline-flex lg:w-auto"
               >

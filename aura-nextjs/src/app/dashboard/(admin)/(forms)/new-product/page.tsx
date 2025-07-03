@@ -31,7 +31,7 @@ interface ProductForm {
 }
 
 interface images {
-  id: string;
+  id?: string;
   url: string;
   imageId: string;
 }
@@ -514,7 +514,7 @@ export default function ProductForm(props: ProductForm) {
                   error={discountError.length > 0}
                   name="discount"
                   type="number"
-                  defaultValue={props.data?.discount}
+                  defaultValue={props.data?.discount || 0}
                   placeholder="Discount amount"
                 />
                 {discountError.length > 0 ? (
