@@ -17,7 +17,7 @@ import {
   deleteProduct,
   getProducts,
 } from '@/utils/services/products-services';
-import ProductForm from '../../(forms)/new-product/page';
+import { ProductForm } from '@/app/dashboard/(admin)/(forms)/new-product/ProductForm';
 import { Loader } from '@/components/common/loader';
 import cookie from 'js-cookie';
 import { useToast } from '@/hooks/use-toast';
@@ -26,17 +26,17 @@ export default function ProductTable() {
   const [page, setPage] = React.useState<number>(1);
   const [pageCount, setPageCount] = React.useState<number>(0);
   const [Products, setProducts] = React.useState<Product[] | []>([]);
-   // eslint-disable-next-line
+  // eslint-disable-next-line
   const [description, setDescription] = React.useState<string | undefined>('');
   // eslint-disable-next-line
   const [specifications, setSpecifications] = React.useState<
-  string | undefined
+    string | undefined
   >('');
-   // eslint-disable-next-line
+  // eslint-disable-next-line
   const [usage, setUsage] = React.useState<string | undefined>('');
-   // eslint-disable-next-line
+  // eslint-disable-next-line
   const [Categories, setCategories] = React.useState<string[]>([]);
-   // eslint-disable-next-line
+  // eslint-disable-next-line
   const [brand, setBrand] = React.useState<string[]>([]);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isDelete, setIsDelete] = React.useState(false);
@@ -175,17 +175,16 @@ export default function ProductTable() {
       <div className='max-w-full overflow-x-auto'>
         {isLoading ? (
           <Loader />
-        ) : Products.length === 0 ?
-        (
-          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
-            <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+        ) : Products.length === 0 ? (
+          <div className='overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6'>
+            <div className='flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between'>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+                <h3 className='text-lg font-semibold text-gray-800 dark:text-white/90'>
                   Products
                 </h3>
               </div>
             </div>
-            <p className="text-center text-gray-500">No Product available</p>
+            <p className='text-center text-gray-500'>No Product available</p>
           </div>
         ) : (
           <>
