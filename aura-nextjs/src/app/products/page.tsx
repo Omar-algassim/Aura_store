@@ -171,7 +171,7 @@ function ShoppingPage() {
           route.push(`/products${query}`);
         })
         .catch((error) => {
-          setError(error.message);
+          setError("هناك مشكلة في الاتصال بالشبكة");
           setLoading(false);
         });
     } else {
@@ -203,8 +203,9 @@ function ShoppingPage() {
           setLoading(false);
           route.push(`/products${query}`);
         })
+        // lint-ignore-next-line
         .catch((error) => {
-          setError(error.message);
+          setError("هناك مشكلة في الاتصال بالشبكة");
           setLoading(false);
         });
       // getProducts().then((data) => {
@@ -447,8 +448,9 @@ function Category(props: categoryProps) {
         setCategories(data.categories.data);
         setLoading(false);
       })
+      // lint-ignore-next-line
       .catch((error) => {
-        setError(error.message);
+        setError("هناك مشكلة في الاتصال بالشبكة");
         setLoading(false);
       });
   }, []);
@@ -479,11 +481,11 @@ function Category(props: categoryProps) {
   }
 
   return loading ? (
-    <Skeleton />
+    <Skeleton className='w-2' />
   ) : (
     <>
       {error ? (
-        <div>{error}</div>
+        <div></div>
       ) : (
         categories.map((item) => (
           <li key={item.documentId}>
