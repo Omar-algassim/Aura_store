@@ -170,6 +170,7 @@ function ShoppingPage() {
           setLoading(false);
           route.push(`/products${query}`);
         })
+        // eslint-disable-next-line
         .catch((error) => {
           setError("هناك مشكلة في الاتصال بالشبكة");
           setLoading(false);
@@ -203,7 +204,7 @@ function ShoppingPage() {
           setLoading(false);
           route.push(`/products${query}`);
         })
-        // lint-ignore-next-line
+        // eslint-disable-next-line
         .catch((error) => {
           setError("هناك مشكلة في الاتصال بالشبكة");
           setLoading(false);
@@ -448,7 +449,7 @@ function Category(props: categoryProps) {
         setCategories(data.categories.data);
         setLoading(false);
       })
-      // lint-ignore-next-line
+      // eslint-disable-next-line
       .catch((error) => {
         setError("هناك مشكلة في الاتصال بالشبكة");
         setLoading(false);
