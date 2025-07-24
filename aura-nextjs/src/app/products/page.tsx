@@ -170,8 +170,8 @@ function ShoppingPage() {
           setLoading(false);
           route.push(`/products${query}`);
         })
-        .catch((error) => {
-          setError("هناك مشكلة في الاتصال بالشبكة");
+        .catch(() => {
+          setError('هناك مشكلة في الاتصال بالشبكة');
           setLoading(false);
         });
     } else {
@@ -204,8 +204,8 @@ function ShoppingPage() {
           route.push(`/products${query}`);
         })
         // lint-ignore-next-line
-        .catch((error) => {
-          setError("هناك مشكلة في الاتصال بالشبكة");
+        .catch(() => {
+          setError('هناك مشكلة في الاتصال بالشبكة');
           setLoading(false);
         });
       // getProducts().then((data) => {
@@ -449,8 +449,8 @@ function Category(props: categoryProps) {
         setLoading(false);
       })
       // lint-ignore-next-line
-      .catch((error) => {
-        setError("هناك مشكلة في الاتصال بالشبكة");
+      .catch(() => {
+        setError('هناك مشكلة في الاتصال بالشبكة');
         setLoading(false);
       });
   }, []);
