@@ -73,10 +73,10 @@ function ProductPageComponent(params: { product: Product }) {
   };
 
   const addToCart = async () => {
-    console.log(`adding ${quantity} items from ${product.title} to cart`);
+    // console.log(`adding ${quantity} items from ${product.title} to cart`);
     await cart.addProduct(product, quantity);
-    console.log(`added ${quantity} items from ${product.title} to cart`);
-    console.log('Cart total items ', cart.total_items);
+    // console.log(`added ${quantity} items from ${product.title} to cart`);
+    // console.log('Cart total items ', cart.total_items);
     cartDispatcher({ type: 'UPDATE', payload: { cart: cart } });
     const iconTip = document.getElementById('cart-icon-tip');
     if (iconTip) {
@@ -89,9 +89,9 @@ function ProductPageComponent(params: { product: Product }) {
 
   const sendReview = async () => {
     // check if all the fields are their
-    console.log(
-      `sending review for ${product.title} with ${review} and rate ${rate} stars, sended by ${user.username}`
-    );
+    // console.log(
+    //   `sending review for ${product.title} with ${review} and rate ${rate} stars, sended by ${user.username}`
+    // );
     if (!review || !rate) {
       setError('الرجاء كتابة تقيمك مع اختيار التقدير اولا');
       return;
@@ -144,7 +144,7 @@ function ProductPageComponent(params: { product: Product }) {
               )}
               <Image
                 className='w-full max-w-[392px] max-h-[236px] tablet:max-w-[1140px] tablet:max-h-[400px] laptop:w-full laptop:max-h-[560px] laptop:max-w-[1400px] tablet:rounded-xl object-contain object-center animate-out '
-                src={`${BaseUrl}/${hero}`}
+                src={`${BaseUrl}${hero}`}
                 width={1400}
                 height={800}
                 alt={product.title}
@@ -192,7 +192,7 @@ function ProductPageComponent(params: { product: Product }) {
                   )}
                   <Image
                     className='w-[71px] h-[71px] tablet:w-[100px] tablet:h-[100px] object-cover object-center rounded-lg animate-in cursor-pointer hover:scale-105 hover:ring-1 hover:ring-primary transition-transform duration-50'
-                    src={`${BaseUrl}/${img}`}
+                    src={`${BaseUrl}${img}`}
                     width={100}
                     height={100}
                     alt={product.title}

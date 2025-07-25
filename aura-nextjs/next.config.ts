@@ -1,14 +1,19 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      "res.cloudinary.com",
-      "localhost",
-      process.env.SERVER_HOST_NAME || "192.168.8.7",
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: process.env.SERVER_HOST_NAME || 'api.auraglowups.com',
+      },
     ],
   },
 };
 
-import removeImports from "next-remove-imports";
+import removeImports from 'next-remove-imports';
 export default removeImports()(nextConfig);
