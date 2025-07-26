@@ -13,7 +13,7 @@ import {
 } from '@/components/context';
 import { CartEntity } from '@/entities/cart-entity';
 import AlertDialogElement from '../common/alert-dialog';
-import { whatsappMessage } from '@/constants/app-constants';
+import { whatsappMessage, whatsappPhone } from '@/constants/app-constants';
 
 interface NavElementProps {
   name: string;
@@ -144,7 +144,7 @@ export function Navbar() {
                 name='جميع المنتجات'
               />
               <NavElement
-                link={`https://wa.me/201507023464?text=${whatsappMessage}`}
+                link={`https://wa.me/${whatsappPhone}?text=${whatsappMessage}`}
                 name='تواصل معنا'
                 icon='/icons/logos-whatsapp-icon.svg'
               />
