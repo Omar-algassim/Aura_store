@@ -149,7 +149,7 @@ export function Navbar() {
                 icon='/icons/logos-whatsapp-icon.svg'
               />
               <NavElement
-                link='/about-us'
+                link='/aura/about-aura'
                 name='نبذة عن Aura'
               />
               <NavElement
