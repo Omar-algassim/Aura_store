@@ -14,7 +14,7 @@ import { Skeleton } from '@/components/ui/shadcn/skeleton';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Product } from '@/interfaces/dto';
 import { Loader } from '@/components/common/loader';
-import { ArrowLeftIcon } from 'lucide-react';
+import { ArrowLeftIcon, ArrowUpDownIcon } from 'lucide-react';
 import { Preloader } from '@/components/ui/Preloader';
 
 interface categoryProps {
@@ -394,12 +394,13 @@ function ShoppingPage() {
             className='w-[260px]'>
             <button className='tablet:min-w-[260px] bg-blue_shade rounded-2xl p-4 flex items-center gap-2 cursor-pointer'>
               <span className='flex-1 text-start'>{sort}</span>
-              <Image
+              {/* <Image
                 alt='sort'
                 src={'icons/arrows-updown.svg'}
                 width={20}
                 height={20}
-              />
+              /> */}
+              <ArrowUpDownIcon className='w-5 h-5 stroke-2' />
             </button>
           </Dropdown>
         </div>
