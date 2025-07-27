@@ -14,7 +14,7 @@ function Home() {
       <Header />
       <main className='flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white w-full max-w-[1480px]'>
         {/* main hero /only displayed in big screens/ */}
-        <section className='hidden tablet:flex tablet:w-full items-center justify-center'>
+        <section className='flex tablet:w-full items-center justify-center -mt-4 tablet:-mt-20'>
           <Image
             src={'/images/cover-image-4.png'}
             width={1140}
