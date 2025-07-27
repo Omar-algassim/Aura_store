@@ -1175,6 +1175,7 @@ export const countriesCode = [
   },
 ];
 
-export const whatsappMessage = '*اهلا بك في اورى*\n\nكيف بمكننا مساعدتك';
+export const whatsappMessage = `مرحب، عاوز/ة أعرف أكتر عن منتجات أورا ✨
+ممكن تساعدوني؟`;
 export const whatsappPhone =
   process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '249999094668';
