@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/popover';
-import {
-  Command,
-  CommandGroup,
-  CommandList,
-} from './shadcn/command';
+import { Command, CommandGroup, CommandList } from './shadcn/command';
 import { Checkbox } from '@/components/ui/shadcn/checkbox';
 import { Slider } from '@/components/ui/slider';
 import {
@@ -28,7 +24,7 @@ export default function FilterProducts(props: filterProps) {
   const [selectedBrand, setSelectedBrand] = React.useState<string[]>([]);
   const [brands, setBrands] = React.useState<any[] | undefined>([]);
   const [price, setPrice] = React.useState<number[]>([0, 250000]);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(props.openFilter);
 
   function setPrices(price: number[]) {
     const maxPrice = price[1];
@@ -66,7 +62,7 @@ export default function FilterProducts(props: filterProps) {
       <PopoverTrigger asChild>{props.children}</PopoverTrigger>
       <PopoverContent
         className={`popover border-none shadow-none z-50 scroll-m-0 ${props.className}`}>
-        <Command className='w-[280px] min-h-96 max-h-[460px] bg-blue_shade border-none pb-4 shadow-xl'>
+        <Command className='w-[280px] max-h-[516px] bg-blue_shade border-none pb-4 shadow-xl flex items-center justify-center'>
           <CommandList className='w-full p-4'>
             <CommandGroup
               dir='rtl'
@@ -75,9 +71,11 @@ export default function FilterProducts(props: filterProps) {
                 <Accordion
                   type='single'
                   collapsible>
-                  <AccordionItem value='item-1'>
+                  <AccordionItem
+                    value='item-1'
+                    defaultChecked>
                     <AccordionTrigger className='sticky top-0 '>
-                      <h3 className='font-semibold'>الماركات</h3>
+                      <h3 className='font-semibold'>العلامات التجارية</h3>
                     </AccordionTrigger>
                     <AccordionContent>
                       {brands?.map((brand) => (

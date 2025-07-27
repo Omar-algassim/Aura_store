@@ -23,6 +23,7 @@ import React, { useEffect } from 'react';
 import { getFieldError } from '@/components/ui/forms/handleError';
 import { useToast } from '@/hooks/use-toast';
 import { Preloader } from '@/components/ui/Preloader';
+import clsx from 'clsx';
 
 interface ProductForm {
   editMode?: boolean;
@@ -37,6 +38,7 @@ interface images {
 }
 
 export function ProductForm(props: ProductForm) {
+  const formContainerRef = React.useRef<HTMLDivElement>(null);
   const [thumbnail, setThumbnail] = React.useState<File | undefined>();
   const [newImages, setNewImages] = React.useState<File[]>([]);
   const [description, setDescription] = React.useState<string>(
@@ -94,6 +96,15 @@ export function ProductForm(props: ProductForm) {
     getBrandsAndCategories();
   }, []);
 
+  useEffect(() => {
+    if (error && formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }, [error, formContainerRef]);
+
   const categoriesOptions = Categories.map((category) => ({
     value: category?.documentId,
     text: category?.title,
@@ -110,11 +121,12 @@ export function ProductForm(props: ProductForm) {
   async function backtraceStorage(
     uploadedThumbnail: { data?: any },
     uploadedImages: { url: string; imageId: string }[],
-    jwt: string
+    jwt: string,
+    rowData: Product
   ): Promise<{
     message: string;
     type: string;
-    data: any;
+    data: Product | null;
     error: string;
   }> {
     // delete product thumbnail if available
@@ -138,7 +150,7 @@ export function ProductForm(props: ProductForm) {
     return {
       message: 'error uploading Images',
       type: 'server',
-      data: null,
+      data: rowData,
       error: "One or more images didn't uploaded successfully",
     }; // for now
   }
@@ -163,24 +175,28 @@ export function ProductForm(props: ProductForm) {
       };
     }
 
+    const rowData = Object.fromEntries(
+      formData.entries()
+    ) as unknown as Product;
+
     // upload the thumbnail and images
     if (!thumbnail && !props.editMode) {
-      setError('please upload the thumbnail');
+      setError('please upload the product thumbnail');
       return {
-        message: 'please upload the thumbnail',
+        message: 'please upload the product thumbnail',
         type: 'validation',
-        data: null,
+        data: rowData,
         error: null,
       };
     }
     // check the data of form (validation)
     const validation = newProductAction(prev, formData);
     if (validation.error) {
-      setError('please check the data');
+      setError('please check the form data');
       return {
-        message: 'please check the data',
+        message: 'please check the form data',
         type: 'validation',
-        data: null,
+        data: rowData,
         error: validation.error,
       };
     }
@@ -193,7 +209,7 @@ export function ProductForm(props: ProductForm) {
         return {
           message: 'error uploading thumbnail',
           type: 'validation',
-          data: null,
+          data: rowData,
           error: uploadedThumbnail.error,
         };
       } else {
@@ -227,7 +243,12 @@ export function ProductForm(props: ProductForm) {
 
     // backtrace storage on error, deleting all the uploaded images
     if (uploadedImages.length !== newImages.length) {
-      return await backtraceStorage(uploadedThumbnail, uploadedImages, jwt);
+      return await backtraceStorage(
+        uploadedThumbnail,
+        uploadedImages,
+        jwt,
+        rowData
+      );
     }
 
     // add the images and the thumbnail urls to the product data
@@ -240,7 +261,7 @@ export function ProductForm(props: ProductForm) {
     // create the product
     if (props.editMode) {
       const productId = props.data?.documentId;
-      console.log('productId', validation.data);
+      // console.log('productId', validation.data);
       if (validation.data.images.length === 0) {
         delete validation.data.images;
       }
@@ -262,7 +283,8 @@ export function ProductForm(props: ProductForm) {
           return await backtraceStorage(
             uploadedThumbnail,
             uploadedImages,
-            jwt
+            jwt,
+            rowData
           );
         } else {
           setError(null);
@@ -286,7 +308,7 @@ export function ProductForm(props: ProductForm) {
         return {
           message: 'Product Id is missing',
           type: 'validation',
-          data: null,
+          data: rowData,
         };
       }
     }
@@ -317,7 +339,7 @@ export function ProductForm(props: ProductForm) {
       return {
         message: 'error creating product',
         type: 'server Error',
-        data: null,
+        data: rowData,
         error: product.error,
       };
     } else {
@@ -347,7 +369,11 @@ export function ProductForm(props: ProductForm) {
   return (
     <div
       dir='ltr'
-      className='no-scrollbar relative w-full max-w-screen overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11'>
+      ref={formContainerRef}
+      className={clsx(
+        'no-scrollbar relative w-full max-w-screen overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11',
+        props.editMode ? 'h-[calc(100vh-100px)]' : ''
+      )}>
       {isPending && (
         <div className='absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-gray-900/50 z-999'>
           <Preloader />
@@ -371,7 +397,7 @@ export function ProductForm(props: ProductForm) {
       <form
         action={action}
         className='flex flex-col'>
-        <div className='custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3'>
+        <div className='custom-scrollbar overflow-y-auto px-2 pb-3'>
           <div>
             <h5 className='mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6'>
               Main information
@@ -382,7 +408,7 @@ export function ProductForm(props: ProductForm) {
                 <Input
                   name='name'
                   error={nameError.length > 0}
-                  defaultValue={props.data?.name}
+                  defaultValue={state?.data?.name || props.data?.name}
                   placeholder='the name of product'
                   type='text'
                 />
@@ -404,7 +430,7 @@ export function ProductForm(props: ProductForm) {
                 <Input
                   error={titleError.length > 0}
                   name='title'
-                  defaultValue={props.data?.title}
+                  defaultValue={state?.data?.title || props.data?.title}
                   placeholder='the title of product'
                   type='text'
                 />
@@ -499,7 +525,7 @@ export function ProductForm(props: ProductForm) {
                   error={priceError.length > 0}
                   name='price'
                   type='number'
-                  defaultValue={props.data?.price}
+                  defaultValue={state?.data?.price || props.data?.price}
                   placeholder='product price'
                 />
                 {priceError.length > 0 ? (
@@ -520,7 +546,9 @@ export function ProductForm(props: ProductForm) {
                   error={discountError.length > 0}
                   name='discount'
                   type='number'
-                  defaultValue={props.data?.discount || 0}
+                  defaultValue={
+                    state?.data?.discount || props.data?.discount || 0
+                  }
                   placeholder='Discount amount'
                 />
                 {discountError.length > 0 ? (
@@ -546,7 +574,9 @@ export function ProductForm(props: ProductForm) {
                   <Input
                     error={colorGradeError.length > 0}
                     name='color_grade'
-                    defaultValue={props.data?.color_grade}
+                    defaultValue={
+                      state?.data?.color_grade || props.data?.color_grade
+                    }
                     placeholder='product color grade'
                     type='text'
                   />
@@ -567,7 +597,7 @@ export function ProductForm(props: ProductForm) {
                   <Input
                     error={weightError.length > 0}
                     name='weight'
-                    defaultValue={props.data?.weight}
+                    defaultValue={state?.data?.weight || props.data?.weight}
                     placeholder='product weight'
                     type='number'
                   />
@@ -590,7 +620,7 @@ export function ProductForm(props: ProductForm) {
                       error={stockError.length > 0}
                       name='stock'
                       type='number'
-                      defaultValue={props.data?.stock}
+                      defaultValue={state?.data?.stock || props.data?.stock}
                       placeholder='amount of products in stock'
                     />
                     {stockError.length > 0 ? (
