@@ -1,9 +1,8 @@
-import { newProductSchema } from "@/components/ui/forms/schemas";
-
+import { newProductSchema } from '@/components/ui/forms/schemas';
 
 export function newProductAction(
   _prevState: any,
-  formData: FormData,
+  formData: FormData
 ): {
   message: string;
   type?: string;
@@ -12,31 +11,31 @@ export function newProductAction(
 } {
   // extract the data from the form data object
   const rowData = {
-    name: formData.get("name"),
-    thumbnail: formData.get("thumbnail"),
-    price: formData.get("price"),
-    title: formData.get("title"),
-    description: formData.get("description"),
-    usage: formData.get("usage"),
-    specification: formData.get("specification"),
-    categories: formData.getAll("categories[]"),
-    brand: formData.get("brand"),
-    images: formData.getAll("images[]"),
-    stock: formData.get("stock"),
-    color_grade: formData.get("color_grade"),
-    weight: formData.get("weight"),
-    discount: Number(formData.get("discount")),
+    name: formData.get('name'),
+    thumbnail: formData.get('thumbnail'),
+    price: formData.get('price'),
+    title: formData.get('title'),
+    description: formData.get('description'),
+    usage: formData.get('usage'),
+    specification: formData.get('specification'),
+    categories: formData.getAll('categories[]'),
+    brand: formData.get('brand'),
+    images: formData.getAll('images[]'),
+    stock: formData.get('stock'),
+    color_grade: formData.get('color_grade'),
+    weight: formData.get('weight'),
+    discount: Number(formData.get('discount')),
   };
 
-  console.dir(rowData);
+  // console.dir(rowData);
 
   // validate the data using zod
   const validation = newProductSchema.safeParse(rowData);
   if (!validation.success) {
-    console.log("Validation error", validation.error.issues);
+    console.log('Validation error', validation.error.issues);
     return {
-        message:"please check the data",
-        type: "validation",
+      message: 'please check the data',
+      type: 'validation',
       error: validation.error.issues,
       data: null,
     };
@@ -60,11 +59,11 @@ export function newProductAction(
     discount: Number(validation.data.discount) || undefined, // ensure discount is a number or undefined
   };
 
-  console.log("Validated data:", data);
+  console.log('Validated data:', data);
   return {
-    message: "product validation successfully",
-    type: "success",
+    message: 'product validation successfully',
+    type: 'success',
     data: data,
     error: null,
   };
-};
+}
