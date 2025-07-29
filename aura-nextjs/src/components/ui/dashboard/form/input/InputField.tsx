@@ -1,7 +1,7 @@
-import React, { FC } from "react";
+import React, { FC } from 'react';
 
 interface InputProps {
-  type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
+  type?: 'text' | 'number' | 'email' | 'password' | 'date' | 'time' | string;
   id?: string;
   name?: string;
   placeholder?: string;
@@ -15,16 +15,17 @@ interface InputProps {
   success?: boolean;
   error?: boolean;
   hint?: string; // Optional hint text
+  children?: React.ReactNode;
 }
 
 const Input: FC<InputProps> = ({
-  type = "text",
+  type = 'text',
   id,
   name,
   placeholder,
   defaultValue,
   onChange,
-  className = "",
+  className = '',
   min,
   max,
   step,
@@ -32,6 +33,7 @@ const Input: FC<InputProps> = ({
   success = false,
   error = false,
   hint,
+  children,
 }) => {
   // Determine input styles based on state (disabled, success, error)
   let inputClasses = `h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${className}`;
@@ -48,7 +50,7 @@ const Input: FC<InputProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <input
         type={type}
         id={id}
@@ -68,15 +70,16 @@ const Input: FC<InputProps> = ({
         <p
           className={`mt-1.5 text-xs ${
             error
-              ? "text-error-500"
+              ? 'text-error-500'
               : success
-              ? "text-success-500"
-              : "text-gray-500"
-          }`}
-        >
+              ? 'text-success-500'
+              : 'text-gray-500'
+          }`}>
           {hint}
         </p>
       )}
+      {/* Render children if any (e.g., icons, additional elements) */}
+      {children}
     </div>
   );
 };

@@ -25,6 +25,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Preloader } from '@/components/ui/Preloader';
 import clsx from 'clsx';
 
+const weightUnits = [
+  { value: 'gm', label: 'gm' },
+  { value: 'ml', label: 'ml' },
+];
+
 interface ProductForm {
   editMode?: boolean;
   data?: Product;
@@ -56,9 +61,16 @@ export function ProductForm(props: ProductForm) {
   );
   const [Categories, setCategories] = React.useState<any[]>([]);
   const [brands, setBrands] = React.useState<any[]>([]);
+  const [productWeight, setProductWeight] = React.useState<
+    { value: number; unit: string } | undefined
+  >(props.data?.weight || undefined);
+
   const [error, setError] = React.useState<string | null>(null);
+
   const [state, action, isPending] = React.useActionState(handleSave, null);
+
   const { toast } = useToast();
+
   const images: images[] = props.data?.images || [];
 
   const nameError = getFieldError(state?.error, 'name');
@@ -592,14 +604,46 @@ export function ProductForm(props: ProductForm) {
                     <span className='flex-1 text-primary-dark text-xs text-right font-[400] font-alex max-w-[200px] h-8 text-wrap'></span>
                   )}
                 </div>
-                <div className='col-span-2 lg:col-span-1'>
+                <div className='relative col-span-2 lg:col-span-1'>
                   <Label>Weight</Label>
+                  {/* value */}
                   <Input
                     error={weightError.length > 0}
-                    name='weight'
-                    defaultValue={state?.data?.weight || props.data?.weight}
+                    name='weight-value'
+                    defaultValue={
+                      state?.data?.weight.value || props.data?.weight?.value
+                    }
+                    onChange={(e) =>
+                      setProductWeight((prev) => ({
+                        value: parseFloat(e.target.value),
+                        unit: prev?.unit || 'gm',
+                      }))
+                    }
                     placeholder='product weight'
-                    type='number'
+                    type='number'>
+                    {/* unit */}
+                    <div className='absolute right-0 top-0'>
+                      <Select
+                        options={weightUnits}
+                        defaultValue={
+                          state?.data?.weight.unit || props.data?.weight?.unit
+                        }
+                        placeholder='Select Unit'
+                        onChange={(value) =>
+                          setProductWeight((prev) => ({
+                            value: prev?.value || 0,
+                            unit: value,
+                          }))
+                        }
+                        className='dark:bg-dark-900'
+                      />
+                    </div>
+                  </Input>
+                  {/* actual weight input */}
+                  <input
+                    hidden
+                    name='weight'
+                    value={JSON.stringify(productWeight)}
                   />
                   {weightError.length > 0 ? (
                     weightError.map((error, index) => (

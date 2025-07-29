@@ -8,7 +8,7 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -52,7 +52,8 @@
       "target": "api::brand.brand"
     },
     "weight": {
-      "type": "integer"
+      "type": "json",
+      "required": true
     },
     "color_grade": {
       "type": "string"

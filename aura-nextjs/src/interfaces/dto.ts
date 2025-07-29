@@ -74,7 +74,10 @@ export interface Product {
   ordered: number;
   viewed?: number;
   discount: number;
-  weight?: number;
+  weight: {
+    value: number;
+    unit: string;
+  };
   color_grade?: string;
   usage: string;
   description: string;

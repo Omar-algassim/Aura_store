@@ -354,7 +354,7 @@ function ProductPageComponent(params: { product: Product }) {
               <p className='text-[13px] tablet:text-lg font-[600]'>الوزن:</p>
               <p className='text-[13px] tablet:text-lg font-[400]'>
                 {' '}
-                {product.weight} kg
+                {product.weight.value} {product.weight.unit}
               </p>
             </div>
             {product.color_grade && (
