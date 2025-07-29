@@ -52,7 +52,7 @@ function ProductCard({ product }: { product: Product }) {
       role='button'
       tabIndex={0}
       onClick={() => {
-        router.push(`/product/${product.documentId}`);
+        router.push(`/products/${product.documentId}`);
       }}>
       {/* Sale tag */}
       {product.discount && (
