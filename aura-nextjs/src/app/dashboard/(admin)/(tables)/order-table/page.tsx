@@ -25,6 +25,9 @@ import cookie from 'js-cookie';
 import { BaseUrl } from '@/constants/api-constants';
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from '@/components/common/loader';
+import Link from 'next/link';
+import { PhoneCallIcon } from 'lucide-react';
+import WhatsAppIcon from '@/components/icons/WhatsAppIcon';
 
 export default function OrderTable() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -208,10 +211,32 @@ export default function OrderTable() {
                     </TableCell>
                     <TableCell className='px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400'>
                       {/* phone number */}
-                      {order.user?.phone_number ? (
-                        <span className='block font-medium text-gray-800 dark:text-white/90'>
-                          {order.user.phone_number}
-                        </span>
+                      {order.delivery_address.recipient_phone ? (
+                        <div className='flex gap-2 items-center'>
+                          <span className='block font-medium text-gray-800 dark:text-white/90'>
+                            {order.delivery_address.recipient_phone}
+                          </span>
+
+                          <Link
+                            className='flex items-center size-6 p-1 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-300 dark:hover:bg-white/[0.03] transition-colors duration-150 ease-in-out'
+                            href={`tel:${order.delivery_address.recipient_phone}`}
+                            target='_blank'
+                            rel='noopener noreferrer'>
+                            <PhoneCallIcon className='h-4 w-4 text-gray-500' />
+                          </Link>
+                          <Link
+                            className='flex items-center size-6 p-1 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-300 dark:hover:bg-white/[0.03] transition-colors duration-150 ease-in-out'
+                            href={`https://wa.me/${order.delivery_address.recipient_phone.slice(
+                              1
+                            )}`}
+                            target='_blank'
+                            rel='noopener noreferrer'>
+                            <WhatsAppIcon
+                              viewBox='0 0 120 120'
+                              className='h-4 w-4 text-gray-500'
+                            />
+                          </Link>
+                        </div>
                       ) : (
                         <span className='block font-medium text-gray-800 dark:text-white/90'>
                           No phone number provided
@@ -276,16 +301,16 @@ export default function OrderTable() {
         <div className='no-scrollbar relative w-full max-w-[800px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11'>
           <div className='px-2 pr-14'>
             <h4 className='mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90'>
-              Fill Brand Information
+              Current Order Information
             </h4>
             <p className='mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7'>
-              register new brand in store.
+              View and edit the current order details.
             </p>
           </div>
           <form
             action={handleSave}
             className='flex flex-col'>
-            <div className='custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3'>
+            <div className='custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3 dark:text-white/90'>
               <div>
                 <h5 className='mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6'>
                   Main information
@@ -297,12 +322,12 @@ export default function OrderTable() {
                       <Select
                         defaultValue={edit?.order_status}
                         options={[
-                          { value: 'pending', label: 'pending' },
-                          { value: 'confirmed', label: 'confirm' },
-                          { value: 'delivered', label: 'delivered' },
-                          { value: 'cancelled', label: 'cancel' },
-                          { value: 'onDelivery', label: 'on delivery' },
-                          { value: 'preparing', label: 'preparing' },
+                          { value: 'pending', label: 'Pending' },
+                          { value: 'confirmed', label: 'Confirmed' },
+                          { value: 'preparing', label: 'Preparing' },
+                          { value: 'onDelivery', label: 'On Delivery' },
+                          { value: 'delivered', label: 'Delivered' },
+                          { value: 'cancelled', label: 'Cancelled' },
                         ]}
                         placeholder='Select Option'
                         onChange={(value) => {
@@ -319,12 +344,33 @@ export default function OrderTable() {
                     <Label>order Id:</Label>
                     <p className='ml-6'>{edit?.documentId}</p>
                   </div>
-                  <div className='grid grid-cols-1 gap-x-6 gap-y-5'>
+                  <div className='grid grid-cols-1 gap-x-6 gap-y-3'>
                     <Label>Delivery Address:</Label>
                     <div className='ml-6 flex flex-col gap-2'>
-                      <p>Country: {edit?.delivery_address.region}</p>
-                      <p>City: {edit?.delivery_address.city}</p>
-                      <p>Address: {edit?.delivery_address.address}</p>
+                      <div className='w-full flex justify-between'>
+                        <p className='min-w-[120px] text-gray-500 dark:text-gray-400'>
+                          Country:
+                        </p>
+                        <p className='flex-1 text-start'>
+                          {edit?.delivery_address.region}
+                        </p>
+                      </div>
+                      <div className='w-full flex justify-between'>
+                        <p className='min-w-[120px] text-gray-500 dark:text-gray-400'>
+                          City:
+                        </p>
+                        <p className='flex-1 text-start'>
+                          {edit?.delivery_address.city}
+                        </p>
+                      </div>
+                      <div className='w-full flex justify-between'>
+                        <p className='min-w-[120px] text-gray-500 dark:text-gray-400'>
+                          Address:
+                        </p>
+                        <p className='flex-1 text-start'>
+                          {edit?.delivery_address.address}
+                        </p>
+                      </div>
                     </div>
                   </div>
                   <div className='grid grid-cols-2 gap-x-6 gap-y-5'>
@@ -339,7 +385,7 @@ export default function OrderTable() {
                     <div>
                       <Label>Customer Phone:</Label>
                       <p className='ml-6'>
-                        {edit?.user?.phone_number || (
+                        {edit?.delivery_address.recipient_phone || (
                           <span className='text-gray-500'>N/A</span>
                         )}
                       </p>
