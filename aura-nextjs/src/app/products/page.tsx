@@ -419,7 +419,7 @@ function ShoppingPage() {
         <div className='flex flex-wrap px-3 py-12 gap-2 tablet:gap-4 justify-center'>
           {products?.map((product) => (
             <div
-              className='flex-1 min-w-[160px] tablet:min-w-[320px]'
+              className='flex-1 min-w-[160px] tablet:min-w-[320px] max-w-[430px]'
               key={product.documentId}>
               <ProductCard
                 key={product.documentId}

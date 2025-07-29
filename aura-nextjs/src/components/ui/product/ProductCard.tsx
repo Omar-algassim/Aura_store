@@ -11,8 +11,10 @@ import { getTotalRate } from '@/utils/services/products-services';
 import { useCart, useCartDispatcher } from '@/components/context';
 import { CartEntity } from '@/entities/cart-entity';
 import { CheckCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 function ProductCard({ product }: { product: Product }) {
+  const router = useRouter();
   const cart = useCart() as CartEntity;
   const cartDispatcher = useCartDispatcher();
   const [addedToCart, setAddedToCart] = useState(false);
@@ -45,8 +47,13 @@ function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className='relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full bg-white p-0 m-0 rounded-xl tablet:hover:drop-shadow-xl transition-all duration-150'
-      dir='ltr'>
+      className='relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full max-w-[430px] bg-white p-0 m-0 rounded-xl cursor-pointer tablet:hover:drop-shadow-xl transition-all duration-150'
+      dir='ltr'
+      role='button'
+      tabIndex={0}
+      onClick={() => {
+        router.push(`/product/${product.documentId}`);
+      }}>
       {/* Sale tag */}
       {product.discount && (
         <div className='absolute z-30 top-0 right-0 bg-primary text-white text-[13px] font-[500] p-1 rounded-bl-xl rounded-tr-xl'>
