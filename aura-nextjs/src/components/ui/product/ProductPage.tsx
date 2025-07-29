@@ -122,6 +122,13 @@ function ProductPageComponent(params: { product: Product }) {
     setProductReviews([...productReviews, data]);
   };
 
+  const toReadablePrice = (price: number): string => {
+    return new Intl.NumberFormat('ar-SD', {
+      style: 'currency',
+      currency: 'SDG',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
   return (
     <>
       <div className='w-full flex flex-col items-center tablet:items-start gap-y-2'>
@@ -217,14 +224,15 @@ function ProductPageComponent(params: { product: Product }) {
                 className={`text-[13px] tablet:text-[18px] font-[700] ${
                   product.discount && 'line-through opacity-80'
                 }`}>
-                {product.price} SDG
+                {toReadablePrice(product.price)}
               </p>
               {product.discount && (
                 <p className='text-[13px] tablet:text-[18px] font-[700] text-primary'>
-                  {Math.round(
-                    product.price - (product.price * product.discount) / 100
+                  {toReadablePrice(
+                    Math.round(
+                      product.price - (product.price * product.discount) / 100
+                    )
                   )}{' '}
-                  SDG
                 </p>
               )}
             </div>

@@ -45,6 +45,14 @@ function ProductCard({ product }: { product: Product }) {
     setAddedToCart(false);
   };
 
+  const toReadablePrice = (price: number): string => {
+    return new Intl.NumberFormat('ar-SD', {
+      style: 'currency',
+      currency: 'SDG',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
+
   return (
     <div
       className='relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full max-w-[430px] bg-white p-0 m-0 rounded-xl cursor-pointer tablet:hover:drop-shadow-xl transition-all duration-150'
@@ -53,7 +61,8 @@ function ProductCard({ product }: { product: Product }) {
       tabIndex={0}
       onClick={() => {
         router.push(`/products/${product.documentId}`);
-      }}>
+      }}
+      title='عرض تفاصيل المنتج'>
       {/* Sale tag */}
       {product.discount && (
         <div className='absolute z-30 top-0 right-0 bg-primary text-white text-[13px] font-[500] p-1 rounded-bl-xl rounded-tr-xl'>
@@ -174,27 +183,30 @@ function ProductCard({ product }: { product: Product }) {
         {/* footer */}
         <div className='w-full flex items-center justify-between gap-4'>
           {/* stock */}
-          <div className='w-fit tablet:px-1 tablet:py-2 flex flex-col items-end'>
+          {/* <div className='w-fit tablet:px-1 tablet:py-2 flex flex-col items-end'>
             {product.stock > 0 && (
               <p className='w-full text-[13px] tablet:text-[16px] font-[400] text-primary text-left'>
                 {product.stock} متوفر
               </p>
             )}
-          </div>
+          </div> */}
           {/* product price */}
-          <div className='w-fit tablet:px-1 tablet:py-2 flex flex-col items-end'>
+          <div className='w-fit tablet:px-1 tablet:py-2 flex items-end gap-3'>
             <p
-              className={`text-[13px] tablet:text-[18px] font-[700] ${
-                product.discount && 'line-through opacity-80'
+              className={`text-[13px] tablet:text-[18px] ${
+                product.discount
+                  ? 'line-through opacity-80 font-[500] italic'
+                  : 'font-[700]'
               }`}>
-              {product.price} SDG
+              {toReadablePrice(product.price)}
             </p>
             {product.discount && (
               <p className='text-[13px] tablet:text-[18px] font-[700] text-primary'>
-                {Math.round(
-                  product.price - (product.price * product.discount) / 100
+                {toReadablePrice(
+                  Math.round(
+                    product.price - (product.price * product.discount) / 100
+                  )
                 )}{' '}
-                SDG
               </p>
             )}
           </div>
