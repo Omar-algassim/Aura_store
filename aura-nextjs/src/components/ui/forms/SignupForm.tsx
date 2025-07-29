@@ -4,13 +4,8 @@ import React, { useActionState, useEffect } from 'react';
 import Input from '@/components/common/Input';
 import { Preloader } from '../Preloader';
 import { ButtonPrimary } from '@/components/common/Buttons';
-import {
-  useCart,
-  useCartDispatcher,
-  useUserDispatch,
-} from '@/components/context';
+import { useUserDispatch } from '@/components/context';
 import { redirect } from 'next/navigation';
-import { CartEntity } from '@/entities/cart-entity';
 import { CountriesDropdown } from '../CountriesDropdown';
 import { getFieldError, getFormError } from './handleError';
 
@@ -24,8 +19,6 @@ const initialState = {
 export function SignupForm({ type }: { type: 'phone' | 'email' }) {
   // const user = useUser();
   const UserDispatcher = useUserDispatch();
-  const CartDispatcher = useCartDispatcher();
-  const cart = useCart() as CartEntity;
   const formRef = React.useRef<HTMLFormElement>(null);
   const [countryKey, setCountryKey] = React.useState('');
   const [formState, formAction, isPending] = useActionState(
