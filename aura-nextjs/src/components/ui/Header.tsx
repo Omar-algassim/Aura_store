@@ -52,7 +52,7 @@ export function Header() {
   return (
     <>
       {/* static one */}
-      <div className='w-full relative flex flex-col items-center justify-center bg-white px-3'>
+      <div className='w-full relative z-40 flex flex-col items-center justify-center bg-white px-3'>
         <div className='w-full max-w-[1440px] z-30 sticky top-0 flex flex-col items-center justify-center'>
           <div className='flex items-center justify-between gap-4 w-[95vw] max-w-[1480px] rounded-2xl py-[20px]  tablet:justify-between flex-wrap z-30 sticky top-0'>
             {/* nav bar and create account button */}
@@ -145,7 +145,7 @@ export function Header() {
             </div>
 
             {/* Cart and Logo */}
-            <div className='flex items-center justify-end gap-4'>
+            <div className='flex items-center justify-end gap-1 tablet:gap-4'>
               <div className='relative flex items-center'>
                 <Image
                   src='/icons/cart.svg'
@@ -156,7 +156,7 @@ export function Header() {
                   className='cursor-pointer'
                 />
                 <div
-                  className={`absolute -top-4 -right-2.5 w-[20px] h-[20px] tablet:w-[24px] tablet:h-[24px] rounded-full text-center text-[12px] tablet-text-[14px] pt-[3px] ${
+                  className={`absolute -top-2 -right-2.5 w-[20px] h-[20px] tablet:w-[24px] tablet:h-[24px] rounded-full text-center text-[12px] tablet-text-[14px] pt-[3px] ${
                     cartCount === 0
                       ? 'bg-transparent text-transparent'
                       : 'bg-primary text-white'

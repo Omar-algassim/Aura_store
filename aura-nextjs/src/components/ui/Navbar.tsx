@@ -14,11 +14,24 @@ import {
 import { CartEntity } from '@/entities/cart-entity';
 import AlertDialogElement from '../common/alert-dialog';
 import { whatsappMessage, whatsappPhone } from '@/constants/app-constants';
+import {
+  InfoIcon,
+  UserCircleIcon,
+  CartIcon,
+  WhatsAppIcon,
+} from '@/components/icons';
+
+const ICONS = {
+  info: InfoIcon,
+  profile: UserCircleIcon,
+  products: CartIcon,
+  whatsapp: WhatsAppIcon,
+};
 
 interface NavElementProps {
   name: string;
   link: string;
-  icon?: string;
+  icon?: 'info' | 'profile' | 'products' | 'whatsapp';
 }
 
 const alertProps = {
@@ -34,26 +47,22 @@ const alertProps = {
  * @returns
  */
 function NavElement(props: NavElementProps) {
-  const router = useRouter();
+  const IconComponent = props.icon ? ICONS[props.icon] : null;
   return (
-    <div
-      className='flex items-center justify-center hover:bg-primary-dark hover:text-white active:bg-primary-dark
+    <Link
+      href={props.link}
+      target={props.icon === 'whatsapp' ? '_blank' : '_self'}
+      rel={props.icon === 'whatsapp' ? 'noopener noreferrer' : undefined}
+      className='group flex items-center justify-center gap-1 hover:bg-primary-dark hover:text-white active:bg-primary-dark
           active:text-white focus:outline-none focus:bg-primary-dark w-[180px]
-          focus:text-white rounded-[12px] py-[12px] px-[6px] cursor-pointer'>
-      {/* the link element navigation to  */}
-      <Link href={props.link}>{props.name}</Link>
+          focus:text-white rounded-[12px] py-[12px] px-4 cursor-pointer'>
       {/*the icon beside the element if exist */}
-      {props.icon && (
-        <Image
-          className='mr-6 cursor-whatsapp'
-          onClick={() => router.push('https://wa.me/966531676082')}
-          src={props.icon}
-          alt={props.name}
-          width={20}
-          height={20}
-        />
+      {IconComponent && (
+        <IconComponent className='h-5 w-5 text-foreground group-hover:text-white group-active:text-white' />
       )}
-    </div>
+      {/* the link element navigation to  */}
+      <h4 className='flex-1'>{props.name}</h4>
+    </Link>
   );
 }
 
@@ -138,25 +147,36 @@ export function Navbar() {
                 </>
               )}
             </div>
-            <div className='flex flex-col justify-between pt-[40px] px-6'>
-              <NavElement
-                link='/products'
-                name='جميع المنتجات'
-              />
-              <NavElement
-                link={`https://wa.me/${whatsappPhone}?text=${whatsappMessage}`}
-                name='تواصل معنا'
-                icon='/icons/logos-whatsapp-icon.svg'
-              />
-              <NavElement
-                link='/aura/about-aura'
-                name='نبذة عن Aura'
-              />
-              <NavElement
-                link='/profile'
-                name='الملف الشخصي'
-              />
-            </div>
+            <ul className='flex flex-col justify-between pt-[40px] px-6'>
+              <li>
+                <NavElement
+                  link='/products'
+                  name='جميع المنتجات'
+                  icon='products'
+                />
+              </li>
+              <li>
+                <NavElement
+                  link={`https://wa.me/${whatsappPhone}?text=${whatsappMessage}`}
+                  name='تواصل معنا'
+                  icon='whatsapp'
+                />
+              </li>
+              <li>
+                <NavElement
+                  link='/aura/about-aura'
+                  name='نبذة عن Aura'
+                  icon='info'
+                />
+              </li>
+              <li>
+                <NavElement
+                  link='/profile'
+                  name='الملف الشخصي'
+                  icon='profile'
+                />
+              </li>
+            </ul>
           </div>
         </div>
       </div>
