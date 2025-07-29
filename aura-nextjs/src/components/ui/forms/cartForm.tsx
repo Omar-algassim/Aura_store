@@ -26,7 +26,7 @@ import { getFieldError } from './handleError';
 
 type Props = {
   //   orderId: string;
-   
+
   onError: (error: any) => void;
   children?: React.ReactNode;
 };
@@ -150,6 +150,20 @@ export function CartForm(props: Props) {
       }
     }
   }, [formState, cart, user, onError, cartDispatcher, router]);
+
+  // submit form on enter key press
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && checkoutFormRef.current) {
+        event.preventDefault();
+        checkoutFormRef.current.requestSubmit();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
   return (
     <>
       <form

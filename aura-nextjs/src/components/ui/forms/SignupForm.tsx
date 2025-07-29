@@ -26,6 +26,7 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
   const UserDispatcher = useUserDispatch();
   const CartDispatcher = useCartDispatcher();
   const cart = useCart() as CartEntity;
+  const formRef = React.useRef<HTMLFormElement>(null);
   const [countryKey, setCountryKey] = React.useState('');
   const [formState, formAction, isPending] = useActionState(
     signupAction,
@@ -62,11 +63,6 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
       // dispatch user data to global context
       // // /console.log('user data', JSON.stringify(formState.data, null, 2));
       UserDispatcher({ type: 'LOGIN', payload: { userData: formState.data } });
-      // sync the cart with the user
-      cart.sync(formState.data.user.documentId).then(() => {
-        CartDispatcher({ type: 'UPDATE', payload: { cart: cart } });
-      });
-
       // check if the user used phone number or email, and act accordingly
       if (type === 'email') {
         // redirect to email confirmation page
@@ -80,11 +76,25 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
         );
       }
     }
-  });
+  }, [formState.data, UserDispatcher, type]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && formRef.current) {
+        event.preventDefault();
+        formRef.current.requestSubmit();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <form
       action={formAction}
+      ref={formRef}
       className='flex flex-col space-y-4 mt-6 w-full tablet:flex-row tablet:flex-wrap tablet:gap-x-4 tablet:items-center'>
       {formError && (
         <span className='text-primary-dark text-xs text-center font-[400] font-alex w-full text-wrap'>
