@@ -1,10 +1,11 @@
 'use client';
 import { signupAction } from '@/utils/services/auth-service';
 import React, { useActionState, useEffect } from 'react';
+import cookies from 'js-cookie';
 import Input from '@/components/common/Input';
 import { Preloader } from '../Preloader';
 import { ButtonPrimary } from '@/components/common/Buttons';
-import { useUserDispatch } from '@/components/context';
+import { useUser, useUserDispatch } from '@/components/context';
 import { redirect } from 'next/navigation';
 import { CountriesDropdown } from '../CountriesDropdown';
 import { getFieldError, getFormError } from './handleError';
@@ -18,7 +19,7 @@ const initialState = {
 };
 
 export function SignupForm({ type }: { type: 'phone' | 'email' }) {
-  // const user = useUser();
+  const user = useUser();
   const { toast } = useToast();
   const [error, setError] = React.useState<string>('');
   const UserDispatcher = useUserDispatch();
@@ -59,6 +60,13 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
       // dispatch user data to global context
       // // /console.log('user data', JSON.stringify(formState.data, null, 2));
       UserDispatcher({ type: 'LOGIN', payload: { userData: formState.data } });
+      // check if the user is confirmed
+      if (user?.confirmed) {
+        const nextPage = cookies.get('nextPage') || '/';
+        cookies.remove('nextPage');
+        // redirect to the next page
+        redirect(nextPage);
+      }
       // check if the user used phone number or email, and act accordingly
       if (type === 'email') {
         // redirect to email confirmation page
@@ -72,7 +80,7 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
         );
       }
     }
-    console.log('Form State Data:', formState.data);
+    // console.log('Form State Data:', formState.data);
   }, [formState.data, UserDispatcher, type]);
 
   useEffect(() => {

@@ -156,10 +156,13 @@ export const signinProvider = async (
 
     return { ok: true, data };
   } catch (error: any) {
-    console.error(error);
+    // console.error('Error from signinProvider Service:', error);
     return {
       ok: false,
-      error: error.message || 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+      error: {
+        message: error.message || 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+        code: error.code || 500,
+      },
     };
   }
 };

@@ -177,7 +177,7 @@ class APIClient {
       }
       return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
     } catch (error) {
-      //console.error(error);
+      // console.error('Error From Catch API:', error);
       // console.log('AxiosError:', error.response?.data);
       if (isAxiosError(error)) {
         return { error: error.response?.data };
