@@ -119,37 +119,37 @@ function ProductsCarousel({
     );
   }
   return (
-    <>
+    <div className='w-full flex items-center justify-center'>
       {error && <div>{error}</div>}
       <Carousel
         opts={{
           align: 'end',
         }}
-        className='flex flex-col items-center justify-center px-0 tablet:px-3 laptop:px-5 rounded-2xl scroll-m-3 laptop:scroll-m-0'
+        className='relative w-full flex flex-col items-center justify-center px-1 rounded-2xl scroll-m-3 laptop:scroll-m-0'
         dir='ltr'>
         <CarouselContent
-          className='w-screen max-w-[1400px] mr-2 py-4 items-stretch justify-items-stretch'
+          className='w-full max-w-[1400px] py-4 items-stretch justify-items-stretch'
           dir='ltr'>
           {loading
             ? Array.from({ length: 3 }).map((_, index) => (
                 <CarouselItem
                   key={index}
-                  className='basis-1/2 max-w-[173px] tablet:max-w-none tablet:basis-1/3 pr-2 by-2 flex items-stretch justify-items-stretch'>
+                  className='basis-1/2 max-w-[173px] tablet:max-w-none tablet:basis-1/3 flex items-stretch justify-items-stretch'>
                   <ProductCardSkeleton />
                 </CarouselItem>
               ))
             : products.map((product) => (
                 <CarouselItem
                   key={`${product.documentId}-${productsType}`}
-                  className='max-w-[216px] tablet:max-w-[340px] pr-2 by-2 flex items-stretch justify-items-stretch'>
+                  className='max-w-[216px] tablet:max-w-[340px] flex items-stretch justify-items-stretch'>
                   <ProductCard product={product} />
                 </CarouselItem>
               ))}
         </CarouselContent>
-        <CarouselPrevious className='absolute -left-3 bg-black text-white hidden tablet:flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]' />
-        <CarouselNext className='absolute -right-3 bg-black text-white hidden tablet:flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]' />
+        <CarouselPrevious className='absolute left-0 bg-black text-white hidden tablet:flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]' />
+        <CarouselNext className='absolute right-0 bg-black text-white hidden tablet:flex hover:opacity-75 hover:bg-black hover:text-white w-[50px] h-[50px]' />
       </Carousel>
-    </>
+    </div>
   );
 }
 

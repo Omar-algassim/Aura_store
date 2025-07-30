@@ -10,10 +10,10 @@ function Home() {
   const router = useRouter();
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen gap-4 laptop:gap-24 bg-white w-full'>
+    <div className='flex flex-col items-center justify-center w-screen min-h-screen gap-4 laptop:gap-24 bg-white overflow-x-hidden'>
       <Header />
       <main className='flex flex-col items-center justify-center min-h-screen gap-12 tablet:gap-16 laptop:gap-24 bg-white w-full max-w-[1480px]'>
-        {/* main hero /only displayed in big screens/ */}
+        {/* cover image */}
         <section className='flex tablet:w-full items-center justify-center -mt-4 tablet:-mt-20'>
           <Image
             src={'/images/cover-image-4.png'}
@@ -37,7 +37,7 @@ function Home() {
           </div>
 
           {/* product list (offers) items */}
-          <div className='w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
+          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
             <ProductsCarousel productsType='offers' />
           </div>
 
@@ -78,7 +78,7 @@ function Home() {
           </div>
 
           {/* product list (latest) items */}
-          <div className='w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
+          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
             <ProductsCarousel productsType='recent' />
           </div>
 
@@ -119,7 +119,7 @@ function Home() {
           </div>
 
           {/* product list (top-selling) items */}
-          <div className='w-full min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
+          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
             <ProductsCarousel productsType='bestSelling' />
           </div>
 
