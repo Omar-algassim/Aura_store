@@ -123,7 +123,7 @@ function ProductPageComponent(params: { product: Product }) {
   };
 
   const toReadablePrice = (price: number): string => {
-    return new Intl.NumberFormat('ar-SD', {
+    return new Intl.NumberFormat('en-SD', {
       style: 'currency',
       currency: 'SDG',
       minimumFractionDigits: 0,
@@ -221,13 +221,15 @@ function ProductPageComponent(params: { product: Product }) {
             {/* product price */}
             <div className='w-full tablet:px-1 tablet:py-2 flex flex-col'>
               <p
-                className={`text-[13px] tablet:text-[18px] font-[700] ${
-                  product.discount && 'line-through opacity-80'
+                className={`text-xs tablet:text-lg ${
+                  product.discount
+                    ? 'line-through italic opacity-80 font-[500]'
+                    : 'font-[700]'
                 }`}>
                 {toReadablePrice(product.price)}
               </p>
               {product.discount && (
-                <p className='text-[13px] tablet:text-[18px] font-[700] text-primary'>
+                <p className='text-xs tablet:text-lg font-[700] text-primary'>
                   {toReadablePrice(
                     Math.round(
                       product.price - (product.price * product.discount) / 100

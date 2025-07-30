@@ -46,7 +46,7 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   const toReadablePrice = (price: number): string => {
-    return new Intl.NumberFormat('ar-SD', {
+    return new Intl.NumberFormat('en-SD', {
       style: 'currency',
       currency: 'SDG',
       minimumFractionDigits: 0,
@@ -55,7 +55,7 @@ function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className='relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 min-h-[412px] w-full max-w-[430px] bg-white p-0 m-0 rounded-xl cursor-pointer tablet:hover:drop-shadow-xl transition-all duration-150'
+      className='relative flex flex-col gap-y-2 justify-stretch tablet:gap-3 h-full tablet:min-h-[412px] w-full max-w-[430px] bg-white p-0 m-0 rounded-xl cursor-pointer tablet:hover:drop-shadow-xl transition-all duration-150'
       dir='ltr'
       role='button'
       tabIndex={0}
@@ -65,19 +65,19 @@ function ProductCard({ product }: { product: Product }) {
       title='عرض تفاصيل المنتج'>
       {/* Sale tag */}
       {product.discount && (
-        <div className='absolute z-30 top-0 right-0 bg-primary text-white text-[13px] font-[500] p-1 rounded-bl-xl rounded-tr-xl'>
+        <div className='absolute z-30 top-0 right-0 bg-primary text-white text-sm font-[500] p-1 rounded-bl-xl rounded-tr-xl'>
           {product.discount}% خصم
         </div>
       )}
 
       {/* card image */}
-      <div className='relative w-full h-[200px] flex items-center justify-center rounded-lg bg-surface overflow-hidden'>
+      <div className='relative w-full h-[220px] flex items-center justify-center rounded-lg bg-surface overflow-hidden'>
         {/* out of stock */}
         {product.stock <= 0 && (
           <div className='absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden bg-[#03030325] backdrop-blur-sm'>
             <div className='z-40 bg-primary-dark w-[600px] h-[20px] opacity-70 rotate-45' />
             <div className='absolute inset-0 z-50 flex items-center justify-center'>
-              <div className='text-white text-[13px] tablet:text-[16px] font-[600] p-1 rounded-bl-xl rounded-tr-xl'>
+              <div className='text-white text-sm tablet:text-lg font-[600] p-1 rounded-bl-xl rounded-tr-xl'>
                 نفذ من المخزون
               </div>
             </div>
@@ -85,16 +85,15 @@ function ProductCard({ product }: { product: Product }) {
         )}
         <Image
           src={`${BaseUrl}${product.thumbnail}`}
-          width={300}
-          height={250}
-          alt={product.title}
+          fill
+          alt={`${product.title} - Thumbnail`}
           // content="center"
           // objectFit="contain"
-          className='w-[173px] tablet:w-[200px] h-auto object-cover object-center'
+          className='aspect-square object-contain'
         />
       </div>
       {/* card body */}
-      <div className='w-full flex flex-col gap-y-2 tablet:gap-y-3 px-2 tablet:px-3'>
+      <div className='w-full flex-1 flex flex-col gap-y-2 tablet:gap-y-3 px-2 tablet:px-3'>
         <div className='flex items-center justify-between w-full'>
           {/* product rating */}
           <div className='tablet:px-2 tablet:py-3 flex'>
@@ -169,19 +168,19 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         </div>
         {/* product title */}
-        <div className='w-full tablet:px-1 tablet:py-2 flex justify-end'>
+        <div
+          dir='rtl'
+          className='w-full tablet:px-1 tablet:py-2 flex justify-end'>
           <ToolTip content={<p>{product.title}</p>}>
             <Link
               href={`/products/${product.documentId}`}
-              className={`text-[13px] tablet:text-[22px] font-[500] tablet:max-h-[27px] overflow-hidden cursor-pointer rounded-lg hover:underline hover:opacity-80 transition-all duration-150`}>
-              {product.title.length <= 25
-                ? product.title
-                : `${product.title.slice(0, 25)}...`}
+              className={`text-sm tablet:text-xl font-[500] line-clamp-2 cursor-pointer rounded-lg hover:underline hover:opacity-80 transition-all duration-150`}>
+              {product.title}
             </Link>
           </ToolTip>
         </div>
         {/* footer */}
-        <div className='w-full flex items-center justify-between gap-4'>
+        <div className='w-full flex-1 self-end flex items-end justify-between gap-4'>
           {/* stock */}
           {/* <div className='w-fit tablet:px-1 tablet:py-2 flex flex-col items-end'>
             {product.stock > 0 && (
