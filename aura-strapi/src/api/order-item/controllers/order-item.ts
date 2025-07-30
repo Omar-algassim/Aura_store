@@ -39,9 +39,6 @@ export default factories.createCoreController(
             viewed: viewed + 1,
           },
         });
-        await strapi
-          .documents('api::product.product')
-          .publish({ documentId: productId });
       } catch (error) {
         console.error('Error updating product stock:', error);
         return ctx.internalServerError('Error updating product stock');

@@ -21,9 +21,6 @@ export default factories.createCoreController(
             viewed: viewed, // Increment the viewed count
           },
         });
-        await strapi
-          .documents('api::product.product')
-          .publish({ documentId: id });
         return { data, meta };
       } catch (error) {
         if (error.name === 'NotFoundError') {
