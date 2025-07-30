@@ -13,6 +13,7 @@ import {
 } from '@/components/context';
 import { CartEntity } from '@/entities/cart-entity';
 import { CountriesDropdown } from '../CountriesDropdown';
+import { useToast } from '@/hooks/use-toast';
 
 const getError = (
   error: { message: string; path: string[] }[],
@@ -40,6 +41,8 @@ export function LoginForm({ type = 'phone' }: { type?: 'phone' | 'email' }) {
     signinAction,
     initialState
   );
+  const { toast } = useToast();
+  const [error, setError] = React.useState<string>('');
   const formRef = React.useRef<HTMLFormElement>(null);
   const [phone, setPhone] = React.useState('');
   const [countryKey, setCountryKey] = React.useState('+249');
@@ -80,6 +83,17 @@ export function LoginForm({ type = 'phone' }: { type?: 'phone' | 'email' }) {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'خطأ',
+        description: error,
+        variant: 'destructive',
+      });
+      setError('');
+    }
+  }, [error]);
 
   return (
     <form
@@ -139,7 +153,7 @@ export function LoginForm({ type = 'phone' }: { type?: 'phone' | 'email' }) {
               onChange={(e) => {
                 const value = e.target.value;
                 if (value.startsWith('0')) {
-                  alert('الرجاء ادخال رقم الهاتف بدون الصفر');
+                  setError('الرجاء ادخال رقم الهاتف بدون الصفر');
                   setPhone(value.slice(1));
                   return;
                 }

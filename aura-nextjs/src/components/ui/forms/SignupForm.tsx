@@ -8,6 +8,7 @@ import { useUserDispatch } from '@/components/context';
 import { redirect } from 'next/navigation';
 import { CountriesDropdown } from '../CountriesDropdown';
 import { getFieldError, getFormError } from './handleError';
+import { useToast } from '@/hooks/use-toast';
 
 const initialState = {
   message: '',
@@ -18,6 +19,8 @@ const initialState = {
 
 export function SignupForm({ type }: { type: 'phone' | 'email' }) {
   // const user = useUser();
+  const { toast } = useToast();
+  const [error, setError] = React.useState<string>('');
   const UserDispatcher = useUserDispatch();
   const formRef = React.useRef<HTMLFormElement>(null);
   const [countryKey, setCountryKey] = React.useState('');
@@ -69,7 +72,19 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
         );
       }
     }
+    console.log('Form State Data:', formState.data);
   }, [formState.data, UserDispatcher, type]);
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'خطأ',
+        description: error,
+        variant: 'destructive',
+      });
+      setError('');
+    }
+  }, [error]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -128,9 +143,16 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
             <Input
               type='tel'
               value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.startsWith('0')) {
+                  setError('الرجاء ادخال رقم الهاتف بدون الصفر');
+                  setFormData({ ...formData, phone: value.slice(1) });
+                  return;
+                } else {
+                  setFormData({ ...formData, phone: value });
+                }
+              }}
               name='phone'
               placeholder='9xxxxxxxxxx'
               customStyles='flex-1'

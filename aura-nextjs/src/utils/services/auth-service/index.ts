@@ -1,8 +1,7 @@
- 
-import { signInSchema, signUpSchema } from "@/components/ui/forms/schemas";
-import { SignupDTO } from "@/interfaces/dto";
-import { apiClient } from "@/utils/api/api-client";
-import { AxiosError } from "axios";
+import { signInSchema, signUpSchema } from '@/components/ui/forms/schemas';
+import { SignupDTO } from '@/interfaces/dto';
+import { apiClient } from '@/utils/api/api-client';
+import { AxiosError } from 'axios';
 
 /**
  * signupAction is an async function that takes a form data object and run client side validation on it before sending it to the server endpoint
@@ -16,24 +15,24 @@ export const signupAction = async (
   try {
     // extract the data from the form data object
     const rowData = {
-      email: formData.get("email")?.toString(),
-      countryCode: formData.get("countryCode")?.toString(),
-      phone: formData.get("phone")?.toString(),
-      firstName: formData.get("firstName")?.toString(),
-      lastName: formData.get("lastName")?.toString(),
-      password: formData.get("password")?.toString(),
-      confirmPassword: formData.get("confirmPassword")?.toString(),
+      email: formData.get('email')?.toString(),
+      countryCode: formData.get('countryCode')?.toString(),
+      phone: formData.get('phone')?.toString(),
+      firstName: formData.get('firstName')?.toString(),
+      lastName: formData.get('lastName')?.toString(),
+      password: formData.get('password')?.toString(),
+      confirmPassword: formData.get('confirmPassword')?.toString(),
     };
 
-    console.log("Attempt to sign up", JSON.stringify(rowData));
+    // console.log("Attempt to sign up", JSON.stringify(rowData));
     // validate the data using zod
     const validation = signUpSchema.safeParse(rowData);
     // // /console.log(JSON.stringify(validation));
     if (!validation.success) {
-      console.log("Validation error", validation.error.issues);
+      // console.log("Validation error", validation.error.issues);
       return {
-        type: "validation",
-        message: "الرجاء التأكد من البيانات المدخله",
+        type: 'validation',
+        message: 'الرجاء التأكد من البيانات المدخله',
         error: validation.error.issues,
         data: null,
       };
@@ -51,11 +50,11 @@ export const signupAction = async (
     let userData: any;
     // check if the provider is email or phone
     // and call the appropriate API endpoint
-    console.log("rowData", JSON.stringify(rowData, null, 2));
+    // console.log("rowData", JSON.stringify(rowData, null, 2));
     if (rowData.email) {
       // if it's an email, call the email signup API
       data.email = rowData.email;
-      console.log("email signup", JSON.stringify(data, null, 2));
+      console.log('email signup', JSON.stringify(data, null, 2));
       const response = await apiClient.signup(data);
       userData = response.data;
       error = response.error;
@@ -66,7 +65,7 @@ export const signupAction = async (
       // // /console.log("user data", JSON.stringify(userData, null, 2));
     } else {
       // if it's a phone number, call the phone signup API
-      const phone = validation.data.phone?.startsWith("0")
+      const phone = validation.data.phone?.startsWith('0')
         ? validation.data.phone?.slice(1)
         : validation.data.phone;
       data.phone_number = `${validation.data.countryCode}${phone}`;
@@ -84,13 +83,13 @@ export const signupAction = async (
       // return { message: error, type: "server", error, data: null };
       return handleError(error);
     }
-    return { message: "تم التسجيل بنجاح", data: userData };
+    return { message: 'تم التسجيل بنجاح', data: userData };
   } catch (error: any) {
     console.error(error);
     return {
-      type: "server",
-      message: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
-      error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+      type: 'server',
+      message: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+      error: error.message || 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
       data: null,
     };
   }
@@ -104,17 +103,17 @@ export const signupAction = async (
 export const signinAction = async (_prevState: any, formData: FormData) => {
   try {
     const data = {
-      provider: formData.get("provider")?.toString(),
-      countryCode: formData.get("countryCode")?.toString(),
-      password: formData.get("password")?.toString(),
+      provider: formData.get('provider')?.toString(),
+      countryCode: formData.get('countryCode')?.toString(),
+      password: formData.get('password')?.toString(),
     };
 
     // console.log("Attempt to sign in", JSON.stringify(data));
     const validation = signInSchema.safeParse(data);
     if (!validation.success) {
       return {
-        type: "validation",
-        message: "الرجاء التأكد من البيانات المدخله",
+        type: 'validation',
+        message: 'الرجاء التأكد من البيانات المدخله',
         error: validation.error.issues,
         data: null,
       };
@@ -126,16 +125,16 @@ export const signinAction = async (_prevState: any, formData: FormData) => {
     );
     if (error) {
       // /console.log("API ==> error", error);
-      return { message: error, type: "server", error, data: null };
+      return { message: error, type: 'server', error, data: null };
     }
 
-    return { message: "تم تسجيل الدخول بنجاح", data: userData };
+    return { message: 'تم تسجيل الدخول بنجاح', data: userData };
   } catch (error: any) {
     console.error(error);
     return {
-      type: "server",
-      message: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
-      error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+      type: 'server',
+      message: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+      error: error.message || 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
       data: null,
     };
   }
@@ -160,7 +159,7 @@ export const signinProvider = async (
     console.error(error);
     return {
       ok: false,
-      error: error.message || "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+      error: error.message || 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
     };
   }
 };
@@ -171,22 +170,22 @@ const handleError = (error: any) => {
   if (error.code === AxiosError.ERR_NETWORK) {
     return {
       message: error.code,
-      type: "server",
-      error: "خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا",
+      type: 'server',
+      error: 'خطاء بالشبكة, تأكد من إتصالك بالإنترنت وحاول مجددا',
       data: null,
     };
-  } else if (errorType === "ApplicationError") {
+  } else if (errorType === 'ApplicationError') {
     return {
       message: errorType,
-      type: "server",
-      error: "اسم المستخدم, رقم الهاتف, او البريد الالكتروني مستعمل بالفعل",
+      type: 'server',
+      error: 'اسم المستخدم, رقم الهاتف, او البريد الالكتروني مستعمل بالفعل',
       data: null,
     };
   }
   return {
     message: error,
-    type: "server",
-    error: "حدث خطأ ما, الرجاء المحاوله مره اخرى",
+    type: 'server',
+    error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
     data: null,
   };
 };
