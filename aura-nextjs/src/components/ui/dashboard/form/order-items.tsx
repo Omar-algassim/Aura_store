@@ -8,40 +8,45 @@ import { BaseUrl } from "@/constants/api-constants";
 
 interface OrderItemProps {
     count: number;
-    product: Product; // Allow null to handle cases where product is not passed
-};
-
-export default function OrderItems(props: OrderItemProps) {
-    const [count, setCount] = useState(props.count);
-    const [isOpen, setIsOpen] = useState(false);
-    const [changed, setChanged] = useState(true);
-
-    function increaseAmount(): void {
-      if (count < props.product?.stock) {
-        setCount(count + 1);
-        if (props.count === count + 1) {
-          setChanged(true);
-        } else {
-          setChanged(false); 
-      }
-  }
+    product: {
+      documentId: string; // Allow documentId to be optional
+      title: string; // Allow title to be optional
+      price: number; // Allow price to be optional
+      thumbnail: string; // Allow thumbnail to be optional
+      stock?: number; // Allow stock to be optional
+    } | null; // Allow product to be null
 }
 
-    function decreaseAmount(): void {
-      if (count > 1) {
-        setCount(count - 1);
-        if (props.count === count - 1) {
-          setChanged(true);
-        } else {
-          setChanged(false);
-        }
-    }
-    }
+export default function OrderItems(props: OrderItemProps) {
+  const [count, setCount] = useState(props.count);
+  const [isOpen, setIsOpen] = useState(false);
+  const [changed, setChanged] = useState(true);
+  
+  //     function increaseAmount(): void {
+    //       if (count < props.product?.stock) {
+//         setCount(count + 1);
+//         if (props.count === count + 1) {
+//           setChanged(true);
+//         } else {
+//           setChanged(false); 
+//       }
+//   }
+// }
+
+//     function decreaseAmount(): void {
+//       if (count > 1) {
+//         setCount(count - 1);
+//         if (props.count === count - 1) {
+  //           setChanged(true);
+  //         } else {
+    //           setChanged(false);
+    //         }
+//     }
+//     }
 
     function toggleDeleteModal(): void {
-        setIsOpen(!isOpen);
+      setIsOpen(!isOpen);
     }
-
     async function handleDelete(): Promise<void> {
       // Implement the delete logic here
       console.log("Delete item clicked");
@@ -60,7 +65,7 @@ export default function OrderItems(props: OrderItemProps) {
                 width={40}
                 height={40}
                 src={`${BaseUrl}${props.product?.thumbnail}`}
-                alt={props.product.name}
+                alt={props.product.title || "Product Image"}
               />
             </div>
             <div>
@@ -72,14 +77,11 @@ export default function OrderItems(props: OrderItemProps) {
           <div className="py-3 text-gray-800 text-theme-sm dark:text-gray-400">
             {props.product?.price * count} SDG
           </div>
-          <div className="py-3 text-gray-800 text-theme-sm dark:text-gray-400">
-            {props.product?.name}
-          </div>
            <div className="flex gap-2">
               <div>
                   {count}
               </div>
-              <span className="flex flex-col gap-1">
+              {/* <span className="flex flex-col gap-1">
                   <Image
                   onClick={increaseAmount}
                   alt='increase'
@@ -94,7 +96,7 @@ export default function OrderItems(props: OrderItemProps) {
                   height={18}
                   className="cursor-pointer"
                   src='/icons/angle-down.svg' />
-              </span>
+              </span> */}
           </div>
           <div className="flex items-center gap-2">
            <button

@@ -833,7 +833,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     singularName: 'product';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     brand: Schema.Attribute.Relation<'oneToOne', 'api::brand.brand'>;
@@ -876,7 +876,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     usage: Schema.Attribute.Text;
     viewed: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
-    weight: Schema.Attribute.Integer;
+    weight: Schema.Attribute.JSON & Schema.Attribute.Required;
   };
 }
 
@@ -924,6 +924,8 @@ export interface ApiReviewReview extends Struct.CollectionTypeSchema {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+    userID: Schema.Attribute.String;
+    userName: Schema.Attribute.String;
   };
 }
 

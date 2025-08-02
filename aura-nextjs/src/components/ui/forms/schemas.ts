@@ -84,6 +84,7 @@ export const newProductSchema = z.object({
   weight: z
     .string({ message: 'Please enter a valid weight value and unit.' })
     .refine((value) => {
+      if (!value) return false;
       const parsedWeight = JSON.parse(value);
       return (
         parsedWeight &&

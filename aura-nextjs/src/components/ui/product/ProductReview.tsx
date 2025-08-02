@@ -86,7 +86,7 @@ function ProductReview({ review }: { review: Review }) {
         {/* username/rate */}
         <div className='flex flex-col items-center justify-center gap-2'>
           <div className='text-sm font-[500] capitalize'>
-            {review?.user?.username || 'Anonymous'}
+            {review?.userName || 'Anonymous'}
           </div>
           <ProductRate starsNumber={review.rate} />
         </div>

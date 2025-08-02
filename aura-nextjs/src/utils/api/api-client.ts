@@ -454,7 +454,7 @@ class APIClient {
       }
       return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
     } catch (error: any) {
-      // /console.log(error, null, 2);
+      console.log(error, null, 2);
       return { error: error.message };
     }
   }
@@ -925,7 +925,7 @@ class APIClient {
   ) {
     const ordersData = orderItems.map((item) => {
       return {
-        count: item.quantity,
+        count: item.count,
         product: {
           connect: item.product.documentId,
         },

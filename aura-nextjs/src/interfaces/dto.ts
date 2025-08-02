@@ -43,7 +43,7 @@ export interface OrderItem {
     thumbnail: string;
     price: number;
   };
-  quantity: number;
+  count: number;
 }
 
 export interface CartEntityDto {
@@ -93,6 +93,8 @@ export interface Review {
   documentId: string;
   text: string;
   rate: number;
+  userName?: string;
+  userID: string;
   user: { documentId: string; username: string; email: string };
   product: Product;
   likes?: { documentId: string; username?: string; email?: string }[];

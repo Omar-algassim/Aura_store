@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
         hostname: process.env.SERVER_HOST_NAME || 'api.auraglowups.com',
       },
     ],
+    domains: [
+      'res.cloudinary.com',
+      process.env.SERVER_HOST_NAME || 'api.auraglowups.com',
+      'localhost',
+    ]
   },
 };
 

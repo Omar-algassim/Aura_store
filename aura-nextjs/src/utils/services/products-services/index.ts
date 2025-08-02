@@ -1,4 +1,5 @@
  
+import { user } from '@/constants/app-constants';
 import { ProductQueryFilters } from '@/interfaces';
 import { Product, Review } from '@/interfaces/dto';
 import { apiClient } from '@/utils/api/api-client';
@@ -458,6 +459,7 @@ export const getBrands = async () => {
 export const createProductReview = async (
   productId: string,
   userId: string,
+  userName: string,
   review: Partial<Review>,
   jwt: string
 ) => {
@@ -465,6 +467,8 @@ export const createProductReview = async (
     data: {
       rate: review.rate,
       text: review.text,
+      userName: userName,
+      userID: userId,
       product: {
         connect: [{ documentId: productId }],
       },

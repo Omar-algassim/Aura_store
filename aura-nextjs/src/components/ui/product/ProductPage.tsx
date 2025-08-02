@@ -21,6 +21,7 @@ import ProductReview from './ProductReview';
 import ProductsCarousel from './ProductsCarousel';
 import AlertDialogElement from '@/components/common/alert-dialog';
 import { CartEntity } from '@/entities/cart-entity';
+import { useToast } from '@/hooks/use-toast';
 
 function ProductPageComponent(params: { product: Product }) {
   const router = useRouter();
@@ -28,6 +29,7 @@ function ProductPageComponent(params: { product: Product }) {
   const cart = useCart() as CartEntity;
   const cartDispatcher = useCartDispatcher();
   const [error, setError] = useState('');
+  const [errorOpen, setErrorOpen] = useState(false);
   const [product] = useState(params.product);
   const [addedToCart, setAddedToCart] = useState(false);
   const [hero, setHero] = useState(product.thumbnail);
@@ -37,6 +39,7 @@ function ProductPageComponent(params: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [review, setReview] = useState('');
   const [rate, setRate] = useState(0);
+  const { toast } = useToast();
 
   // console.log(JSON.stringify(product, null, 2));
   const totalRate = getTotalRate(productReviews);
@@ -94,6 +97,12 @@ function ProductPageComponent(params: { product: Product }) {
     // );
     if (!review || !rate) {
       setError('الرجاء كتابة تقيمك مع اختيار التقدير اولا');
+      setErrorOpen(true);
+      toast({
+        title: 'خطأ',
+        description: 'الرجاء كتابة تقيمك مع اختيار التقدير اولا',
+        variant: 'destructive',
+      });
       return;
     }
     // check if the user logged in
@@ -106,9 +115,11 @@ function ProductPageComponent(params: { product: Product }) {
       return;
     }
     // send the review, using the reviewService
+    // console.log('user', user);
     const { error, data } = await createProductReview(
       product.documentId,
       user.documentId,
+      user.username,
       { text: review, rate: rate },
       jwt
     );
@@ -438,6 +449,13 @@ function ProductPageComponent(params: { product: Product }) {
             </div>
             {/* submit */}
             <div className='flex flex-col w-full items-center justify-center'>
+              <AlertDialogElement
+                header='خطأ'
+                cancel='إغلاق'
+                open={errorOpen}
+                body={error}>
+                <div></div>
+              </AlertDialogElement>
               <ButtonPrimary handleClick={sendReview}>
                 شاركي تقييمك
               </ButtonPrimary>
@@ -472,13 +490,6 @@ function ProductPageComponent(params: { product: Product }) {
           </div>
         </section>
       </div>
-      {error && (
-        <AlertDialogElement
-          header='خطأ'
-          body={error}>
-          <div></div>
-        </AlertDialogElement>
-      )}
     </>
   );
 }

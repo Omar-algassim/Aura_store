@@ -28,6 +28,7 @@ import { Loader } from '@/components/common/loader';
 import Link from 'next/link';
 import { PhoneCallIcon } from 'lucide-react';
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon';
+import OrderItems from '@/components/ui/dashboard/form/order-items';
 
 export default function OrderTable() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -390,6 +391,17 @@ export default function OrderTable() {
                         )}
                       </p>
                     </div>
+                  </div>
+                  <div>
+                    <Label>Order Total:</Label>
+                    <p className='ml-6'>
+                      {edit?.total_pay} SDG
+                    </p>
+                    {
+                      edit?.order_items.map((item) => (
+                        <OrderItems key={item.documentId} product={item.product} count={item.count} />
+                      ))
+                    }
                   </div>
                   <div>
                     <Label>Payment notification</Label>
