@@ -605,7 +605,7 @@ export function ProductForm(props: ProductForm) {
                   )}
                 </div>
                 <div className='relative col-span-2 lg:col-span-1'>
-                  <Label>Weight</Label>
+                  <Label>Weight *</Label>
                   {/* value */}
                   <Input
                     error={weightError.length > 0}
