@@ -18,7 +18,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'Aura-Store',
+  title: 'Aura Beauty',
   description:
     'Aura aims to establish itself as a premier online destination for authentic personal care and beauty products in Sudan. The e-commerce platform will offer a streamlined and user-friendly shopping experience, allowing customers to make purchases by providing their WhatsApp numbers and uploading payment advice from the Bankak application, eliminating the need for traditional authentication methods. -Goals The main objectives are: Create a straightforward, accessible, and secure platform for users to shop online with requiring user registration. Facilitate a simple purchase flow by using WhatsApp for customer communication and verification, combined with uploaded payment advice. Ensure a seamless user experience with a focus on performance, product presentation, and easy navigation',
   publisher: 'Aura-Store',

@@ -13,7 +13,7 @@ function ProductsLayout({ children }: { children: React.ReactNode }) {
 }
 
 export const metadata = {
-  title: 'Aura-Store | Products',
+  title: 'Aura Beauty | Products',
   description:
     'Explore our wide range of personal care and beauty products, from shampoos to skincare essentials. Shop now for authentic Sudanese beauty products.',
 };
