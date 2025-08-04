@@ -1,5 +1,5 @@
  
-import { user } from '@/constants/app-constants';
+
 import { ProductQueryFilters } from '@/interfaces';
 import { Product, Review } from '@/interfaces/dto';
 import { apiClient } from '@/utils/api/api-client';

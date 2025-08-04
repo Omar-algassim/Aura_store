@@ -161,7 +161,7 @@ export class CartEntity {
     const order_items = Object.values(this.products).map((product) => {
       return {
         product: product.product,
-        quantity: product.amount,
+        count: product.amount,
       };
     });
     // console.log("Order items: ", JSON.stringify(order_items, null, 2));

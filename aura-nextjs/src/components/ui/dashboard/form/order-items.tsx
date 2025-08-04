@@ -1,8 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import {  Product } from "@/interfaces/dto";
-import { FileIcon, TrashBinIcon } from "@/icons";
+// import { FileIcon, TrashBinIcon } from "@/icons";
 import { Modal } from "../ui/modal";
 import { BaseUrl } from "@/constants/api-constants";
 
@@ -18,9 +17,9 @@ interface OrderItemProps {
 }
 
 export default function OrderItems(props: OrderItemProps) {
-  const [count, setCount] = useState(props.count);
+  // const [count, setCount] = useState(props.count);
   const [isOpen, setIsOpen] = useState(false);
-  const [changed, setChanged] = useState(true);
+  // const [changed, setChanged] = useState(true);
   
   //     function increaseAmount(): void {
     //       if (count < props.product?.stock) {
@@ -75,11 +74,11 @@ export default function OrderItems(props: OrderItemProps) {
             </div>
           </div>
           <div className="py-3 text-gray-800 text-theme-sm dark:text-gray-400">
-            {props.product?.price * count} SDG
+            {props.product?.price * props.count} SDG
           </div>
            <div className="flex gap-2">
               <div>
-                  {count}
+                  {props.count}
               </div>
               {/* <span className="flex flex-col gap-1">
                   <Image
@@ -98,7 +97,7 @@ export default function OrderItems(props: OrderItemProps) {
                   src='/icons/angle-down.svg' />
               </span> */}
           </div>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
            <button
              onClick={() => console.log("Edit item clicked")}
              type="button"
@@ -113,8 +112,8 @@ export default function OrderItems(props: OrderItemProps) {
               className="flex w-full items-center justify-center gap-2 rounded-full border border-red-900 bg-red-800 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-red-950 hover:text-white dark:border-red-950 dark:bg-red-800 dark:text-white dark:hover:bg-red-950 dark:hover:text-white lg:inline-flex lg:w-auto"
             >
               <TrashBinIcon width={20} />
-            </button>                            
-           </div>
+            </button>                             
+           </div>*/}
           <Modal isOpen={isOpen} onClose={toggleDeleteModal} className="max-w-[400px] m-4">
             <div className="p-6">
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Delete Item</h2>
