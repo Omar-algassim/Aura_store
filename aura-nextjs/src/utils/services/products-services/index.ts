@@ -1,4 +1,3 @@
-import Cookies from 'js-cookie';
 import { ProductQueryFilters } from '@/interfaces';
 import { Product, Review } from '@/interfaces/dto';
 import { apiClient } from '@/utils/api/api-client';
