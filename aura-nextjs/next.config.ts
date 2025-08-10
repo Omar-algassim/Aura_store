@@ -11,8 +11,13 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: process.env.SERVER_HOST_NAME || 'api.auraglowups.com',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '1337',
+      },
     ],
-  }
+  },
 };
 
 import removeImports from 'next-remove-imports';

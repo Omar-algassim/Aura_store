@@ -977,6 +977,42 @@ export interface ApiSalesSales extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiSettingSetting extends Struct.SingleTypeSchema {
+  collectionName: 'settings';
+  info: {
+    description: '';
+    displayName: 'Settings';
+    pluralName: 'settings';
+    singularName: 'setting';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    bank_account_number: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'2006899'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    delivery_fees: Schema.Attribute.Decimal;
+    exchange_fees: Schema.Attribute.Decimal;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::setting.setting'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    social_links: Schema.Attribute.JSON & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    whatsapp_message: Schema.Attribute.Text;
+    whatsapp_phone: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'249999094668'>;
+  };
+}
+
 export interface ApiSteadySellingSteadySelling
   extends Struct.CollectionTypeSchema {
   collectionName: 'steady_sellings';
@@ -1542,6 +1578,7 @@ declare module '@strapi/strapi' {
       'api::product.product': ApiProductProduct;
       'api::review.review': ApiReviewReview;
       'api::sales.sales': ApiSalesSales;
+      'api::setting.setting': ApiSettingSetting;
       'api::steady-selling.steady-selling': ApiSteadySellingSteadySelling;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
