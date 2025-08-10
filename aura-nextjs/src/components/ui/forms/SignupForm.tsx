@@ -162,7 +162,7 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
                 }
               }}
               name='phone'
-              placeholder='9xxxxxxxxxx'
+              placeholder='9xxxxxxxxxx رقم الواتس اب'
               customStyles='flex-1'
             />
             <CountriesDropdown
