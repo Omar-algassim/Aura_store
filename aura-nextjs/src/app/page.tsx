@@ -26,7 +26,7 @@ function Home() {
         </section>
 
         {/* product list (Offers) */}
-        <section className='flex flex-col gap-4 items-center justify-center w-full px-[17px] tablet:mt-0'>
+        <section className='flex flex-col gap-1 items-center justify-center w-full px-[17px]'>
           <div className='w-full flex flex-col gap-2 tablet:gap-4 items-center'>
             <h2 className='w-full text-xl tablet:text-2xl laptop:text-3xl font-alex font-bold text-right'>
               العروض
@@ -37,7 +37,7 @@ function Home() {
           </div>
 
           {/* product list (offers) items */}
-          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
+          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4'>
             <ProductsCarousel productsType='offers' />
           </div>
 
@@ -55,7 +55,7 @@ function Home() {
         </section>
 
         {/* image container */}
-        <section className='w-full  flex items-center justify-center'>
+        <section className='w-full flex items-center justify-center'>
           <Image
             src={'/images/cover-image-1.png'}
             width={1140}
@@ -67,7 +67,7 @@ function Home() {
         </section>
 
         {/* products list (latest) */}
-        <section className='flex flex-col gap-4 items-center justify-center w-full  mt-12 px-[17px] tablet:mt-0'>
+        <section className='flex flex-col gap-1 items-center justify-center w-full px-[17px]'>
           <div className='w-full flex flex-col gap-2 tablet:gap-4 items-center'>
             <h2 className='w-full text-xl tablet:text-2xl laptop:text-3xl font-alex font-bold text-right'>
               وصل حديثا
@@ -78,7 +78,7 @@ function Home() {
           </div>
 
           {/* product list (latest) items */}
-          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
+          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4'>
             <ProductsCarousel productsType='recent' />
           </div>
 
@@ -96,7 +96,7 @@ function Home() {
         </section>
 
         {/* image container */}
-        <section className='w-full  flex items-center justify-center'>
+        <section className='w-full flex items-center justify-center'>
           <Image
             src={'/images/cover-image-2.png'}
             width={1140}
@@ -108,7 +108,7 @@ function Home() {
         </section>
 
         {/* product list (top selling) */}
-        <section className='flex flex-col gap-4 items-center justify-center w-full  mt-12 px-[17px] tablet:mt-0'>
+        <section className='flex flex-col gap-1 items-center justify-center w-full px-[17px]'>
           <div className='w-full flex flex-col gap-2 tablet:gap-4 items-center'>
             <h2 className='w-full text-xl tablet:text-2xl laptop:text-3xl font-alex font-bold text-right'>
               الاكثر مبيعا
@@ -119,7 +119,7 @@ function Home() {
           </div>
 
           {/* product list (top-selling) items */}
-          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4 mt-6 tablet:mt-10'>
+          <div className='w-screen max-w-[1440px] min-h-[408px] tablet:min-h-[526px] flex items-center justify-center gap-4'>
             <ProductsCarousel productsType='bestSelling' />
           </div>
 
@@ -137,7 +137,7 @@ function Home() {
         </section>
 
         {/* image container */}
-        <section className='w-full  flex items-center justify-center'>
+        <section className='w-full flex items-center justify-center'>
           <Image
             src={'/images/cover-image-3.png'}
             width={1140}
