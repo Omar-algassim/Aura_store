@@ -78,9 +78,7 @@ export default async (plugin: any) => {
       });
 
     if (userExists) {
-      throw new ApplicationError(
-        'Username, email, or phone number already taken'
-      );
+      return ctx.badRequest(new ApplicationError('User already exists'));
     }
 
     const newUser = {
