@@ -131,3 +131,26 @@ export interface signUpFormData {
   password: string;
   confirmPassword: string;
 }
+
+// App Setting
+export interface AppSetting {
+  id?: string;
+  documentId?: string;
+  site_name?: string;
+  site_description?: string;
+  site_logo?: string;
+  site_favicon?: string;
+  social_links: {
+    facebook: string;
+    twitter?: string;
+    instagram: string;
+    linkedin?: string;
+  };
+  delivery_fees: number;
+  exchange_fees: number;
+  whatsapp_message?: string;
+  whatsapp_phone?: string;
+  bank_account_number?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

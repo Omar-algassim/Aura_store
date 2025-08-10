@@ -1,3 +1,4 @@
+'use client';
 import {
   facebook,
   instagram,
@@ -8,14 +9,18 @@ import {
 import { Copyright } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSettings } from '../context/SettingsContext';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { settings } = useSettings();
   return (
     <footer className='relative bottom-0 mt-12 p-12 tablet:p-14 w-full min-w-full h-[476px] tablet:h-[336px] flex flex-col items-center justify-center bg-foreground text-white gap-10'>
       <div className='w-full flex flex-col tablet:flex-row tablet:gap-x-4 items-center justify-center mt-16 tablet:mt-0 space-y-10 tablet:space-y-0'>
         <Link
-          href={`https://wa.me/${whatsappPhone}?text=${whatsappMessage}`}
+          href={`https://wa.me/${
+            settings.whatsapp_phone || whatsappPhone
+          }?text=${settings.whatsapp_message || whatsappMessage}`}
           className='text-white text-center text-[16px] font-[500]'>
           تواصل معنا
         </Link>
@@ -41,7 +46,10 @@ export function Footer() {
       {/* social media icons */}
       <div className='w-full flex items-center justify-center gap-8'>
         <Link
-          href='https://www.instagram.com/auraglowups/'
+          href={
+            settings.social_links?.instagram ||
+            'https://www.instagram.com/auraglowups/'
+          }
           className='w-10 h-10 flex items-center justify-center'>
           <Image
             src={instagram}
@@ -53,7 +61,10 @@ export function Footer() {
         </Link>
 
         <Link
-          href='https://www.facebook.com/AuraGlowUps'
+          href={
+            settings.social_links?.facebook ||
+            'https://www.facebook.com/AuraGlowUps'
+          }
           className='w-10 h-10 flex items-center justify-center'>
           <Image
             src={facebook}
@@ -65,7 +76,9 @@ export function Footer() {
         </Link>
 
         <Link
-          href={`https://wa.me/${whatsappPhone}?text=${whatsappMessage}`}
+          href={`https://wa.me/${
+            settings.whatsapp_phone || whatsappPhone
+          }?text=${settings.whatsapp_message || whatsappMessage}`}
           className='w-10 h-10 flex items-center justify-center'>
           <Image
             src={whatsapp}

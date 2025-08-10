@@ -20,6 +20,7 @@ import {
   CartIcon,
   WhatsAppIcon,
 } from '@/components/icons';
+import { useSettings } from '../context/SettingsContext';
 
 const ICONS = {
   info: InfoIcon,
@@ -68,6 +69,7 @@ function NavElement(props: NavElementProps) {
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { settings } = useSettings();
   const user = useUser();
   const userDispatcher = useUserDispatch();
   const cartDispatcher = useCartDispatcher();
@@ -157,7 +159,9 @@ export function Navbar() {
               </li>
               <li>
                 <NavElement
-                  link={`https://wa.me/${whatsappPhone}?text=${whatsappMessage}`}
+                  link={`https://wa.me/${
+                    settings.whatsapp_phone || whatsappPhone
+                  }?text=${settings.whatsapp_message || whatsappMessage}`}
                   name='تواصل معنا'
                   icon='whatsapp'
                 />

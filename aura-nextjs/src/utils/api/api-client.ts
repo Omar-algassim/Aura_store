@@ -2,7 +2,7 @@
 // uses axios for http requests
 // export a class instance of the api client, which contains all the api calls
 import { User } from '@/entities/user-entity';
-import { OrderDTO, OrderItem, SignupDTO } from '@/interfaces/dto';
+import { AppSetting, OrderDTO, OrderItem, SignupDTO } from '@/interfaces/dto';
 import axios, { AxiosError, isAxiosError } from 'axios';
 class APIClient {
   private baseUrl =
@@ -1295,6 +1295,60 @@ class APIClient {
       }
     } catch (error: any) {
       return { error: error.response?.data || error.message };
+    }
+  }
+
+  async getSettings(): Promise<{ error?: string; data?: AppSetting }> {
+    try {
+      const response = await this.api.get(`/setting`);
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+        };
+      }
+    } catch (error: any) {
+      return { error: error.response?.data || error.message };
+    }
+  }
+
+  async updateSettings(jwt: string, data: Partial<AppSetting>) {
+    try {
+      const response = await this.api.put(
+        `/setting`,
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        return { data: response.data.data };
+      } else {
+        return {
+          error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+          code: response.status,
+        };
+      }
+    } catch (error: any) {
+      // console.error('Error updating settings FROM API', error);
+      if (isAxiosError(error)) {
+        if (error.code === axios.AxiosError.ERR_BAD_REQUEST) {
+          // console.error('Bad request error:', error.response?.data);
+        }
+        return {
+          error:
+            'Error updating Settings fields, please check your input and try again.',
+        };
+      }
+      if (error.code === axios.AxiosError.ERR_NETWORK) {
+        return {
+          error: 'Network error, please check your connection and try again.',
+        };
+      }
+      return { error: error.message };
     }
   }
 }

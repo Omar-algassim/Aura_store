@@ -6,6 +6,7 @@ import './globals.css';
 import UserContextProvider from '@/components/context/UserContext';
 import CartContextProvider from '@/components/context/CartContext';
 import { Toaster } from '@/components/ui/shadcn/toaster';
+import SettingsContextProvider from '@/components/context/SettingsContext';
 
 const alexandria = Alexandria({
   variable: '--font-alexandria',
@@ -63,9 +64,11 @@ export default function RootLayout({
       <body
         dir='rtl'
         className='antialiased flex flex-col items-center justify-start'>
-        <UserContextProvider>
-          <CartContextProvider>{children}</CartContextProvider>
-        </UserContextProvider>
+        <SettingsContextProvider>
+          <UserContextProvider>
+            <CartContextProvider>{children}</CartContextProvider>
+          </UserContextProvider>
+        </SettingsContextProvider>
         <Toaster />
       </body>
     </html>
