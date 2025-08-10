@@ -34,6 +34,7 @@ export default function OrderTable() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [edit, setEdit] = React.useState<OrderDTO | undefined>();
   const [loading, setLoading] = React.useState(false);
+  const [cartListOpen, setCartListOpen] = React.useState(false);
   const [orders, setOrders] = React.useState<OrderDTO[]>([]);
   const [status, setStatus] = React.useState<OrderStatus>('pending');
   const { toast } = useToast();
@@ -134,6 +135,13 @@ export default function OrderTable() {
 
   function toggleEditModal(order: OrderDTO | undefined): void {
     setIsOpen(!isOpen);
+    if (order) {
+      setEdit(order);
+    }
+  }
+
+  function toggleCartListModal(order?: OrderDTO): void {
+    setCartListOpen(!cartListOpen);
     if (order) {
       setEdit(order);
     }
@@ -268,6 +276,16 @@ export default function OrderTable() {
                     <TableCell className='py-3 text-gray-500 text-theme-sm dark:text-gray-400'>
                       <div className='flex items-center gap-2'>
                         <button
+                          onClick={() => toggleCartListModal(order)}
+                          className='flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto'>
+                          <Image src='/icons/cart.svg' alt='Cart Icon' width={15} height={15} />
+                          Cart list
+                        </button>
+                      </div>
+                    </TableCell>
+                    <TableCell className='py-3 text-gray-500 text-theme-sm dark:text-gray-400'>
+                      <div className='flex items-center gap-2'>
+                        <button
                           onClick={() => toggleEditModal(order)}
                           className='flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto'>
                           <svg
@@ -397,11 +415,6 @@ export default function OrderTable() {
                     <p className='ml-6'>
                       {edit?.total_pay} SDG
                     </p>
-                    {
-                      edit?.order_items.map((item) => (
-                        <OrderItems key={item.documentId} product={item.product} count={item.count} />
-                      ))
-                    }
                   </div>
                   <div>
                     <Label>Payment notification</Label>
@@ -435,6 +448,25 @@ export default function OrderTable() {
               </Button>
             </div>
           </form>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={cartListOpen}
+        onClose={() => toggleCartListModal(undefined)}
+        className='max-w-[700px] max-h-[600px] '>
+        <div className='p-4 flex flex-col gap-4 items-start'>
+          <div className='w-full flex flex-col'>
+            <Label>Order Total:</Label>
+            <p className='ml-6'>
+              {edit?.total_pay} SDG
+            </p>
+          </div>
+          <Label> order items</Label>
+          {
+            edit?.order_items.map((item) => (
+              <OrderItems key={item.documentId} product={item.product} count={item.count} />
+            ))
+          }
         </div>
       </Modal>
     </div>
