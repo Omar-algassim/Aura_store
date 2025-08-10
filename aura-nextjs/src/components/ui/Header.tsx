@@ -25,7 +25,6 @@ export function Header() {
       const result = await getUserMe(jwt);
       if (result.ok && 'data' in result) {
         const { data } = result;
-        console.log('user role', data.role);
         setUserRole(data.role);
       }
     };
