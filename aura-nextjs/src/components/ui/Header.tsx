@@ -6,16 +6,30 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCart, useUser } from '../context';
 import { ButtonPrimary } from '../common/Buttons';
+import { getUserMe } from '@/utils/services/user-services';
+import cookie from 'js-cookie';
 
 export function Header() {
   const containerRef = useRef<HTMLDivElement>(null);
   const route = useRouter();
   const cart = useCart();
   const user = useUser();
+  const [userRole, setUserRole] = React.useState(user.role);
+
   const [cartCount, setCartCount] = React.useState(cart?.total_items);
 
   useEffect(() => {
     setCartCount(cart?.total_items);
+    const jwt = cookie.get('jwt');
+    const getRole = async () => {
+      const result = await getUserMe(jwt);
+      if (result.ok && 'data' in result) {
+        const { data } = result;
+        console.log('user role', data.role);
+        setUserRole(data.role);
+      }
+    };
+    getRole();
   }, [cart?.total_items]);
 
   useEffect(() => {
@@ -60,8 +74,8 @@ export function Header() {
               <Navbar />
               {user.documentId.length > 0 ? (
                 <div className='w-[158px] h-[58px] hidden laptop:flex'>
-                  <ButtonPrimary handleClick={() => user.role.name === 'editor' || user.role.name === 'admin' ? route.push('/dashboard') : route.push('/profile')}>
-                    {user.role.name === 'editor' || user.role.name === 'admin' ? 'لوحة التحكم' : 'حسابي'}
+                  <ButtonPrimary handleClick={() => userRole.name === 'editor' ? route.push('/dashboard') : route.push('/profile')}>
+                    {userRole.name === 'editor' ? 'لوحة التحكم' : 'حسابي'}
                   </ButtonPrimary>
                 </div>
               ) : (
