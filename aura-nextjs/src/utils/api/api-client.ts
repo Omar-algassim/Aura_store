@@ -328,8 +328,11 @@ class APIClient {
    * @param query determines the fields to populate
    * @returns a Promise which resolved to the fetched product data or an error
    */
-  async fetchProduct(id: string, query: string) {
+  async fetchProduct(id: string, query: string, jwt?: string) {
     try {
+      if (jwt) {
+        this.api.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
+      }
       const fetchedProduct = await this.api.get(`/products/${id}?${query}`);
       if (fetchedProduct.status !== 200) {
         throw new Error('حدث خطأ ما, الرجاء المحاوله مره اخرى');
