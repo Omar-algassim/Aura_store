@@ -152,6 +152,10 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
               type='tel'
               value={formData.phone}
               onChange={(e) => {
+                if (!countryKey) {
+                  setError('الرجاء اختيار الدولة');
+                  return;
+                }
                 const value = e.target.value;
                 if (value.startsWith('0')) {
                   setError('الرجاء ادخال رقم الهاتف بدون الصفر');
