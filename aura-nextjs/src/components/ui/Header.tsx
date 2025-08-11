@@ -73,7 +73,12 @@ export function Header() {
               <Navbar />
               {user.documentId.length > 0 ? (
                 <div className='w-[158px] h-[58px] hidden laptop:flex'>
-                  <ButtonPrimary handleClick={() => userRole.name === 'editor' ? route.push('/dashboard') : route.push('/profile')}>
+                  <ButtonPrimary
+                    handleClick={() =>
+                      userRole.name === 'editor'
+                        ? route.push('/dashboard')
+                        : route.push('/profile')
+                    }>
                     {userRole.name === 'editor' ? 'لوحة التحكم' : 'حسابي'}
                   </ButtonPrimary>
                 </div>
@@ -92,7 +97,7 @@ export function Header() {
             </div>
 
             {/* Cart and Logo */}
-            <div className='flex items-center justify-end gap-1 tablet:gap-4'>
+            <div className='flex items-center justify-end gap-4'>
               <div className='relative flex items-center'>
                 <Image
                   src='/icons/cart.svg'
@@ -100,7 +105,7 @@ export function Header() {
                   alt='cart'
                   width={32}
                   height={32}
-                  className='cursor-pointer'
+                  className='cursor-pointer size-8 tablet:size-9'
                 />
                 <div
                   className={`absolute -top-2 -right-2.5 w-[20px] h-[20px] tablet:w-[24px] tablet:h-[24px] rounded-full text-center text-[12px] tablet-text-[14px] pt-[3px] ${
@@ -118,7 +123,7 @@ export function Header() {
                 alt='logo'
                 width={44}
                 height={44}
-                className='cursor-pointer'
+                className='cursor-pointer size-8 tablet:size-9'
               />
             </div>
           </div>
@@ -139,8 +144,13 @@ export function Header() {
               <Navbar />
               {user.documentId.length > 0 ? (
                 <div className='w-[158px] h-[58px] hidden laptop:flex'>
-                  <ButtonPrimary handleClick={() => route.push('/profile')}>
-                    حسابي
+                  <ButtonPrimary
+                    handleClick={() =>
+                      userRole.name === 'editor'
+                        ? route.push('/dashboard')
+                        : route.push('/profile')
+                    }>
+                    {userRole.name === 'editor' ? 'لوحة التحكم' : 'حسابي'}
                   </ButtonPrimary>
                 </div>
               ) : (
@@ -158,7 +168,7 @@ export function Header() {
             </div>
 
             {/* Cart and Logo */}
-            <div className='flex items-center justify-end gap-1 tablet:gap-4'>
+            <div className='flex items-center justify-end gap-4'>
               <div className='relative flex items-center'>
                 <Image
                   src='/icons/cart.svg'
@@ -166,7 +176,7 @@ export function Header() {
                   alt='cart'
                   width={32}
                   height={32}
-                  className='cursor-pointer'
+                  className='cursor-pointer size-8 tablet:size-9'
                 />
                 <div
                   className={`absolute -top-2 -right-2.5 w-[20px] h-[20px] tablet:w-[24px] tablet:h-[24px] rounded-full text-center text-[12px] tablet-text-[14px] pt-[3px] ${
@@ -184,7 +194,7 @@ export function Header() {
                 alt='logo'
                 width={44}
                 height={44}
-                className='cursor-pointer'
+                className='cursor-pointer size-8 tablet:size-9'
               />
             </div>
           </div>

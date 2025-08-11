@@ -134,7 +134,7 @@ export function Search() {
       if (e.key === 'Enter') {
         e.preventDefault();
         const searchValue = key.trim();
-        console.log('Enter pressed', searchValue);
+        // console.log('Enter pressed', searchValue);
         if (searchValue) {
           Router.push(`/products?search=${searchValue}`);
           setResults([]);
@@ -158,7 +158,7 @@ export function Search() {
             name='search'
             type='text'
             value={key}
-            customStyles='peer shadow-none max-w-[423px] max-h-[30px] focus:outline-none bg-blue_shade'
+            customStyles='peer shadow-none max-w-[423px] max-h-[30px] focus:outline-none bg-blue_shade line-clamp-1'
             placeholder='إبحثي عن منتج, علامة تجارية ...'
             onChange={(e) =>
               e.target.value ? setKey(e.target.value) : setKey('')

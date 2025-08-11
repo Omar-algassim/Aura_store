@@ -18,7 +18,7 @@ function AlertDialogElement(props: alertDialogElementProps) {
   const [open, setOpen] = React.useState(props.open || false);
 
   function Open() {
-    console.log('open');
+    // console.log('open');
     if (props.onClick) {
       props.onClick();
     }
@@ -26,7 +26,7 @@ function AlertDialogElement(props: alertDialogElementProps) {
   }
 
   async function action() {
-    console.log('action');
+    // console.log('action');
     if (props.action) {
       await props.action();
     }

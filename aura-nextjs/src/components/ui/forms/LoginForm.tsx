@@ -56,19 +56,26 @@ export function LoginForm({ type = 'phone' }: { type?: 'phone' | 'email' }) {
     // I think we need to convert it to async function
     if (formState.data) {
       // dispatch user data to global context
-      // /console.log("user data", JSON.stringify(formState.data, null, 2));
+      // console.log("user data", JSON.stringify(formState.data, null, 2));
       userDispatcher({ type: 'LOGIN', payload: { userData: formState.data } });
-      // sync the cart with the user
-      // cart.sync(formState.data.user.documentId).then(() => {
-      //   CartDispatcher({ type: "UPDATE", payload: { cart: cart } });
-      // });
+
+      cookie.set('jwt', formState.data.jwt);
+      cookie.set('user', JSON.stringify(formState.data.user));
       //redirect to nextPage
       const nextPage = cookie.get('nextPage') || '/';
-      console.log('From Login', nextPage);
+      // console.log('From Login', nextPage);
       cookie.remove('nextPage');
-      return router.replace(nextPage);
+      router.replace(nextPage);
+      return;
     }
-  }, [CartDispatcher, cart, formState.data, router, userDispatcher]);
+  }, [
+    CartDispatcher,
+    cart,
+    formState,
+    formState.data,
+    router,
+    userDispatcher,
+  ]);
 
   // submit form on enter key press
   useEffect(() => {
@@ -151,10 +158,18 @@ export function LoginForm({ type = 'phone' }: { type?: 'phone' | 'email' }) {
               customStyles='w-full bg-surface'
               value={phone}
               onChange={(e) => {
+                if (!countryKey) {
+                  setError('الرجاء اختيار الدولة');
+                  return;
+                }
                 const value = e.target.value;
                 if (value.startsWith('0')) {
                   setError('الرجاء ادخال رقم الهاتف بدون الصفر');
                   setPhone(value.slice(1));
+                  return;
+                }
+                if (value.length > 0 && !/^\d+$/.test(value)) {
+                  setError('الرجاء ادخال رقم هاتف صحيح');
                   return;
                 }
                 if (!value.startsWith('+')) {

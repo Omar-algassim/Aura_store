@@ -48,26 +48,32 @@ export async function middleware(request: NextRequest) {
     cookieStore.set('nextPage', currentPath);
     // if the user is logged in but not verified
     // redirect to confirm page
+
+    console.log('userFromCookie: ', JSON.stringify(userFromCookie, null, 2));
     if (userFromCookie?.documentId?.length) {
       // console.log('user is logged in but not verified');
       // if the user has a phone number and is not verified
       // redirect to confirm phone page
-      if (
-        userFromCookie.phone_number &&
-        !userFromCookie.phoneNumberConfirmed
-      ) {
-        // redirect to confirm phone page
-        return NextResponse.redirect(
-          new URL(`/confirm-phone?msg=${message.phone_number}`, request.url)
-        );
-      } else if (userFromCookie.email && !userFromCookie.emailConfirmed) {
-        return NextResponse.redirect(
-          new URL(`/confirm-email?msg=${message.email}`, request.url)
-        );
+      if (!userFromCookie.confirmed) {
+        if (
+          userFromCookie.phone_number &&
+          !userFromCookie.phoneNumberConfirmed
+        ) {
+          // redirect to confirm phone page
+          return NextResponse.redirect(
+            new URL(`/confirm-phone?msg=${message.phone_number}`, request.url)
+          );
+        } else if (userFromCookie.email && !userFromCookie.emailConfirmed) {
+          return NextResponse.redirect(
+            new URL(`/confirm-email?msg=${message.email}`, request.url)
+          );
+        }
       }
     }
     // console.log('user not logged in, redirecting to login');
-    return NextResponse.redirect(new URL('/login?msg="الرجاء تسجيل الدخول"', request.url));
+    return NextResponse.redirect(
+      new URL('/login?msg="الرجاء تسجيل الدخول"', request.url)
+    );
   }
 
   if (['/login', '/register'].includes(currentPath)) {

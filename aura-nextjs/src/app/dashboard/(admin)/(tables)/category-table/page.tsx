@@ -38,7 +38,7 @@ export default function CategoryList() {
     const fetchData = async () => {
       const response = await getCategories();
       if (response.error) {
-        console.error('Error fetching categories:', response.error);
+        // console.error('Error fetching categories:', response.error);
         return;
       }
       setCategories(response.categories.data);

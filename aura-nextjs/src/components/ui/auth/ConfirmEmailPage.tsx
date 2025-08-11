@@ -30,9 +30,9 @@ export function ConfirmEmailPage(params: ConfirmEmailPageProps) {
   const [canResend, setCanResend] = useState(false);
   const [remainingTime, setRemainingTime] = useState(20);
 
+  const nextPage = cookies.get('nextPage') || '/';
   useEffect(() => {
     if (user.confirmed) {
-      const nextPage = cookies.get('nextPage') || '/';
       router.replace(`${nextPage}?msg=تم تأكيد الحساب بنجاح`);
     }
     // console.log('user confirmed:', user.confirmed);
@@ -70,8 +70,20 @@ export function ConfirmEmailPage(params: ConfirmEmailPageProps) {
   }, [message, error, toast]);
 
   useEffect(() => {
-    window.history.pushState({}, '', '/confirm-email');
-  }, []);
+    // periodically checking for confirmation
+    const intervalId = setInterval(() => {
+      // Check if the user is confirmed
+      const jwt = cookies.get('jwt');
+      if (user.confirmed || jwt) {
+        clearInterval(intervalId);
+        router.replace(nextPage);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [user, nextPage, router]);
 
   const resendCode = async () => {
     setCanResend(false);
@@ -84,7 +96,7 @@ export function ConfirmEmailPage(params: ConfirmEmailPageProps) {
       error = data.error;
     }
     if (error) {
-      // /console.log(error);
+      // console.log(error);
       setError(error);
     }
     setCanResend(false);

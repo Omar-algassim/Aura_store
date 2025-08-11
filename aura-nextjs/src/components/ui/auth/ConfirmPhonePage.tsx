@@ -66,8 +66,20 @@ export function ConfirmPhonePage(props: ConfirmPhonePageProps) {
   }, [message, error, toast]);
 
   useEffect(() => {
-    window.history.pushState({}, '', '/confirm-email');
-  }, []);
+    // periodically checking for confirmation
+    const intervalId = setInterval(() => {
+      // Check if the user is confirmed
+      const jwt = cookie.get('jwt');
+      if (user.confirmed || jwt) {
+        clearInterval(intervalId);
+        router.replace(nextPage);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [user, nextPage, router]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -84,6 +96,7 @@ export function ConfirmPhonePage(props: ConfirmPhonePageProps) {
       setCanResend(true);
     }
   }, [remainingTime]);
+
   const resendCode = async () => {
     setCanResend(false);
     setError('');
@@ -109,7 +122,7 @@ export function ConfirmPhonePage(props: ConfirmPhonePageProps) {
       return;
     }
     const { error, data } = await sendPhoneConfirmationCode(code);
-    if (error) {
+    if (error || !data) {
       setError(error);
     } else if (data) {
       userDispatcher({ type: 'LOGIN', payload: { userData: data } });

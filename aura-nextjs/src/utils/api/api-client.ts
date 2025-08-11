@@ -236,9 +236,12 @@ class APIClient {
 
   async requestPhoneConfirmCode(phone: string) {
     try {
-      const result = await this.api.post('/auth/send-email-confirmation', {
-        phone_number: phone,
-      });
+      const result = await this.api.post(
+        '/auth/send-email-confirmation?force=true',
+        {
+          phone_number: phone,
+        }
+      );
       if (result.status === 200 || result.status === 201) {
         return { data: result.data };
       }
@@ -270,9 +273,12 @@ class APIClient {
 
   async requestEmailConfirmationCode(email: string) {
     try {
-      const result = await this.api.post('/auth/send-email-confirmation', {
-        email,
-      });
+      const result = await this.api.post(
+        '/auth/send-email-confirmation?force=true',
+        {
+          email,
+        }
+      );
       if (result.status === 200 || result.status === 201) {
         return { data: result.data };
       }

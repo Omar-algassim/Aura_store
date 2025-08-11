@@ -113,7 +113,7 @@ export function CartForm(props: Props) {
         'pending'
       );
       if (error || !data) {
-        console.log(JSON.stringify(error, null, 2));
+        // console.log(JSON.stringify(error, null, 2));
         onError(error);
         setReceiptImage(null);
         setLoading(false);
@@ -128,8 +128,8 @@ export function CartForm(props: Props) {
       // console.log("checkout data", data);
       if (user.phone_number) {
         try {
-          const response = await ReceiveOrderMessage(user.phone_number, data);
-          console.log('ReceiveOrderMessage response: ', response);
+          await ReceiveOrderMessage(user.phone_number, data);
+          // console.log('ReceiveOrderMessage response: ', response);
         } catch {}
       }
       cartDispatcher({ type: 'DELETE', payload: { cart } });
