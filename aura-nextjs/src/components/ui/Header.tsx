@@ -139,8 +139,8 @@ export function Header() {
               <Navbar />
               {user.documentId.length > 0 ? (
                 <div className='w-[158px] h-[58px] hidden laptop:flex'>
-                  <ButtonPrimary handleClick={() => route.push('/profile')}>
-                    حسابي
+                  <ButtonPrimary handleClick={() => userRole.name === 'editor' ? route.push('/dashboard') : route.push('/profile')}>
+                    {userRole.name === 'editor' ? 'لوحة التحكم' : 'حسابي'}
                   </ButtonPrimary>
                 </div>
               ) : (
