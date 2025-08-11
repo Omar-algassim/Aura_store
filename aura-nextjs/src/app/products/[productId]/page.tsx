@@ -1,5 +1,5 @@
 import React from 'react';
-
+import cookies from 'js-cookie';
 import { getProduct } from '@/utils/services/products-services';
 import { Product } from '@/interfaces/dto';
 
@@ -11,7 +11,8 @@ async function ProductPage({
   params: Promise<{ productId: string }>;
 }) {
   const { productId } = await params;
-  const { error, data } = await getProduct(productId);
+  const jwt = cookies.get('jwt');
+  const { error, data } = await getProduct(productId, jwt);
   // console.log(data.data);
   return error ? (
     <div>{error}</div>

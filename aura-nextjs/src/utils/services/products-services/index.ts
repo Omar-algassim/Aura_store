@@ -1,5 +1,3 @@
- 
-
 import { ProductQueryFilters } from '@/interfaces';
 import { Product, Review } from '@/interfaces/dto';
 import { apiClient } from '@/utils/api/api-client';
@@ -297,7 +295,8 @@ export const getSimilarProducts = async (
  * @param id the products id to fetch, typically provided by the product page
  * @returns a Promise which resolved to the fetched product data or an error
  */
-export const getProduct = async (id: string) => {
+export const getProduct = async (id: string, jwt?: string) => {
+  console.log('jwt', jwt);
   const query = qs.stringify({
     populate: {
       images: '*',
@@ -321,7 +320,7 @@ export const getProduct = async (id: string) => {
     },
   });
 
-  return await apiClient.fetchProduct(id, query);
+  return await apiClient.fetchProduct(id, query, jwt);
 };
 
 /**
@@ -500,7 +499,7 @@ export const updateProductReview = async (
       rate: review.rate,
       text: review.text,
       likes: {
-        connect: [
+        set: [
           ...(review.likes?.map((like) => ({
             documentId: like,
           })) || []),
