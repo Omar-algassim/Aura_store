@@ -31,9 +31,9 @@ const OrderCard = (props: Props) => {
   const handleOrderCancel = async () => {
     // Logic to cancel the order
     const jwt = Cookies.get('jwt');
-    console.log('Cancel order clicked');
+    // console.log('Cancel order clicked');
     if (!jwt || !props.order.documentId) {
-      console.error('JWT token not found or order ID is missing');
+      // console.error('JWT token not found or order ID is missing');
       // toast.error('Unauthorized');
       toast({
         variant: 'destructive',
@@ -44,7 +44,7 @@ const OrderCard = (props: Props) => {
     }
     const { error } = await cancelOrder(jwt, props.order.documentId);
     if (error) {
-      console.error(error);
+      // console.error(error);
       // toast.error(error);
       toast({
         variant: 'destructive',

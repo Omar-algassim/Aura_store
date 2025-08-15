@@ -43,11 +43,11 @@ export default function CountryList() {
     const fetchData = async () => {
       const response = await getAvailableCountries();
       if (response.error) {
-        console.error('Error fetching regions:', response.error);
+        // console.error('Error fetching regions:', response.error);
         return;
       }
       if (!response.data || !response.data) {
-        console.warn('No regions data found in response');
+        // console.warn('No regions data found in response');
         return;
       }
       setCities(response.data || []);

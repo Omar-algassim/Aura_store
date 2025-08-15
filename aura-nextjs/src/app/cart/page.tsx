@@ -36,7 +36,7 @@ function ProductControls(data: CartProductsDTO): JSX.Element {
     setQuantity(quantity + 1);
     await cart.addProduct(product);
     cartDispatcher({ type: 'UPDATE', payload: { cart } });
-    console.log('cart after increas', cart);
+    // console.log('cart after increas', cart);
   }
 
   return (
@@ -119,7 +119,7 @@ export default function CartPage() {
   const [cartProducts, setCartProducts] = React.useState(cart.products);
 
   React.useEffect(() => {
-    console.log('cart is changed', cart);
+    // console.log('cart is changed', cart);
     setCartProducts(cart.products);
   }, [cart, cart.total_items]);
 

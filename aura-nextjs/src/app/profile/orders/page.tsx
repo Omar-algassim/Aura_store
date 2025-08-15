@@ -38,7 +38,7 @@ function OrdersPage() {
         setLoading(false);
         return;
       }
-      console.log(data);
+      // console.log(data);
       setOrders(data);
       setUserOrderStatuses([
         'الكل',

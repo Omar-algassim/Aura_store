@@ -33,13 +33,13 @@ export default function BrandList() {
   React.useEffect(() => {
     const fetchData = async () => {
       const response = await getBrands();
-      console.log('Fetched brands:', response);
+      // console.log('Fetched brands:', response);
       if (response.error) {
-        console.error('Error fetching brands:', response.error);
+        // console.error('Error fetching brands:', response.error);
         return;
       }
       if (!response.brands || !response.brands.data) {
-        console.warn('No brands data found in response');
+        // console.warn('No brands data found in response');
         return;
       }
       setBrands(response.brands.data || []);
@@ -73,7 +73,7 @@ export default function BrandList() {
     if (!toDelete) return;
     const jwt = cookie.get('jwt');
     if (!jwt) {
-      console.error('JWT token is missing');
+      // console.error('JWT token is missing');
       return;
     }
     try {

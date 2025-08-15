@@ -3,7 +3,7 @@ import '@uiw/react-markdown-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 
 const MarkdownEditor = dynamic(
-  () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
+  () => import('@uiw/react-markdown-editor').then((mod) => mod.default),
   { ssr: false }
 );
 
@@ -20,17 +20,27 @@ interface MarkDownInputProps {
 }
 
 function MarkDownInput(props: MarkDownInputProps) {
-  const { className, value, prefixCls, visible, visibleEditor, defaultValue, placeholder, height, onChange } = props;
-  
+  const {
+    className,
+    value,
+    prefixCls,
+    visible,
+    visibleEditor,
+    defaultValue,
+    placeholder,
+    height,
+    onChange,
+  } = props;
+
   const handleChange = (value: string) => {
-    console.log('Markdown value changed:', value);
+    // console.log('Markdown value changed:', value);
     onChange(value);
   };
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    console.log('Markdown editor scrolled:', e);
+  const handleScroll = (/*e: React.UIEvent<HTMLDivElement>*/) => {
+    // console.log('Markdown editor scrolled:', e);
   };
   return (
-    <div className="wmde-markdown-var">
+    <div className='wmde-markdown-var'>
       <MarkdownEditor
         className={className}
         value={value}
@@ -39,11 +49,20 @@ function MarkDownInput(props: MarkDownInputProps) {
         visibleEditor={visibleEditor}
         defaultValue={defaultValue}
         onChange={handleChange}
-        toolbars={['undo', 'redo', 'bold', 'italic', 'strike', 'quote', 'header', 'ulist']}
+        toolbars={[
+          'undo',
+          'redo',
+          'bold',
+          'italic',
+          'strike',
+          'quote',
+          'header',
+          'ulist',
+        ]}
         onScroll={handleScroll}
         prefixCls={prefixCls}
         placeholder={placeholder}
-       />
+      />
     </div>
   );
 }

@@ -59,7 +59,7 @@ export default function ProductTable() {
         page
       );
       if (error) {
-        console.error('Error fetching products:', error.error);
+        // console.error('Error fetching products:', error.error);
         setIsLoading(false);
       } else {
         setIsLoading(false);
@@ -79,7 +79,7 @@ export default function ProductTable() {
   }
 
   async function handleDelete() {
-    console.log(toDelete);
+    // console.log(toDelete);
     const jwt = cookie.get('jwt');
     if (jwt) {
       setIsLoading(true);

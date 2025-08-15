@@ -41,7 +41,7 @@ export function NewBrandForm(props: BrandFormProps) {
   }> {
     const jwt = cookie.get('jwt');
     if (!jwt) {
-      console.error('JWT token is missing');
+      // console.error('JWT token is missing');
       return {
         message: 'JWT token is missing',
         type: 'error',
@@ -51,7 +51,7 @@ export function NewBrandForm(props: BrandFormProps) {
     }
     const validation = newBrandAction(prev, formData);
     if (validation.error) {
-      console.error('Validation error', validation.error);
+      // console.error('Validation error', validation.error);
       return {
         message: 'Please check the data',
         type: 'validation',
@@ -61,7 +61,7 @@ export function NewBrandForm(props: BrandFormProps) {
     }
     const data = validation.data;
     if (!data) {
-      console.error('No data returned from validation');
+      // console.error('No data returned from validation');
       return {
         message: 'No data returned from validation',
         type: 'error',
@@ -70,7 +70,7 @@ export function NewBrandForm(props: BrandFormProps) {
       };
     }
     if (props.editMode && props.brand) {
-      console.log('send data to update', data);
+      // console.log('send data to update', data);
       const response = await updateBrand(props.brand.documentId, data, jwt);
       if (response.error) {
         props.toggleEditModal?.();
@@ -93,7 +93,7 @@ export function NewBrandForm(props: BrandFormProps) {
           title: 'brand updated',
           description: 'Brand has been updated successfully.',
         });
-        console.log('refreshing router after brand update');
+        // console.log('refreshing router after brand update');
         window.location.reload();
         return {
           message: 'Brand updated successfully',

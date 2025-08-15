@@ -311,7 +311,7 @@ function ShoppingPage() {
         currentPage + 1
       ).then((data) => {
         setProducts([...products, ...data.products]);
-        console.log('all products', products);
+        // console.log('all products', products);
         setLoading(false);
       });
     }

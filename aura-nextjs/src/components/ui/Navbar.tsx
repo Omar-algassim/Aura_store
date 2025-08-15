@@ -82,7 +82,7 @@ export function Navbar() {
 
   function logout() {
     if (user.documentId) {
-      console.log('logout');
+      // console.log('logout');
       userDispatcher({ type: 'LOGOUT', payload: {} });
       cartDispatcher({ type: 'DELETE', payload: { cart } });
       router.push('/');

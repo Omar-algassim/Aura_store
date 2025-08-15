@@ -60,12 +60,14 @@ function ProfileInfo() {
       return;
     }
     setLoading(true);
-    if (phone && countryKey.concat(phone) !== user.phone_number) {
+    if (phone && phone !== user.phone_number) {
       // set the user confirmation to false
       // send otp to the new phone number
       // prompt the user to enter the otp
       // if otp is correct, update the phone number and set the confirmation to true
-      console.log('phone number changed', phone);
+      // console.log(
+      //   `phone number changed, phone: ${phone}, user.phone_number: ${user.phone_number}`
+      // );
       phoneChanged = true;
       user.phone_number = phone;
       user.country_code = countryKey; // update the country code
@@ -84,7 +86,7 @@ function ProfileInfo() {
     }
     if (username && username !== user.username) {
       // update the username
-      console.log('username changing');
+      // console.log('username changing');
       usernameChanged = true;
       user.username = username;
     }
@@ -93,18 +95,36 @@ function ProfileInfo() {
       setLoading(false);
       return;
     }
-    setLoading(false);
-    const { error, data } = await updateUser(jwt, {
-      username: user.username,
-      email: user.email,
-      phone_number: user.phone_number,
-      country_code: user.country_code,
-      confirmed: user.confirmed,
-      emailConfirmed: user.emailConfirmed,
-      phoneNumberConfirmed: user.phoneNumberConfirmed,
-    });
-    setLoading(false);
+    setLoading(true);
+    // no phone number and email changes at the same time
+    // reducing the risk of conflicts, and account confirmation issues
+    if (emailChanged && phoneChanged) {
+      setError('غير مسموح بتغيير البريد الإلكتروني ورقم الهاتف في نفس الوقت');
+      setCountryKey(oldData.country_code || '');
+      setPhone(oldData.phone_number);
+      setEmail(oldData.email);
+      setEditing('');
+      setLoading(false);
+      return;
+    }
+    const newData: Partial<User> = {};
+    if (emailChanged) {
+      newData.email = email;
+      newData.emailConfirmed = false;
+      newData.emailConfirmed = false;
+    }
+    if (phoneChanged) {
+      newData.phone_number = phone;
+      newData.country_code = countryKey;
+      newData.confirmed = false;
+      newData.phoneNumberConfirmed = false;
+    }
+    if (usernameChanged) {
+      newData.username = user.username;
+    }
+    const { error, data } = await updateUser(jwt, newData);
     if (error || !data) {
+      setLoading(false);
       // if (error)
       setError(error || 'حدث خطأ ما, الرجاء المحاوله مره اخرى');
       // reset the user data to the old data
@@ -123,14 +143,24 @@ function ProfileInfo() {
       setCountryKey(user.country_code || '+249');
       return;
     }
+    userDispatcher({
+      type: 'UPDATE',
+      payload: { userData: { ...user, ...newData } },
+    });
     if (email && emailChanged) {
+      // console.log('requesting email confirmation');
+      // console.log('User: ', JSON.stringify(user, null, 2));
       await requestEmailConfirmationCode(email);
+      Cookies.remove('jwt');
     }
     if (phone && phoneChanged) {
       // send otp to the new phone number
       // prompt the user to enter the otp
       // if otp is correct, update the phone number and set the confirmation to true
+      // console.log('requesting phone confirmation');
+      // console.log('User: ', JSON.stringify(user, null, 2));
       await requestPhoneConfirmCode(phone);
+      Cookies.remove('jwt');
       toast({
         title: 'تم إرسال رمز التحقق',
         description: 'يرجى التحقق من رقم الهاتف الجديد',
@@ -138,9 +168,9 @@ function ProfileInfo() {
       });
     }
 
-    userDispatcher({ type: 'UPDATE', payload: { userData: user } });
     setError('');
     setEditing('');
+    setLoading(false);
     router.replace('/profile/me');
     toast({
       title: 'تم الحفظ',
@@ -168,12 +198,7 @@ function ProfileInfo() {
     setUsername(user.username);
     setEmail(user.email);
     setCountryKey(user.country_code || '+249');
-    const countryKeyPattern = new RegExp(`^${'\\' + user.country_code}`, 'g');
-    const phoneWithOutCountryKey = user.phone_number?.replace(
-      countryKeyPattern,
-      ''
-    );
-    setPhone(phoneWithOutCountryKey);
+    setPhone(user.phone_number);
   }, [user]);
 
   useEffect(() => {
@@ -238,7 +263,8 @@ function ProfileInfo() {
               <div
                 dir='ltr'
                 className={`w-full max-width-[320px] h-14 flex items-center justify-end pr-4 rounded-[12px] text-[16px] text-right text-[#0f0f0f] font-[400] bg-surface border-[3px] border-surface
-              }`}>
+              }`}
+                onClick={() => setEditing('username')}>
                 {username || (
                   <span
                     className='text-secondary'
@@ -285,7 +311,8 @@ function ProfileInfo() {
               <div
                 dir='ltr'
                 className={`w-full max-width-[320px] h-14 flex items-center justify-end pr-4 rounded-[12px] text-[16px] text-right text-[#0f0f0f] font-[400] bg-surface border-[3px] border-surface
-              }`}>
+              }`}
+                onClick={() => setEditing('email')}>
                 {email || (
                   <span
                     className='text-secondary'
@@ -336,7 +363,7 @@ function ProfileInfo() {
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value.startsWith('0')) {
-                    alert('الرجاء ادخال رقم الهاتف بدون الصفر');
+                    // alert('الرجاء ادخال رقم الهاتف بدون الصفر');
                     setPhone(value.slice(1));
                     return;
                   }
@@ -369,7 +396,8 @@ function ProfileInfo() {
               <div
                 dir='ltr'
                 className={`w-full max-width-[320px] h-14 flex items-center justify-end pr-4 rounded-[12px] text-[16px] text-right text-[#0f0f0f] font-[400] bg-surface border-[3px] border-surface
-              }`}>
+              }`}
+                onClick={() => setEditing('phone')}>
                 {phone || (
                   <span
                     className='text-secondary'
@@ -394,18 +422,19 @@ function ProfileInfo() {
           <ButtonPrimary
             handleClick={saveChanges}
             disabled={
-              username === user.username &&
-              email === user.email &&
-              countryKey.concat(phone || '') === user.phone_number
+              loading ||
+              (username === user.username &&
+                email === user.email &&
+                phone === user.phone_number)
             }
             preloader>
-            حفظ
+            {loading ? 'جاري الحفظ...' : 'حفظ التغييرات'}
           </ButtonPrimary>
         </div>
       </section>
 
       {/* loading */}
-      {loading && <Preloader />}
+      {/* {loading && <Preloader />} */}
     </>
   );
 }

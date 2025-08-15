@@ -148,7 +148,7 @@ export function ProductForm(props: ProductForm) {
         jwt
       );
       if (deleteThumbnail.error) {
-        console.log('error deleting thumbnail', deleteThumbnail.error);
+        // console.log('error deleting thumbnail', deleteThumbnail.error);
       }
     }
     // error handling
@@ -235,7 +235,7 @@ export function ProductForm(props: ProductForm) {
       try {
         const { error, data: response } = await uploadProductImage(image, jwt);
         if (error) {
-          console.log('error uploading Images', error);
+          // console.log('error uploading Images', error);
           setError('error uploading images');
           break;
         }
@@ -246,8 +246,8 @@ export function ProductForm(props: ProductForm) {
           break;
         }
         uploadedImages.push({ url: resultImageUrl, imageId });
-      } catch (error) {
-        console.log('error uploading Images', error);
+      } catch {
+        // console.log('error uploading Images', error);
         setError('error uploading images');
         break;
       }
@@ -332,7 +332,7 @@ export function ProductForm(props: ProductForm) {
       for (const image of uploadedImages) {
         const deleteImage = await deleteProductImage(image.imageId, jwt);
         if (deleteImage.error) {
-          console.log('error deleting image', deleteImage.error);
+          // console.log('error deleting image', deleteImage.error);
         }
       }
       // delete the thumbnail
@@ -341,7 +341,7 @@ export function ProductForm(props: ProductForm) {
         jwt
       );
       if (deleteThumbnail.error) {
-        console.log('error deleting thumbnail', deleteThumbnail.error);
+        // console.log('error deleting thumbnail', deleteThumbnail.error);
       }
       toast({
         variant: 'destructive',

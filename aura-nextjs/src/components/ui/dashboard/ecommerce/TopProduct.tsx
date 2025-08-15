@@ -29,12 +29,12 @@ export default function TopProduct() {
         5
       );
       if (error) {
-        console.error('Error fetching products:', error.error);
+        // console.error('Error fetching products:', error.error);
         setIsLoading(false);
       } else {
         setIsLoading(false);
         setProducts(products);
-        console.log(products);
+        // console.log(products);
       }
     };
     fetchData();

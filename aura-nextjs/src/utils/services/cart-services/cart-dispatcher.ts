@@ -1,27 +1,26 @@
-import { CartEntity } from "@/entities/cart-entity";
-import cookie from "js-cookie";
+import { CartEntity } from '@/entities/cart-entity';
+import cookie from 'js-cookie';
 
- 
 export const initialCart = new CartEntity({
-  documentId: "",
-  user_id: "",
+  documentId: '',
+  user_id: '',
   total_items: 0,
   total_pay: 0,
   products: {},
 });
 
 export type CartReducerAction = {
-  type: "CREATE" | "DELETE" | "UPDATE";
+  type: 'CREATE' | 'DELETE' | 'UPDATE';
   payload: { cart: CartEntity | null };
 };
 
 export const CartReducer = (_prevState: any, action: CartReducerAction) => {
   const payload = action.payload;
   switch (action.type) {
-    case "CREATE": {
-      const cookieCart = cookie.get("cart");
+    case 'CREATE': {
+      const cookieCart = cookie.get('cart');
       if (!cookieCart) {
-        cookie.set("cart", JSON.stringify(initialCart));
+        cookie.set('cart', JSON.stringify(initialCart));
         return initialCart;
       }
       const cartObject = JSON.parse(cookieCart);
@@ -36,19 +35,19 @@ export const CartReducer = (_prevState: any, action: CartReducerAction) => {
       return retrievedCart;
     }
 
-    case "DELETE": {
-      cookie.set("cart", JSON.stringify(initialCart));
+    case 'DELETE': {
+      cookie.set('cart', JSON.stringify(initialCart));
       return initialCart;
     }
 
-    case "UPDATE": {
+    case 'UPDATE': {
       const cart = payload.cart;
       if (!cart) {
-        throw new Error("Cart is null");
+        throw new Error('Cart is null');
       }
-      console.log("Updating cart", cart.total_items, cart.total_pay);
-      cookie.remove("cart");
-      cookie.set("cart", JSON.stringify(cart.toJson()));
+      // console.log("Updating cart", cart.total_items, cart.total_pay);
+      cookie.remove('cart');
+      cookie.set('cart', JSON.stringify(cart.toJson()));
       return new CartEntity({
         documentId: cart.documentId,
         user_id: cart.user_id,
