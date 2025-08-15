@@ -108,7 +108,7 @@ export default function TopProduct() {
                         <Image
                           width={50}
                           height={50}
-                          src={`${BaseUrl}/${product.thumbnail}`}
+                          src={`${BaseUrl}${product.thumbnail}`}
                           className='h-[50px] w-[50px]'
                           alt={product.name}
                         />
