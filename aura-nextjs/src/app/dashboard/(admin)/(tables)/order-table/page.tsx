@@ -65,9 +65,9 @@ export default function OrderTable() {
             description: response.error.message || 'Failed to fetch orders.',
           });
         }
-      } catch (error) {
+      } catch {
         setLoading(false);
-        console.error('An error occurred while fetching orders:', error);
+        // console.error('An error occurred while fetching orders:', error);
       }
     };
     fetchData();
@@ -278,7 +278,12 @@ export default function OrderTable() {
                         <button
                           onClick={() => toggleCartListModal(order)}
                           className='flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto'>
-                          <Image src='/icons/cart.svg' alt='Cart Icon' width={15} height={15} />
+                          <Image
+                            src='/icons/cart.svg'
+                            alt='Cart Icon'
+                            width={15}
+                            height={15}
+                          />
                           Cart list
                         </button>
                       </div>
@@ -412,9 +417,7 @@ export default function OrderTable() {
                   </div>
                   <div>
                     <Label>Order Total:</Label>
-                    <p className='ml-6'>
-                      {edit?.total_pay} SDG
-                    </p>
+                    <p className='ml-6'>{edit?.total_pay} SDG</p>
                   </div>
                   <div>
                     <Label>Payment notification</Label>
@@ -457,16 +460,16 @@ export default function OrderTable() {
         <div className='p-4 flex flex-col gap-4 items-start'>
           <div className='w-full flex flex-col'>
             <Label>Order Total:</Label>
-            <p className='ml-6'>
-              {edit?.total_pay} SDG
-            </p>
+            <p className='ml-6'>{edit?.total_pay} SDG</p>
           </div>
           <Label> order items</Label>
-          {
-            edit?.order_items.map((item) => (
-              <OrderItems key={item.documentId} product={item.product} count={item.count} />
-            ))
-          }
+          {edit?.order_items.map((item) => (
+            <OrderItems
+              key={item.documentId}
+              product={item.product}
+              count={item.count}
+            />
+          ))}
         </div>
       </Modal>
     </div>

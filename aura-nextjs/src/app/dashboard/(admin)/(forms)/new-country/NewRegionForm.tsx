@@ -56,7 +56,7 @@ export function NewRegionForm(props: RegionFormProps) {
     data: any | null;
     error?: any;
   }> {
-    console.log('handleSave called with formData:', formData);
+    // console.log('handleSave called with formData:', formData);
     const jwt = cookie.get('jwt');
     if (!jwt) {
       props.toggleEditModal?.();

@@ -48,7 +48,7 @@ export const EcommerceMetrics = ({
       const jwt = cookie.get('jwt');
       const response = await getUsers(jwt || '');
       if (response.error) {
-        console.error('Error fetching users:', response.error);
+        // console.error('Error fetching users:', response.error);
         return;
       }
       setUsers(response.data);

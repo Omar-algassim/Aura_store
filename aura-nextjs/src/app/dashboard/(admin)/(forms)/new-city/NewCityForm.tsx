@@ -38,11 +38,11 @@ export function NewCityForm(props: CityFormProps) {
   const nameError = getFieldError(state?.error, 'name');
 
   async function connectCountry(cityId: string) {
-    console.log(
-      'Connecting country to city with ID:',
-      cityId,
-      props.countryId
-    );
+    // console.log(
+    //   'Connecting country to city with ID:',
+    //   cityId,
+    //   props.countryId
+    // );
     const jwt = cookie.get('jwt');
     if (!jwt) {
       toast({
@@ -148,7 +148,7 @@ export function NewCityForm(props: CityFormProps) {
     }
     const data = validation.data;
     if (!data) {
-      console.error('No data returned from validation');
+      // console.error('No data returned from validation');
       return {
         message: 'No data returned from validation',
         type: 'error',

@@ -71,7 +71,7 @@ function ProductCard({ product }: { product: Product }) {
       )}
 
       {/* card image */}
-      <div className='relative w-full h-[220px] flex items-center justify-center rounded-lg bg-surface overflow-hidden'>
+      <div className='relative w-full h-auto aspect-square flex items-center justify-center rounded-lg bg-surface overflow-hidden'>
         {/* out of stock */}
         {product.stock <= 0 && (
           <div className='absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden bg-[#03030325] backdrop-blur-sm'>
@@ -118,7 +118,10 @@ function ProductCard({ product }: { product: Product }) {
             </div>
           </div>
           {/* add to cart */}
-          <div className='w-full flex flex-1 justify-end items-end gap-4'>
+          <div
+            className='w-full flex flex-1 justify-end items-end gap-4'
+            onClick={(e) => e.stopPropagation()}
+            title={addedToCart ? 'إزالة من السلة' : 'إضافة للسلة'}>
             {product.stock > 0 ? (
               addedToCart ? (
                 <>
@@ -143,6 +146,7 @@ function ProductCard({ product }: { product: Product }) {
                       alt='remove from cart'
                       className='w-auto h-full max-h-[24px]'
                     />
+                    <span className='sr-only'>إزالة من السلة</span>
                   </ButtonSecondary>
                 </>
               ) : (
@@ -158,6 +162,7 @@ function ProductCard({ product }: { product: Product }) {
                     alt='add to cart'
                     className='w-auto h-full max-h-[24px]'
                   />
+                  <span className='sr-only'>إضافة للسلة</span>
                 </ButtonSecondary>
               )
             ) : (

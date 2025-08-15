@@ -81,7 +81,7 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
       }
     }
     // console.log('Form State Data:', formState.data);
-  }, [formState.data, UserDispatcher, type]);
+  }, [formState, formState.data, UserDispatcher, type]);
 
   useEffect(() => {
     if (error) {
@@ -157,6 +157,10 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
                   return;
                 }
                 const value = e.target.value;
+                if (value.length > 0 && !/^\d+$/.test(value)) {
+                  setError('الرجاء ادخال رقم هاتف صحيح');
+                  return;
+                }
                 if (value.startsWith('0')) {
                   setError('الرجاء ادخال رقم الهاتف بدون الصفر');
                   setFormData({ ...formData, phone: value.slice(1) });

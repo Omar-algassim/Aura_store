@@ -5,8 +5,8 @@ import {
   OrderStatus,
   Product,
   Regions,
-} from "@/interfaces/dto";
-import { apiClient } from "@/utils/api/api-client";
+} from '@/interfaces/dto';
+import { apiClient } from '@/utils/api/api-client';
 
 export class CartEntity {
   documentId: string;
@@ -44,7 +44,7 @@ export class CartEntity {
       // /console.log("Product not in cart, adding it");
       this.products[product.documentId] = { product, amount };
     }
-    console.log("Total pay Before", this.total_pay);
+    // console.log("Total pay Before", this.total_pay);
     // handle discount here
     this.total_pay += this.getProductTotalPrice(product, amount);
     // console.log("Total pay", this.total_pay);
@@ -107,13 +107,13 @@ export class CartEntity {
    * @description It will start by creating the cart in database if it doesn't exist, and create the order items by passing the cart id, product id, and quantity.
    */
   async sync(userId: string) {
-    console.log("Syncing cart with server");
+    // console.log("Syncing cart with server");
     if (!this.documentId) {
-      console.log("Creating cart in database for user ", userId);
+      console.log('Creating cart in database for user ', userId);
     }
-    for (const product of Object.values(this.products)) {
-      console.log("Creating order item for product", product);
-    }
+    // for (const product of Object.values(this.products)) {
+    //   console.log("Creating order item for product", product);
+    // }
   }
 
   /**
@@ -130,8 +130,7 @@ export class CartEntity {
     region: Regions,
     delivery_address: DeliveryAddress,
     checkout_image: File,
-    order_status: OrderStatus = "pending"
-     
+    order_status: OrderStatus = 'pending'
   ): Promise<{ error?: any; data?: any }> {
     // upload the checkout image to the server
     // if (!this.products || Object.keys(this.products).length === 0) {
@@ -140,18 +139,16 @@ export class CartEntity {
     // }
     const receiptFormData = new FormData();
     receiptFormData.append(
-      "files",
+      'files',
       checkout_image,
-      userId + "-checkout-" + checkout_image.name.slice(-5)
+      userId + '-checkout-' + checkout_image.name.slice(-5)
     );
-    const { error: uploadError, data: uploadData } = await apiClient.uploadFile(
-      receiptFormData,
-      jwt
-    );
+    const { error: uploadError, data: uploadData } =
+      await apiClient.uploadFile(receiptFormData, jwt);
 
     if (uploadError || !uploadData) {
-      console.log("Error uploading checkout image: ", uploadError);
-      return { error: "Error uploading checkout image" };
+      // console.log("Error uploading checkout image: ", uploadError);
+      return { error: 'Error uploading checkout image' };
     }
 
     // console.log("Checkout image uploaded: ", uploadData);
@@ -178,10 +175,10 @@ export class CartEntity {
       }
     );
     if (OrderError || !OrderData) {
-      console.log("Error creating order: ", OrderError);
-      return { error: "Error confirming order, please try again" };
+      // console.log("Error creating order: ", OrderError);
+      return { error: 'Error confirming order, please try again' };
     }
-    console.log("Order created: ", OrderData);
+    console.log('Order created: ', OrderData);
     return { data: OrderData };
   }
 

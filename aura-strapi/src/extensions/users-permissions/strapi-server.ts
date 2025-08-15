@@ -276,7 +276,7 @@ export default async (plugin: any) => {
       return ctx.send({ email, sent: true });
     }
 
-    if (user.confirmed) {
+    if (user.confirmed && !ctx.query.force) {
       throw new ApplicationError('Already confirmed');
     }
 
