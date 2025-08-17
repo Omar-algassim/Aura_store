@@ -24,24 +24,24 @@ function ProductCard({ product }: { product: Product }) {
     setAddedToCart(product.documentId in cart.products);
   }, [cart, cart.products, product.documentId]);
 
-  const handleAddToCart = async (product: Product, amount?: number) => {
-    await cart.addProduct(product, amount);
+  const handleAddToCart = (product: Product, amount?: number) => {
+    cart.addProduct(product, amount);
     cartDispatcher({ type: 'UPDATE', payload: { cart: cart } });
     setAddedToCart(true);
   };
 
-  const handleRemoveFromCart = async (product: Product) => {
-    await cart.removeProduct(product);
+  const handleRemoveFromCart = (product: Product) => {
+    cart.removeProduct(product);
     cartDispatcher({ type: 'UPDATE', payload: { cart: cart } });
 
-    const iconTip = document.getElementById('cart-icon-tip');
-    if (iconTip) {
-      iconTip.innerHTML = cart.total_items.toString();
-      if (cart.total_items === 0) {
-        iconTip.classList.add('bg-transparent');
-        iconTip.classList.remove('bg-primary');
-      }
-    }
+    // const iconTip = document.getElementById('cart-icon-tip');
+    // if (iconTip) {
+    //   iconTip.innerHTML = cart.total_items.toString();
+    //   if (cart.total_items === 0) {
+    //     iconTip.classList.add('bg-transparent');
+    //     iconTip.classList.remove('bg-primary');
+    //   }
+    // }
     setAddedToCart(false);
   };
 

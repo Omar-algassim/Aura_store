@@ -35,7 +35,7 @@ export class CartEntity {
    * @param amount the amount of the product items to be added, default is 1
    * @description if the product is already in the cart, it will increase the amount of the product by the given amount, otherwise it will add the product to the cart, and adjust the total pay accordingly
    */
-  async addProduct(product: Product, amount: number = 1) {
+  addProduct(product: Product, amount: number = 1) {
     // /console.log("Adding product to cart", JSON.stringify(product, null, 2));
     if (this.productInCart(product.documentId)) {
       // /console.log("Product already in cart, increasing amount");
@@ -184,12 +184,28 @@ export class CartEntity {
 
   // public section
   toJson() {
+    // only having the necessary fields of the product - Fixing the Cooky Size issue -
+    const cartProducts: {
+      [key: string]: { product: Partial<Product>; amount: number };
+    } = {};
+    Object.values(this.products).forEach((item) => {
+      cartProducts[item.product.documentId] = {
+        product: {
+          documentId: item.product.documentId,
+          title: item.product.title,
+          thumbnail: item.product.thumbnail,
+          price: item.product.price,
+          discount: item.product.discount,
+        },
+        amount: item.amount,
+      };
+    });
     return {
       documentId: this.documentId,
       user_id: this.user_id,
       total_pay: this.total_pay,
       total_items: this.total_items,
-      products: this.products,
+      products: cartProducts,
     };
   }
 
