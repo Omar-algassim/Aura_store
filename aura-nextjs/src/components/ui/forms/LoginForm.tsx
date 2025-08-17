@@ -53,6 +53,14 @@ export function LoginForm({ type = 'phone' }: { type?: 'phone' | 'email' }) {
     typeof formState.error === 'string' ? formState.error : null;
 
   useEffect(() => {
+    const jwt = cookie.get('jwt');
+    if (jwt) {
+      const nextPage = cookie.get('nextPage') || '/';
+      router.replace(nextPage);
+    }
+  }, []);
+
+  useEffect(() => {
     // I think we need to convert it to async function
     if (formState.data) {
       // dispatch user data to global context
