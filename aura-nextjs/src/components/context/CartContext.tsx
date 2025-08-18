@@ -1,4 +1,5 @@
 'use client';
+import cookies from 'js-cookie';
 import { CartEntity } from '@/entities/cart-entity';
 import {
   CartReducer,
@@ -18,10 +19,19 @@ const CartDispatcher = createContext<React.Dispatch<CartReducerAction> | null>(
 );
 
 function CartContextProvider({ children }: { children: React.ReactNode }) {
-  const [cart, dispatch] = useReducer(CartReducer, initialCart);
+  const cartFromCookies = cookies.get('cart');
+  const [cart, dispatch] = useReducer(
+    CartReducer,
+    cartFromCookies ? JSON.parse(cartFromCookies) : initialCart
+  );
 
   useEffect(() => {
-    dispatch({ type: 'CREATE', payload: { cart: initialCart } });
+    dispatch({
+      type: 'CREATE',
+      payload: {
+        cart: cartFromCookies ? JSON.parse(cartFromCookies) : initialCart,
+      },
+    });
   }, []);
   return (
     // stupid solution to avoid typescript error: it's working fine

@@ -1217,7 +1217,8 @@ class APIClient {
         },
       });
 
-      if (response.status === 404) {
+      if (response.status === 404 || response.data.data.length === 0) {
+        // console.log('No monthly target found, creating a new one');
         // create new one
         const today = new Date();
         const data = {

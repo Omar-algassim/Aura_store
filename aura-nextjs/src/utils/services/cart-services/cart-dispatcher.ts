@@ -45,9 +45,9 @@ export const CartReducer = (_prevState: any, action: CartReducerAction) => {
       if (!cart) {
         throw new Error('Cart is null');
       }
-      // console.log("Updating cart", cart.total_items, cart.total_pay);
-      cookie.remove('cart');
-      cookie.set('cart', JSON.stringify(cart.toJson()));
+      // console.log('Updating cart', cart.total_items, cart.total_pay);
+      const cartJson = JSON.stringify(cart.toJson());
+      cookie.set('cart', cartJson);
       return new CartEntity({
         documentId: cart.documentId,
         user_id: cart.user_id,

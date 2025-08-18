@@ -8,10 +8,6 @@ import { ApexOptions } from 'apexcharts';
 
 import { updateCurrentMonthTarget } from '@/utils/services/dashboard/monthly-targets';
 
-import { MoreDotIcon } from '@/icons';
-import { DropdownItem } from '@/components/ui/dashboard/ui/dropdown/DropdownItem';
-import { Dropdown } from '@/components/ui/dashboard/ui/dropdown/Dropdown';
-
 import { useToast } from '@/hooks/use-toast';
 import { numberShortener } from '@/utils/services/dashboard/helper';
 
@@ -35,7 +31,7 @@ export default function MonthlyTarget({
   todayOrderSales = 0,
   yesterdayOrderSales = 0,
 }: MonthlyTargetProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [target, setTarget] = useState(currentMonthTarget);
@@ -108,9 +104,9 @@ export default function MonthlyTarget({
       "You earned ${{todayEarns}} today, it's lower than last day. Steady Days will Pass Soon",
   };
 
-  function toggleDropdown() {
-    setIsOpen(!isOpen);
-  }
+  // function toggleDropdown() {
+  //   setIsOpen(!isOpen);
+  // }
 
   async function updateTarget() {
     if (!jwt) {
@@ -132,9 +128,9 @@ export default function MonthlyTarget({
     setEditTarget(false);
   }
 
-  function closeDropdown() {
-    setIsOpen(false);
-  }
+  // function closeDropdown() {
+  //   setIsOpen(false);
+  // }
 
   // calculate target Reached
   useEffect(() => {
@@ -163,6 +159,26 @@ export default function MonthlyTarget({
     }
   }, [error]);
 
+  // Target Input Component
+  const TargetInput = () => (
+    <div>
+      <input
+        type='number'
+        name='target'
+        defaultValue={newTarget}
+        value={newTarget}
+        onChange={(e) => setNewTarget(Number(e.target.value))}
+        className='max-w-[160px] rounded-lg border border-gray-300 bg-white px-3 py-2 text-base font-semibold text-gray-800 dark:bg-gray-900 dark:text-white/90 focus:outline-none focus:ring-2 focus:ring-primary-500'
+        autoFocus
+      />
+      <button
+        onClick={updateTarget}
+        className='m-2 text-sm text-white bg-primary rounded-xl px-4 py-3 cursor-pointer hover:bg-primary-dark'>
+        Save
+      </button>
+    </div>
+  );
+
   return (
     <div className='rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]'>
       <div className='px-5 pt-5 bg-white shadow-default rounded-2xl pb-11 dark:bg-gray-900 sm:px-6 sm:pt-6'>
@@ -175,7 +191,7 @@ export default function MonthlyTarget({
               Target you’ve set for each month
             </p>
           </div>
-          <div className='relative inline-block'>
+          {/* <div className='relative inline-block'>
             <button
               onClick={toggleDropdown}
               className='dropdown-toggle'>
@@ -198,7 +214,7 @@ export default function MonthlyTarget({
                 Delete
               </DropdownItem>
             </Dropdown>
-          </div>
+          </div> */}
         </div>
         <div className='relative '>
           <div className='max-h-[330px]'>
@@ -210,14 +226,27 @@ export default function MonthlyTarget({
               height={330}
             />
             <span className='sr-only'>
-              {isNaN(targetReachedValue) ? 0 : targetReachedValue.toFixed(2)}% of your target reached
+              {isNaN(targetReachedValue) ? 0 : targetReachedValue.toFixed(2)}%
+              of your target reached
             </span>
           </div>
 
           <span className='absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500'>
             +{isNaN(targetReachedValue) ? 0 : targetReachedValue.toFixed(2)}%
           </span>
+
+          {/* when no target is set */}
+          {target === 0 ? (
+            <div className='absolute inset-0 mt-2 flex flex-col items-center justify-center rounded-2xl bg-black/5 text-gray-500 text-sm dark:text-gray-400 backdrop-blur-lg'>
+              <p className='text-center'>No target set</p>
+              <p className='text-center text-lg text-gray-900 dark:text-gray-400 max-w-[24ch]'>
+                Set a new target to track your monthly progress
+              </p>
+              <TargetInput />
+            </div>
+          ) : null}
         </div>
+
         <p className='mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base'>
           {todaySalesIncrease
             ? salesStatusMessages.salesIncreased.replace(
@@ -237,21 +266,7 @@ export default function MonthlyTarget({
             Target
           </p>
           {editTarget ? (
-            <div>
-              <input
-                type='number'
-                name='target'
-                defaultValue={newTarget}
-                value={newTarget}
-                onChange={(e) => setNewTarget(Number(e.target.value))}
-                className='max-w-[160px] rounded-lg border border-gray-300 bg-white px-3 py-2 text-base font-semibold text-gray-800 dark:bg-gray-900 dark:text-white/90 focus:outline-none focus:ring-2 focus:ring-primary-500'
-              />
-              <button
-                onClick={updateTarget}
-                className='m-2 text-sm text-white bg-primary rounded-xl px-4 py-3 cursor-pointer hover:bg-primary-dark'>
-                Save
-              </button>
-            </div>
+            <TargetInput />
           ) : (
             <p className='flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg'>
               <Edit
