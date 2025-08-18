@@ -446,7 +446,7 @@ export default function OrderTable() {
             <div className='flex items-center gap-3 px-2 mt-6 lg:justify-end'>
               <Button
                 size='sm'
-                onClick={handleSave}>
+                >
                 Save Changes
               </Button>
             </div>
