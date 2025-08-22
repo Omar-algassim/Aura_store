@@ -45,7 +45,8 @@ export function ConfirmPhonePage(props: ConfirmPhonePageProps) {
   const nextPage = cookie.get('nextPage') || '/profile';
 
   useEffect(() => {
-    if (user.confirmed) {
+    const jwt = cookie.get('jwt');
+    if (user.confirmed || jwt) {
       router.replace(`${nextPage}?msg=تم تأكيد الحساب بنجاح`);
     }
   }, [user]);
@@ -126,12 +127,21 @@ export function ConfirmPhonePage(props: ConfirmPhonePageProps) {
       setError(error);
     } else if (data) {
       userDispatcher({ type: 'LOGIN', payload: { userData: data } });
+      console.log('the new user \n', JSON.stringify(data, null, 2));
+      cookie.set('jwt', data.jwt);
+      cookie.set('user', JSON.stringify(data.user));
       router.replace(nextPage);
     }
 
     setCanResend(false);
     setRemainingTime(20);
     setCode('');
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
   };
 
   return (
@@ -160,6 +170,7 @@ export function ConfirmPhonePage(props: ConfirmPhonePageProps) {
         </p>
 
         <InputOTP
+          onKeyDown={handleKeyDown}
           dir='ltr'
           maxLength={6}
           value={code}
