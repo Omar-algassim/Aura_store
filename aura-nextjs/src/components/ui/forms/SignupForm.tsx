@@ -157,7 +157,7 @@ export function SignupForm({ type }: { type: 'phone' | 'email' }) {
                   return;
                 }
                 const value = e.target.value;
-                if (value.length > 0 && !/^\d+$/.test(value)) {
+                if (value.length > 0 && !/^\+?[0-9]+$/.test(value)) {
                   setError('الرجاء ادخال رقم هاتف صحيح');
                   return;
                 }
