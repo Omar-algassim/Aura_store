@@ -145,20 +145,24 @@ export default async (plugin: any) => {
     }
 
     if (returnUser || confirmationToken.length === 6) {
-      await userService.edit(user.id, {
+      const editedUser = await userService.edit(user.id, {
         confirmed: true,
         phoneNumberConfirmed: true,
         confirmationToken: null,
       });
       ctx.send({
-        jwt: jwtService.issue({ id: user.id }),
-        user: await sanitizeUser(user, ctx),
+        jwt: jwtService.issue({ id: editedUser.id }),
+        user: await sanitizeUser(editedUser, ctx),
       });
     } else {
-      await userService.edit(user.id, {
+      const editedUser = await userService.edit(user.id, {
         confirmed: true,
         emailConfirmed: true,
         confirmationToken: null,
+      });
+      ctx.send({
+        jwt: jwtService.issue({ id: editedUser.id }),
+        user: await sanitizeUser(editedUser, ctx),
       });
       const settings: any = await strapi
         .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
