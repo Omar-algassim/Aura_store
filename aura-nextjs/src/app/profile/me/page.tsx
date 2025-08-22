@@ -110,7 +110,7 @@ function ProfileInfo() {
     const newData: Partial<User> = {};
     if (emailChanged) {
       newData.email = email;
-      newData.emailConfirmed = false;
+      newData.confirmed = false;
       newData.emailConfirmed = false;
     }
     if (phoneChanged) {
@@ -151,7 +151,7 @@ function ProfileInfo() {
       // console.log('requesting email confirmation');
       // console.log('User: ', JSON.stringify(user, null, 2));
       await requestEmailConfirmationCode(email);
-      Cookies.remove('jwt');
+     
     }
     if (phone && phoneChanged) {
       // send otp to the new phone number
@@ -160,7 +160,7 @@ function ProfileInfo() {
       // console.log('requesting phone confirmation');
       // console.log('User: ', JSON.stringify(user, null, 2));
       await requestPhoneConfirmCode(phone);
-      Cookies.remove('jwt');
+      
       toast({
         title: 'تم إرسال رمز التحقق',
         description: 'يرجى التحقق من رقم الهاتف الجديد',
