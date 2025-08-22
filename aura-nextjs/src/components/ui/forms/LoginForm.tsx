@@ -176,7 +176,7 @@ export function LoginForm({ type = 'phone' }: { type?: 'phone' | 'email' }) {
                   setPhone(value.slice(1));
                   return;
                 }
-                if (value.length > 0 && !/^\+\d{1,15}$/.test(value)) {
+                if (value.length > 0 && !/^\+?[0-9]+$/.test(value)) {
                   setError('الرجاء ادخال رقم هاتف صحيح');
                   return;
                 }
