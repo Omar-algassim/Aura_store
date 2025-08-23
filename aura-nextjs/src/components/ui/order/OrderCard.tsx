@@ -6,7 +6,6 @@ import Cookies from 'js-cookie';
 import { OrderDTO } from '@/interfaces/dto';
 import { OrdersPage } from '@/constants/app-constants/localization';
 import { BaseUrl } from '@/constants/api-constants';
-import { ButtonPrimary } from '@/components/common/Buttons';
 import { cancelOrder } from '@/utils/services/order-services';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../shadcn/button';
@@ -73,45 +72,45 @@ const OrderCard = (props: Props) => {
   }
   return (
     <div
-      className={`w-full flex flex-col items-center group gap-8 bg-surface rounded-xl p-5 overflow-hidden ${props.className}`}
+      className={`relative w-full flex flex-col items-center group gap-8 bg-surface rounded-xl p-5 overflow-hidden ${props.className}`}
       onClick={() => setCardClicked((prev) => !prev)}>
       {/* order num and order status */}
-      <div className='w-full flex justify-between'>
-        <p className='text-sm font-[500] capitalize text-[#202020]'>
+      <div className='w-full flex justify-between items-center flex-wrap-reverse gap-y-3'>
+        <p className='flex-2/3 text-sm font-[500] capitalize text-[#202020]'>
           رقم الطلب: {props.order.documentId}
         </p>
-        <div className='relative'>
+        <div className='relatives flex-1/3 flex flex-col items-end justify-end gap-3'>
           <p
-            className={`text-sm font-bold capitalize`}
+            className={`text-sm text-end font-bold capitalize px-1`}
             style={{
               color: STATUS_COLORS[props.order.order_status],
             }}>
             {OrdersPage.orderStatuses[props.order.order_status]}
           </p>
-          
-          {/* cancel button */}
-          {props.order.order_status === 'pending' ? (
-            <div
-            className={clsx(
-              `absolute group-hover:top-0 group-active:top-0 left-0 transition-all duration-300 ease-in-out`,
-                cardClicked ? 'top-0' : '-top-100'
-              )}>
-              <ButtonPrimary
-                handleClick={handleOrderCancel}
-                // className='text-sm text-red-500'
-                type='button'
-                disabled={props.order.order_status !== 'pending'}>
-                إلغاء الطلب
-              </ButtonPrimary>
-            </div>
-          ) : null}
           <Button
             variant='link'
             onClick={toggleCartListModal}
-            className='absolute top-13 right-[-28] text-xs text-primary-dark'
-            >
+            className='text-xs text-primary-dark max-w-fit border self-end'>
             تفاصيل الطلب
           </Button>
+
+          {/* cancel button */}
+          {props.order.order_status === 'pending' ? (
+            <div
+              className={clsx(
+                `absolute group-hover:bottom-12 group-active:bottom-12 left-4 transition-all duration-300 ease-in-out`,
+                cardClicked ? 'bottom-12' : '-bottom-100'
+              )}>
+              <Button
+                variant='link'
+                onClick={handleOrderCancel}
+                className='text-surface bg-primary-dark hover:bg-primary-dark/90 active:bg-primary-dark/80 px-3 py-1 rounded-md text-sm'
+                type='button'
+                disabled={props.order.order_status !== 'pending'}>
+                إلغاء الطلب
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -135,12 +134,12 @@ const OrderCard = (props: Props) => {
           {props.order.total_pay} SDG
         </p>
       </div>
-       <Modal
+      <Modal
         isOpen={cartListOpen}
         onClose={() => toggleCartListModal()}
-        className='max-w-[700px] max-h-[600px] '>
-        <div className='p-4 mt-18 flex flex-col gap-4 items-start'>
-          <div className='flex gap-6'>
+        className='max-w-[700px] max-h-[600px] mx-2'>
+        <div className='p-4 pb-6 mt-18 flex flex-col gap-4 items-start'>
+          <div className='flex gap-2'>
             <Label>المبلغ:</Label>
             <p className='ml-6'>{props.order.total_pay} SDG</p>
           </div>

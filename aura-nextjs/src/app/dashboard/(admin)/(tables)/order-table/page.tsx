@@ -29,6 +29,7 @@ import Link from 'next/link';
 import { PhoneCallIcon } from 'lucide-react';
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon';
 import OrderItems from '@/components/ui/dashboard/form/order-items';
+import qs from 'qs';
 
 export default function OrderTable() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -53,7 +54,35 @@ export default function OrderTable() {
       }
       try {
         setLoading(true);
-        const response = await getOrders(jwt);
+        const q = qs.stringify(
+          {
+            sort: ['updatedAt:desc'],
+            populate: {
+              user: {
+                fields: ['documentId', 'username', 'email', 'phone_number'],
+              },
+              order_items: {
+                populate: {
+                  product: {
+                    fields: [
+                      'documentId',
+                      'name',
+                      'title',
+                      'price',
+                      'discount',
+                      'thumbnail',
+                    ],
+                  },
+                },
+                fields: ['documentId', 'count'],
+              },
+            },
+          },
+          {
+            addQueryPrefix: true,
+          }
+        );
+        const response = await getOrders(jwt, q);
         if (response.data) {
           setOrders(response.data);
           setLoading(false);
@@ -444,11 +473,7 @@ export default function OrderTable() {
               </div>
             </div>
             <div className='flex items-center gap-3 px-2 mt-6 lg:justify-end'>
-              <Button
-                size='sm'
-                >
-                Save Changes
-              </Button>
+              <Button size='sm'>Save Changes</Button>
             </div>
           </form>
         </div>

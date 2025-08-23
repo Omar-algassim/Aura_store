@@ -58,7 +58,8 @@ export default function OrderItems(props: OrderItemProps) {
 
   return (
     <div className='flex justify-between items-center w-full border border-primary p-3 rounded-3xl overflow-x-auto'>
-      <div className='flex flex-col items-start gap-2'>
+      {/* image and title */}
+      <div className='flex-2/3 flex flex-col items-start gap-2'>
         <div className='overflow-hidden rounded-md'>
           <Image
             width={40}
@@ -68,17 +69,22 @@ export default function OrderItems(props: OrderItemProps) {
           />
         </div>
         <div>
-          <p className='font-medium text-gray-500 text-theme-xs dark:text-white/90'>
+          <p
+            className='font-medium text-gray-500 text-theme-xs dark:text-white/90 line-clamp-1'
+            title={props.product?.title || 'No title available'}>
             {props.product?.title || 'No title available'}
           </p>
         </div>
       </div>
-      <div className='py-3 text-gray-800 text-theme-sm dark:text-gray-400'>
-        {props.product?.price * props.count} SDG
-      </div>
-      <div className='flex gap-2'>
-        <div>{props.count}</div>
-        {/* <span className="flex flex-col gap-1">
+      <div className='flex-1/3 flex items-end justify-end gap-2 text-gray-800 text-theme-sm dark:text-gray-400'>
+        {new Intl.NumberFormat('en-SD', {
+          style: 'currency',
+          currency: 'SDG',
+          minimumFractionDigits: 0,
+        }).format(props.product?.price || 0)}
+        <div className='flex gap-2'>
+          <div>{props.count}</div>
+          {/* <span className="flex flex-col gap-1">
                   <Image
                   onClick={increaseAmount}
                   alt='increase'
@@ -94,6 +100,7 @@ export default function OrderItems(props: OrderItemProps) {
                   className="cursor-pointer"
                   src='/icons/angle-down.svg' />
               </span> */}
+        </div>
       </div>
       {/* <div className="flex items-center gap-2">
            <button

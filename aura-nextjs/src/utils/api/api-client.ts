@@ -1086,6 +1086,7 @@ class APIClient {
     } catch (error: any) {
       // console.log(error);
       console.error('Error fetching order', query, error);
+      console.error('AxiosError:', error.response?.data);
       return {
         error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
       };

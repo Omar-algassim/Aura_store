@@ -2,14 +2,17 @@
 import { apiClient } from '@/utils/api/api-client';
 import axios from 'axios';
 
-export async function getOrders(jwt: string): Promise<{
+export async function getOrders(
+  jwt: string,
+  q?: string
+): Promise<{
   message: string;
   type?: string;
   data: any | null;
   error?: any;
 }> {
   try {
-    const { error, data } = await apiClient.fetchOrder(jwt);
+    const { error, data } = await apiClient.fetchOrder(jwt, q);
     if (error) {
       return {
         message: error,
@@ -67,7 +70,7 @@ export async function updateOrderStatus(
         error: error,
       };
     }
-    
+
     return {
       message: 'Order status updated successfully',
       type: 'success',
