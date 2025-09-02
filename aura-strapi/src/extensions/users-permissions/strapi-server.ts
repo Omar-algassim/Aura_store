@@ -141,7 +141,8 @@ export default async (plugin: any) => {
     });
 
     if (!user) {
-      throw new ValidationError('Invalid token');
+      ctx.redirect('http://localhost:3000/profile/me?msg=تم تأكيد الحساب مسبقاً');
+      return;
     }
 
     if (returnUser || confirmationToken.length === 6) {
@@ -164,11 +165,11 @@ export default async (plugin: any) => {
         jwt: jwtService.issue({ id: editedUser.id }),
         user: await sanitizeUser(editedUser, ctx),
       });
-      const settings: any = await strapi
-        .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
-        .get();
+      // const settings: any = await strapi
+      //   .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
+      //   .get();
 
-      ctx.redirect(settings.email_confirmation_redirection || '/');
+      // ctx.redirect(settings.email_confirmation_redirection || '/');
     }
   };
 
