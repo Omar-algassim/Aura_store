@@ -6,11 +6,13 @@ import cookies from 'js-cookie';
 
 import { useToast } from '@/hooks/use-toast';
 import { ButtonSecondary } from '@/components/common/Buttons';
+import { Preloader } from '@/components/ui/Preloader'
 import {
   requestEmailConfirmationCode,
   requestResetPwdCode,
 } from '@/utils/services/user-services';
 import { useUser } from '@/components/context';
+import { confirmEmail } from '@/utils/services/auth-service/auth-action';
 
 interface ConfirmEmailPageProps {
   title?: string;
@@ -26,15 +28,34 @@ export function ConfirmEmailPage(params: ConfirmEmailPageProps) {
   const user = useUser();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(searchParams.get('msg') || '');
   const [canResend, setCanResend] = useState(false);
   const [remainingTime, setRemainingTime] = useState(20);
 
   const nextPage = cookies.get('nextPage') || '/';
   useEffect(() => {
+    async function confirm(confirmationToken: string) {
+      setLoading(true);
+      const {data, error} = await confirmEmail(confirmationToken);
+      if (data) {
+        console.log('Email confirmed successfully:', data);
+        cookies.set('jwt', data.jwt);
+        cookies.set('user', JSON.stringify(data.user));
+        router.replace(`${nextPage}?msg=تم تأكيد الحساب بنجاح`);
+      } else if (error){
+        setError('حدث خطأ ما, الرجاء المحاوله مره اخرى');
+      }
+    }
+
     if (user.confirmed) {
       router.replace(`${nextPage}?msg=تم تأكيد الحساب بنجاح`);
     }
+    const confirmationToken = searchParams.get('confirmation');
+    if (confirmationToken) {
+    confirm(confirmationToken);
+  }
+  setLoading(false);
     // console.log('user confirmed:', user.confirmed);
   }, [user, user.confirmed, router]);
 
@@ -92,6 +113,7 @@ export function ConfirmEmailPage(params: ConfirmEmailPageProps) {
       const data = await requestResetPwdCode('email', indicator as string);
       error = data.error;
     } else {
+      console.log('user email:', user);
       const data = await requestEmailConfirmationCode(user.email as string);
       error = data.error;
     }
@@ -103,6 +125,9 @@ export function ConfirmEmailPage(params: ConfirmEmailPageProps) {
     setRemainingTime(20);
   };
 
+  if (loading) {
+    return <Preloader />;
+  } else {
   return (
     <div className='flex flex-col w-[364px] tablet:w-full tablet:max-w-[880px] border-none rounded-3xl pt-20 pb-6 px-6 gap-8 mt-20 bg-white justify-center items-center'>
       <div className='w-full flex items-center justify-center'>
@@ -110,29 +135,24 @@ export function ConfirmEmailPage(params: ConfirmEmailPageProps) {
           {title || 'تأكيد البريد الإلكتروني'}
         </h1>
       </div>
-
-      <div className='w-full flex items-center justify-center'>
-        <p className='w-full text-center text-[14px] tablet:text-[24px] font-[500] tablet:font-[400] font-alex'>
-          {description ||
-            'لقد تم إرسال رابط تأكيد البريد الإلكتروني إلى بريدك الإلكتروني، يرجى التحقق من بريدك الإلكتروني والضغط على الرابط المرسل'}
-        </p>
-      </div>
-
-      <div>
-        <ButtonSecondary
-          disabled={!canResend}
-          handleClick={resendCode}
-          preloader={true}
-          className='bg-white text-primary-dark border-none hover:bg-white hover:text-primary-dark active:bg-white active:text-primary-dark focus:outline-none focus:bg-white focus:text-primary-dark flex flex-col gap-1'>
-          {resendLinkText || 'إعادة إرسال الرابط'}
-        </ButtonSecondary>
-        <p
-          className={`text-center text-[14px] font-[400] font-alex text-secondary ${
-            remainingTime <= 0 ? 'hidden' : 'block'
-          }`}>
-          إعادة إرسال الرابط بعد {remainingTime} ثانية
-        </p>
-      </div>
+      <><div className='w-full flex items-center justify-center'>
+          <p className='w-full text-center text-[14px] tablet:text-[24px] font-[500] tablet:font-[400] font-alex'>
+            {description ||
+              'لقد تم إرسال رابط تأكيد البريد الإلكتروني إلى بريدك الإلكتروني، يرجى التحقق من بريدك الإلكتروني والضغط على الرابط المرسل'}
+          </p>
+        </div><div>
+            <ButtonSecondary
+              disabled={!canResend}
+              handleClick={resendCode}
+              preloader={true}
+              className='bg-white text-primary-dark border-none hover:bg-white hover:text-primary-dark active:bg-white active:text-primary-dark focus:outline-none focus:bg-white focus:text-primary-dark flex flex-col gap-1'>
+              {resendLinkText || 'إعادة إرسال الرابط'}
+            </ButtonSecondary>
+            <p
+              className={`text-center text-[14px] font-[400] font-alex text-secondary ${remainingTime <= 0 ? 'hidden' : 'block'}`}>
+              إعادة إرسال الرابط بعد {remainingTime} ثانية
+            </p>
+          </div></>
     </div>
-  );
+  );}
 }
