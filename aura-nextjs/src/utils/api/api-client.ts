@@ -291,6 +291,27 @@ class APIClient {
     }
   }
 
+  async confirmEmail(confirmationToken: string) {
+    console.log('API => confirmEmail with token:', confirmationToken);
+    try {
+      const result = await this.api.get(`/auth/email-confirmation?confirmation=${confirmationToken}`,
+        {
+          headers: {
+            'Access-Control-Allow-Origin': "*",
+          },
+        }
+      );
+      if (result.status === 200 || result.status === 201 || result.status === 302) {
+        return { data: result.data };
+      }
+      return { error: 'حدث خطأ ما, الرجاء المحاوله مره اخرى' };
+    } catch (error: any) {
+      return {
+        error: error.message || 'حدث خطأ ما, الرجاء المحاوله مره اخرى',
+      };
+    }
+  }
+
   async fetchPage(slug: string) {
     try {
       const result = await this.api.get(`/${slug}`);
