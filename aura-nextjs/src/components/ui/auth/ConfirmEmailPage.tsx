@@ -43,7 +43,7 @@ export function ConfirmEmailPage(params: ConfirmEmailPageProps) {
         cookies.set('jwt', data.jwt);
         cookies.set('user', JSON.stringify(data.user));
         router.replace(`${nextPage}?msg=تم تأكيد الحساب بنجاح`);
-      } else if (error){
+      } else if (error) {
         setError('حدث خطأ ما, الرجاء المحاوله مره اخرى');
       }
     }

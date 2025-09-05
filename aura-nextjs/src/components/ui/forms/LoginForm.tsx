@@ -57,6 +57,9 @@ export function LoginForm({ type = 'phone' }: { type?: 'phone' | 'email' }) {
     if (jwt) {
       const nextPage = cookie.get('nextPage') || '/';
       router.replace(nextPage);
+      if (!nextPage) {
+        router.replace('/');
+      }
     }
   }, []);
 

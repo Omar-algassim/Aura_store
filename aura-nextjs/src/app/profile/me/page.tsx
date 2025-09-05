@@ -151,6 +151,7 @@ function ProfileInfo() {
       // console.log('requesting email confirmation');
       // console.log('User: ', JSON.stringify(user, null, 2));
       await requestEmailConfirmationCode(email);
+      document.location.reload();
      
     }
     if (phone && phoneChanged) {
@@ -160,6 +161,7 @@ function ProfileInfo() {
       // console.log('requesting phone confirmation');
       // console.log('User: ', JSON.stringify(user, null, 2));
       await requestPhoneConfirmCode(phone);
+      document.location.reload();
       
       toast({
         title: 'تم إرسال رمز التحقق',
@@ -367,11 +369,14 @@ function ProfileInfo() {
                     setPhone(value.slice(1));
                     return;
                   }
+                  if (value.length > 0 && !/^\+?[0-9]+$/.test(value)) {
+                  setError('الرجاء ادخال رقم هاتف صحيح');
+                  return;
+                }
                   if (!value.startsWith('+')) {
                     setPhone(countryKey + value);
-                  } else {
-                    setPhone(value);
                   }
+                  else setPhone(value);
                 }}
               />
               <CountriesDropdown
